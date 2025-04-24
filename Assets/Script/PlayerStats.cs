@@ -12,7 +12,11 @@ public class PlayerStats : MonoBehaviour
     public int stamina = 10;
     public int currentHealth = 100;
     public int currentstamina = 10;
+
+    public float moveSpeed = 3.5f;
+    public int resistance = 10;
     public int attackPower = 10;
+    public float attackSpeed = 0.8f;
 
     private void Start()
     {
