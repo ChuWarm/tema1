@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -32,6 +33,28 @@ public class DataManager : MonoBehaviour
     }
 
 
+=======
+using Cysharp.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using UnityEngine;
+
+public static class DataSheetURLHolder
+{
+    public static string DATA_SHEET_URL = "https://script.google.com/macros/s/AKfycbyUd5sR4KJbcy8iaSWgNcuPUJbMuK_OH9CYZA3Tli7Qf0BRNr-H8iiSCABHMcupnFnl/exec";
+
+}
+
+public class DataManager : MonoBehaviour
+{
+    public Dictionary<string, EnemyData> enemyDatas = new();
+
+    public List<EnemyData> enemyDataList = new();
+
+    public List<MemoryUpgradeData> memoryUpgradeDataList = new();
+>>>>>>> Stashed changes
 
     void Start()
     {
@@ -40,6 +63,7 @@ public class DataManager : MonoBehaviour
 
     async UniTaskVoid GetGoogleData()
     {
+<<<<<<< Updated upstream
         var json = await LoadDataGoogleSheet(DATA_URL);
 
         var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
@@ -59,6 +83,28 @@ public class DataManager : MonoBehaviour
         {
             var item = memoryDataSheet.memoryUpgradeSheet[i];
             upgradeDataDic.Add(item.upgradeID, item);
+=======
+        var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
+
+        print(json);
+        EnemyDataSheet enemyDataSheet = JsonUtility.FromJson<EnemyDataSheet>(json);
+
+        for (int i = 0; i < enemyDataSheet.enemyDataSheet.Length; i++)
+        {
+            var enemyData = enemyDataSheet.enemyDataSheet[i];
+
+            enemyDatas.Add(enemyData.enemyID, enemyData);
+            enemyDataList.Add(enemyData);
+        }
+
+        var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
+
+        for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
+        {
+            var memoryUpgradeData = memoryDataSheet.memoryUpgradeSheet[i];
+
+            memoryUpgradeDataList.Add(memoryUpgradeData);
+>>>>>>> Stashed changes
         }
     }
 
@@ -78,4 +124,15 @@ public class DataManager : MonoBehaviour
             }
         }
     }
+<<<<<<< Updated upstream
+=======
+
+
+    public EnemyData GetEnemyData(string enemyID)
+    {
+        if(enemyDatas.ContainsKey(enemyID))
+            return enemyDatas[enemyID];
+        else return null;
+    }
+>>>>>>> Stashed changes
 }

@@ -7,6 +7,7 @@ public static class EnemyFactory
 {
     public static EnemyBase SpawnEnemy(RoomEventHolder room, EnemyData enemyData)
     {
+<<<<<<< Updated upstream
         var enemyBasePrefab = Resources.Load("EnemyBase_Prefab");
 
         var go = MonoBehaviour.Instantiate(enemyBasePrefab, room.transform);
@@ -32,5 +33,41 @@ public class EnemyBase : MonoBehaviour
         // m_visualHolder
 
         return this;    
+=======
+        if (room.IsUnityNull()) return null;
+
+        var basePrefab = Resources.Load<GameObject>("EnemyBase");
+
+        MonoBehaviour.Instantiate(basePrefab, room.transform);
+
+        if (!basePrefab.TryGetComponent<EnemyBase>(out var enemyBase))
+            return null;
+
+        return enemyBase.Init(enemyData);
+    }
+}
+
+
+public class EnemyBase : MonoBehaviour
+{
+    [SerializeField] Transform visualHolder;
+
+    string m_enemyID;
+    int m_health;
+
+    public EnemyBase Init(EnemyData data)
+    {
+        m_enemyID = data.enemyID;
+        m_health = data.health;
+
+        /*
+        var visual = Resources.Load<Transform>($"{data.visualResourceID}");
+
+        visual.SetParent(visualHolder);
+        visual.transform.localPosition = Vector3.zero;
+        */
+
+        return this;
+>>>>>>> Stashed changes
     }
 }
