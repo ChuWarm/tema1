@@ -1,0 +1,64 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Serialization;
+using Update = UnityEngine.PlayerLoop.Update;
+
+public enum PlayerState { None, Idle, Move }
+
+[RequireComponent(typeof(CharacterController))]
+public class PlayerController : MonoBehaviour
+{
+    private PlayerStateIdle _playerStateIdle;
+    private PlayerStateMove _playerStateMove;
+    
+    public PlayerState CurrentState { get; private set; }
+    
+    private Dictionary<PlayerState, IPlayerState> _playerStates;
+    
+    public CharacterController characterController;
+    
+    private void Awake()
+    {
+        characterController = GetComponent<CharacterController>();
+    }
+
+    private void Start()
+    {
+        _playerStateIdle = new PlayerStateIdle();
+        _playerStateMove = new PlayerStateMove();
+
+        _playerStates = new Dictionary<PlayerState, IPlayerState>()
+        {
+            { PlayerState.Idle, _playerStateIdle },
+            { PlayerState.Move, _playerStateMove },
+        };
+        
+        Init();
+    }
+
+    private void Update()
+    {
+        if (CurrentState != PlayerState.None)
+        {
+            _playerStates[CurrentState].UpdateState();
+        }
+    }
+
+    private void Init()
+    {
+        SetState(PlayerState.Idle);
+    }
+
+    public void SetState(PlayerState state)
+    {
+        if (CurrentState != PlayerState.None)
+        {
+            _playerStates[CurrentState].ExitState();
+        }
+        CurrentState = state;
+        _playerStates[CurrentState].EnterState(this);
+    }
+}
