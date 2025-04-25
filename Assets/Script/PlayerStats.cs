@@ -26,7 +26,7 @@ public class PlayerStats : MonoBehaviour
     public void GainExperience(int amount)
     {
         currentExp += amount;
-        // **계정 경험치 획득 반영**
+        //계정 경험치 획득 반영
         LevelManager.Instance.GainAccountExperience(amount);
 
         while (currentExp >= expToNextLevel)

@@ -10,7 +10,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        // 싱글톤 패턴 
+        // 싱글톤 패턴
         if (Instance == null)
         {
             Instance = this;
