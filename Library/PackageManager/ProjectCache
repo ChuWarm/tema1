@@ -5,16 +5,26 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
+<<<<<<< Updated upstream
       ticks: 638811669512688829
     m_Hash: 640261812
+=======
+      ticks: 638809013015975337
+    m_Hash: 3434767189
+>>>>>>> Stashed changes
   m_LockFileStatus:
     m_FilePath: D:/Projects/LikeLion/TEAM1/tema1/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
+<<<<<<< Updated upstream
       ticks: 638811669512698833
     m_Hash: 2672705400
+=======
+      ticks: 638809013016280456
+    m_Hash: 474062846
+>>>>>>> Stashed changes
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:

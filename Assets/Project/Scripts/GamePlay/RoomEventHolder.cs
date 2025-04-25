@@ -5,6 +5,7 @@ using UnityEngine;
 public class RoomEventHolder : MonoBehaviour
 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     [SerializeField] int count;
 
     private void OnEnable()
@@ -13,6 +14,8 @@ public class RoomEventHolder : MonoBehaviour
             EnemyFactory.SpawnEnemy(this, DataManager.Instance.enemyDataDic["dummy_enemy"]);
 
 =======
+=======
+>>>>>>> Stashed changes
     List<EnemyBase> m_enemies;
 
     private void Start()
@@ -25,6 +28,9 @@ public class RoomEventHolder : MonoBehaviour
         {
             EnemyFactory.SpawnEnemy(this, dataM.GetEnemyData("dummy_enemy"));
         }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 }

@@ -1,9 +1,12 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 =======
+=======
+>>>>>>> Stashed changes
 # Created by https://www.toptal.com/developers/gitignore/api/unity
 # Edit at https://www.toptal.com/developers/gitignore?templates=unity
 
@@ -11,6 +14,9 @@
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 /[Ll]ibrary/
 /[Tt]emp/
@@ -81,6 +87,11 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+# End of https://www.toptal.com/developers/gitignore/api/unity
+>>>>>>> Stashed changes
 =======
 
 # End of https://www.toptal.com/developers/gitignore/api/unity

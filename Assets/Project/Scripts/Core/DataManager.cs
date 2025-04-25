@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -34,6 +35,8 @@ public class DataManager : MonoBehaviour
 
 
 =======
+=======
+>>>>>>> Stashed changes
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,6 +57,9 @@ public class DataManager : MonoBehaviour
     public List<EnemyData> enemyDataList = new();
 
     public List<MemoryUpgradeData> memoryUpgradeDataList = new();
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     void Start()
@@ -63,6 +69,7 @@ public class DataManager : MonoBehaviour
 
     async UniTaskVoid GetGoogleData()
     {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         var json = await LoadDataGoogleSheet(DATA_URL);
 
@@ -84,6 +91,8 @@ public class DataManager : MonoBehaviour
             var item = memoryDataSheet.memoryUpgradeSheet[i];
             upgradeDataDic.Add(item.upgradeID, item);
 =======
+=======
+>>>>>>> Stashed changes
         var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
 
         print(json);
@@ -104,6 +113,9 @@ public class DataManager : MonoBehaviour
             var memoryUpgradeData = memoryDataSheet.memoryUpgradeSheet[i];
 
             memoryUpgradeDataList.Add(memoryUpgradeData);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
         }
     }
@@ -125,7 +137,10 @@ public class DataManager : MonoBehaviour
         }
     }
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
 
     public EnemyData GetEnemyData(string enemyID)
@@ -134,5 +149,8 @@ public class DataManager : MonoBehaviour
             return enemyDatas[enemyID];
         else return null;
     }
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 }

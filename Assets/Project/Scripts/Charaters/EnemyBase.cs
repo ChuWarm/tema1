@@ -8,6 +8,7 @@ public static class EnemyFactory
     public static EnemyBase SpawnEnemy(RoomEventHolder room, EnemyData enemyData)
     {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         var enemyBasePrefab = Resources.Load("EnemyBase_Prefab");
 
         var go = MonoBehaviour.Instantiate(enemyBasePrefab, room.transform);
@@ -34,6 +35,8 @@ public class EnemyBase : MonoBehaviour
 
         return this;    
 =======
+=======
+>>>>>>> Stashed changes
         if (room.IsUnityNull()) return null;
 
         var basePrefab = Resources.Load<GameObject>("EnemyBase");
@@ -68,6 +71,9 @@ public class EnemyBase : MonoBehaviour
         */
 
         return this;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     }
 }
