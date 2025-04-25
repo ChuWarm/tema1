@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Project\Scripts\Core\DataManager.cs" />
-    <Compile Include="Assets\Project\Scripts\Data\MemoryUpgradeData.cs" />
+    <Compile Include="Assets\Project\Scripts\Data\UprageData.cs" />
     <Compile Include="Assets\Project\Scripts\GamePlay\RoomEventHolder.cs" />
     <Compile Include="Assets\Project\Scripts\Charaters\EnemyBase.cs" />
     <Compile Include="Assets\Project\Scripts\Data\EnemyData.cs" />
@@ -927,10 +927,6 @@
       <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Model.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UniTask.TextMeshPro">
-      <HintPath>Library\ScriptAssemblies\UniTask.TextMeshPro.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
       <Private>False</Private>
@@ -941,14 +937,6 @@
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UniTask.DOTween">
-      <HintPath>Library\ScriptAssemblies\UniTask.DOTween.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UniTask.Addressables">
-      <HintPath>Library\ScriptAssemblies\UniTask.Addressables.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Shared.Editor">
@@ -983,20 +971,12 @@
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UniTask">
-      <HintPath>Library\ScriptAssemblies\UniTask.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.VisualScripting.State">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UniTask.Linq">
-      <HintPath>Library\ScriptAssemblies\UniTask.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
@@ -1009,6 +989,26 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="UniTask.Addressables.csproj">
+      <Project>{906E3706-C5E3-DC0C-8DAC-61D167202808}</Project>
+      <Name>UniTask.Addressables</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.Linq.csproj">
+      <Project>{1D36AE70-E9E8-37EA-A951-46DBF0CFA283}</Project>
+      <Name>UniTask.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.csproj">
+      <Project>{DBD1A7C4-63F7-2424-5A19-FC28DBC5E8FE}</Project>
+      <Name>UniTask</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.TextMeshPro.csproj">
+      <Project>{92DAFE19-D5A5-0CC9-11E3-66ABA0125E5D}</Project>
+      <Name>UniTask.TextMeshPro</Name>
+    </ProjectReference>
+    <ProjectReference Include="UniTask.DOTween.csproj">
+      <Project>{4DC6F419-9B5B-2130-1AD7-517B80C2AB33}</Project>
+      <Name>UniTask.DOTween</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

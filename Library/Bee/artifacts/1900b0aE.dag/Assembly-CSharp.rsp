@@ -360,7 +360,7 @@
 "Assets/Project/Scripts/Charaters/EnemyBase.cs"
 "Assets/Project/Scripts/Core/DataManager.cs"
 "Assets/Project/Scripts/Data/EnemyData.cs"
-"Assets/Project/Scripts/Data/MemoryUpgradeData.cs"
+"Assets/Project/Scripts/Data/UprageData.cs"
 "Assets/Project/Scripts/GamePlay/RoomEventHolder.cs"
 -langversion:9.0
 /deterministic

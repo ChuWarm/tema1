@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|D:\\Projects\\LikeLion\\TEAM1\\tema1\\assets\\project\\scripts\\core\\datamanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\core\\datamanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|D:\\Projects\\LikeLion\\TEAM1\\tema1\\assets\\project\\scripts\\gameplay\\roomeventholder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\gameplay\\roomeventholder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|d:\\projects\\likelion\\team1\\tema1\\assets\\project\\scripts\\charaters\\enemybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\charaters\\enemybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|d:\\projects\\likelion\\team1\\tema1\\assets\\project\\scripts\\gameplay\\roomeventholder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\gameplay\\roomeventholder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|D:\\Projects\\LikeLion\\TEAM1\\tema1\\assets\\project\\scripts\\core\\datamanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\core\\datamanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|D:\\Projects\\LikeLion\\TEAM1\\tema1\\assets\\project\\scripts\\data\\enemydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\data\\enemydata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|D:\\Projects\\LikeLion\\TEAM1\\tema1\\assets\\project\\scripts\\data\\upragedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{27BEC91B-6201-2BC8-FF7D-5FFE5FCCB0E4}|Assembly-CSharp.csproj|solutionrelative:assets\\project\\scripts\\data\\upragedata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|d:\\projects\\likelion\\team1\\tema1\\assets\\enemybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\enemybase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,8 +34,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EnemyBase.cs",
+              "DocumentMoniker": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
+              "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
+              "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
+              "RelativeToolTip": "Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-25T04:26:49.501Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -36,23 +57,34 @@
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\GamePlay\\RoomEventHolder.cs",
               "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\GamePlay\\RoomEventHolder.cs",
               "RelativeToolTip": "Assets\\Project\\Scripts\\GamePlay\\RoomEventHolder.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T01:00:33.074Z",
+              "WhenOpened": "2025-04-25T04:16:20.513Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "EnemyBase.cs",
-              "DocumentMoniker": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
-              "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
-              "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
-              "RelativeToolTip": "Assets\\Project\\Scripts\\Charaters\\EnemyBase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAAAAAAAAAAAAAA==",
+              "DocumentMoniker": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\EnemyBase.cs",
+              "RelativeDocumentMoniker": "Assets\\EnemyBase.cs",
+              "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\EnemyBase.cs",
+              "RelativeToolTip": "Assets\\EnemyBase.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T00:57:10.563Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-25T04:15:15.476Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "UprageData.cs",
+              "DocumentMoniker": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Data\\UprageData.cs",
+              "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Data\\UprageData.cs",
+              "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Data\\UprageData.cs",
+              "RelativeToolTip": "Assets\\Project\\Scripts\\Data\\UprageData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-25T03:10:43.974Z"
             },
             {
               "$type": "Document",
@@ -62,22 +94,21 @@
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Data\\EnemyData.cs",
               "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Data\\EnemyData.cs",
               "RelativeToolTip": "Assets\\Project\\Scripts\\Data\\EnemyData.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T00:52:21.915Z"
+              "WhenOpened": "2025-04-25T03:06:37.535Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "DataManager.cs",
               "DocumentMoniker": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Core\\DataManager.cs",
               "RelativeDocumentMoniker": "Assets\\Project\\Scripts\\Core\\DataManager.cs",
               "ToolTip": "D:\\Projects\\LikeLion\\TEAM1\\tema1\\Assets\\Project\\Scripts\\Core\\DataManager.cs",
               "RelativeToolTip": "Assets\\Project\\Scripts\\Core\\DataManager.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwBoAAAAlAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAADgvz0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T00:51:16.89Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-25T03:04:30.361Z"
             }
           ]
         }
