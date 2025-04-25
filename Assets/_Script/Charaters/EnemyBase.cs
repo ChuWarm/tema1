@@ -7,13 +7,17 @@ public static class EnemyFactory
 {
     public static EnemyBase SpawnEnemy(RoomEventHolder room, EnemyData enemyData)
     {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        var enemyBasePrefab = Resources.Load("EnemyBase_Prefab");
+        if (room.IsUnityNull()) return null;
 
-        var go = MonoBehaviour.Instantiate(enemyBasePrefab, room.transform);
-        
-        return go.GetComponent<EnemyBase>().Init(enemyData);
+        var basePrefab = Resources.Load<GameObject>("EnemyBase");
+
+        MonoBehaviour.Instantiate(basePrefab, room.transform);
+
+        if (!basePrefab.TryGetComponent<EnemyBase>(out var enemyBase))
+            return null;
+
+        return enemyBase.Init(enemyData);
+
     }
 }
 
@@ -27,41 +31,8 @@ public class EnemyBase : MonoBehaviour
     public EnemyBase Init(EnemyData data)
     {
         gameObject.name = data.enemyName;
-        m_health = data.health;
-        m_enemyID = data.enemyID;
-
-        // 비주얼 적용
-        // m_visualHolder
-
-        return this;    
-=======
-=======
->>>>>>> Stashed changes
-        if (room.IsUnityNull()) return null;
-
-        var basePrefab = Resources.Load<GameObject>("EnemyBase");
-
-        MonoBehaviour.Instantiate(basePrefab, room.transform);
-
-        if (!basePrefab.TryGetComponent<EnemyBase>(out var enemyBase))
-            return null;
-
-        return enemyBase.Init(enemyData);
-    }
-}
-
-
-public class EnemyBase : MonoBehaviour
-{
-    [SerializeField] Transform visualHolder;
-
-    string m_enemyID;
-    int m_health;
-
-    public EnemyBase Init(EnemyData data)
-    {
-        m_enemyID = data.enemyID;
-        m_health = data.health;
+        this.m_health = data.health;
+        this.m_enemyID = data.enemyID;
 
         /*
         var visual = Resources.Load<Transform>($"{data.visualResourceID}");
@@ -70,10 +41,6 @@ public class EnemyBase : MonoBehaviour
         visual.transform.localPosition = Vector3.zero;
         */
 
-        return this;
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+        return this;    
     }
 }

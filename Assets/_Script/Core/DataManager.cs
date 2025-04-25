@@ -1,42 +1,3 @@
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
-using UnityEngine;
-using Cysharp.Threading.Tasks;
-
-public class DataManager : MonoBehaviour
-{
-    public const string DATA_URL = "https://script.google.com/macros/s/AKfycbyUd5sR4KJbcy8iaSWgNcuPUJbMuK_OH9CYZA3Tli7Qf0BRNr-H8iiSCABHMcupnFnl/exec";
-
-    public static DataManager Instance;
-
-    public Dictionary<string, EnemyData> enemyDataDic = new();
-    public Dictionary<string, UprageData> upgradeDataDic = new();
-
-
-    private void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-
-=======
-=======
->>>>>>> Stashed changes
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
@@ -57,10 +18,6 @@ public class DataManager : MonoBehaviour
     public List<EnemyData> enemyDataList = new();
 
     public List<MemoryUpgradeData> memoryUpgradeDataList = new();
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     void Start()
     {
@@ -69,9 +26,8 @@ public class DataManager : MonoBehaviour
 
     async UniTaskVoid GetGoogleData()
     {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        var json = await LoadDataGoogleSheet(DATA_URL);
+
+        var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
 
         var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
 
@@ -80,43 +36,16 @@ public class DataManager : MonoBehaviour
         for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
         {
             var item = enemySheet.enemyDataSheet[i];
-            enemyDataDic.Add(item.enemyID, item);
+            enemyDataList.Add(item);
         }
 
-
-        var memoryDataSheet = JsonUtility.FromJson<MemoryDataSheet>(json);
-
-        for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
-        {
-            var item = memoryDataSheet.memoryUpgradeSheet[i];
-            upgradeDataDic.Add(item.upgradeID, item);
-=======
-=======
->>>>>>> Stashed changes
-        var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
-
-        print(json);
-        EnemyDataSheet enemyDataSheet = JsonUtility.FromJson<EnemyDataSheet>(json);
-
-        for (int i = 0; i < enemyDataSheet.enemyDataSheet.Length; i++)
-        {
-            var enemyData = enemyDataSheet.enemyDataSheet[i];
-
-            enemyDatas.Add(enemyData.enemyID, enemyData);
-            enemyDataList.Add(enemyData);
-        }
 
         var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
 
         for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
         {
-            var memoryUpgradeData = memoryDataSheet.memoryUpgradeSheet[i];
-
-            memoryUpgradeDataList.Add(memoryUpgradeData);
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+            var item = memoryDataSheet.memoryUpgradeSheet[i];
+            memoryUpgradeDataList.Add(item);
         }
     }
 
@@ -136,12 +65,6 @@ public class DataManager : MonoBehaviour
             }
         }
     }
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-
 
     public EnemyData GetEnemyData(string enemyID)
     {
@@ -149,8 +72,4 @@ public class DataManager : MonoBehaviour
             return enemyDatas[enemyID];
         else return null;
     }
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 }
