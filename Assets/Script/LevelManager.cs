@@ -41,4 +41,6 @@ public class LevelManager : MonoBehaviour
         // 기억 레벨업에 따라 다음 기억 요구량 증가
         expToNextLevel += 100;
     }
+
+
 }
