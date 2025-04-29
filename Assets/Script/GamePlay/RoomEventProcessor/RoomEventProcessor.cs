@@ -7,12 +7,15 @@ public class RoomEventProcessor : MonoBehaviour
 {
     private IRoomState _currentRoomState;
     private RoomType _roomType;
+    private Room _room;
+    private bool _eventTriggered;
 
     private void Start()
     {
-        // _roomType = GetComponentInParent<Room>()?.RoomType ?? RoomType.Normal;
+        _room = GetComponent<Room>();
+        _roomType = _room.RoomType;
         
-        
+        SetState(CreateState(_roomType));
     }
 
     private void Update()
@@ -36,19 +39,27 @@ public class RoomEventProcessor : MonoBehaviour
     public void SetState(IRoomState newState)
     {
         _currentRoomState = newState;
-        _currentRoomState?.Enter(this);
+    }
+
+    public void OnPlayerEnterRoom()
+    {
+        if (!_eventTriggered)
+        {
+            _eventTriggered = true;
+            _currentRoomState?.Enter(this);
+        }
     }
 
     public void OnEnemyDead()
     {
         if (_currentRoomState is BattleRoomState battleRoomState)
         {
-            // battleRoomState.OnEnemyDead(this);
+            battleRoomState.OnEnemyDead(this);
         }
     }
 
     public void MarkRoomCleared()
     {
-        GetComponentInParent<Room>()?.MarkRoomCleared();
+        _room.MarkRoomCleared();
     }
 }
