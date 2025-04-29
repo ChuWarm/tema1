@@ -74,7 +74,7 @@ public class Room : MonoBehaviour
         }
     }
 
-    private void MarkRoomCleared()
+    public void MarkRoomCleared()
     {
         _mapData.isCleared = true;
 
