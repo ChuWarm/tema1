@@ -71,15 +71,8 @@ public class EnemyBase : MonoBehaviour
                 Attack();
         }
         else
-        {
-            // 임시
-            transform.position = 
-                Vector3.MoveTowards(transform.position,
-                    player.transform.position, 
-                    m_enemyData.moveSpeed * Time.deltaTime);
-            //
-            
-            // transform.Translate(player.transform.position);
+        { 
+            transform.Translate(player.transform.position);
         }
     }
 

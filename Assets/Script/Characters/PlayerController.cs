@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Update = UnityEngine.PlayerLoop.Update;
 
 public enum PlayerState { None, Idle, Move }
 
