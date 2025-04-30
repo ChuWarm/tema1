@@ -8,7 +8,7 @@ public class Room : MonoBehaviour
 {
     [SerializeField] private GameObject doorNorth, doorSouth, doorEast, doorWest;
     
-    private float _enterThreshold = 40f;
+    private float _enterThreshold = 45f;
     private bool _entered = false;
     private Transform _playerTransform;
     private GameObject[] _doors;
