@@ -8,24 +8,28 @@ public class EnemyData
 {
     public enum EnemyClass
     {
-        Enforcer,
-        Warden,
+        Enforcer,   //
+        Warden,     //
+
     }
 
     public enum PersionalityType
     {
-        Aggressive,
+        Aggressive,     //
     }
 
     public string enemyID;
     public string enemyName;
     public EnemyClass enemyClass;
     public PersionalityType persionalityType;
+
     public int health;
     public float moveSpeed;
     public int resistance;
     public float attackPower;
     public float attackSpeed;
+    public float attackRange;
+    public float attackCooldown;
     public int experienceGiven;
     public string dropTalbeID;
     public string visualResourceID;

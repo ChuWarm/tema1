@@ -16,32 +16,31 @@ public class RoomEventHolder : MonoBehaviour
         //
         
         m_enemies = new List<EnemyBase>();
-
-        // 변경
-        // DataManager dataM = FindObjectOfType<DataManager>();
-        //
-        // for (int i = 0; i < 2; i++)
-        // {
-        //     EnemyFactory.SpawnEnemy(this, dataM.GetEnemyData("dummy_enemy"));
-        // }
-        //
     }
 
     // 추가된 함수
-    public void RegisterEnmey(EnemyBase enemyBase)
+    public void SpawnEnemies(List<EnemyData> enemyDatas, List<Vector3> spawnPoints)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            var enemy = EnemyFactory.SpawnEnemy(this, enemyDatas[i], spawnPoints[i]);
+            RegisterEnemy(enemy);
+        }
+    }
+
+    // 추가된 함수
+    public void RegisterEnemy(EnemyBase enemyBase)
     {
         if (enemyBase != null)
             m_enemies.Add(enemyBase);
     }
-    
+
     // 추가된 함수
     public void OnEnemyDead(EnemyBase enemyBase)
     {
-        if (m_enemies.Contains(enemyBase))
-            m_enemies.Remove(enemyBase);
+        m_enemies.Remove(enemyBase);
         
-        // 방에 남은 적이 모두 죽었으면 알림
         if (m_enemies.Count == 0)
-            m_roomEventProcessor?.OnEnemyDead();
+            m_roomEventProcessor?.OnRoomCleared();
     }
 }

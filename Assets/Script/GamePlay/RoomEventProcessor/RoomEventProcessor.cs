@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RoomEventProcessor : MonoBehaviour
 {
@@ -16,11 +17,6 @@ public class RoomEventProcessor : MonoBehaviour
         _roomType = _room.RoomType;
         
         SetState(CreateState(_roomType));
-    }
-
-    private void Update()
-    {
-        _currentRoomState?.Update(this);
     }
 
     private IRoomState CreateState(RoomType roomType)
@@ -43,22 +39,13 @@ public class RoomEventProcessor : MonoBehaviour
 
     public void OnPlayerEnterRoom()
     {
-        if (!_eventTriggered)
-        {
-            _eventTriggered = true;
-            _currentRoomState?.Enter(this);
-        }
+        if (_eventTriggered) return;
+        
+        _eventTriggered = true;
+        _currentRoomState?.Enter(this);
     }
 
-    public void OnEnemyDead()
-    {
-        if (_currentRoomState is BattleRoomState battleRoomState)
-        {
-            battleRoomState.OnEnemyDead(this);
-        }
-    }
-
-    public void MarkRoomCleared()
+    public void OnRoomCleared()
     {
         _room.MarkRoomCleared();
     }

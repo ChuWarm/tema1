@@ -18,6 +18,7 @@ public class MapGenerator : Singleton<MapGenerator>
     [SerializeField] private RoomPrefabType[] roomPrefabs;
     [SerializeField] private GameObject horizontalPath;
     [SerializeField] private GameObject verticalPath;
+    [SerializeField] private GameObject map;
 
     private Dictionary<RoomType, GameObject> _prefabDict;
     private Dictionary<Vector2Int, MapData> _map = new();
@@ -25,6 +26,7 @@ public class MapGenerator : Singleton<MapGenerator>
     private void OnEnable()
     {
         _prefabDict = new();
+        
         
         foreach (var r in roomPrefabs)
             _prefabDict[r.roomType] = r.roomPrefab;
@@ -65,7 +67,7 @@ public class MapGenerator : Singleton<MapGenerator>
     private void CreateRoom(Vector2Int pos, RoomType type)
     {
         GameObject prefab = _prefabDict[type];
-        GameObject go = Instantiate(prefab, new Vector3(pos.x * 120, 0, pos.y * 120), Quaternion.identity);
+        GameObject go = Instantiate(prefab, new Vector3(pos.x * 120, 0, pos.y * 120), Quaternion.identity, map.transform);
         Room room = go.GetComponent<Room>();
 
         MapData data = new()
@@ -104,7 +106,7 @@ public class MapGenerator : Singleton<MapGenerator>
                 Vector3 to = new Vector3(neighbor.x * 120, 0, neighbor.y * 120);
                 Vector3 center = (from + to) * 0.5f;
 
-                Instantiate(path, center, Quaternion.identity);
+                Instantiate(path, center, Quaternion.identity , map.transform);
             }
         }
     }

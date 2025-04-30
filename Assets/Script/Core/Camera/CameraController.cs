@@ -27,7 +27,7 @@ public class CameraController : Singleton<CameraController>
     
     public void CameraInit()
     {
-        var playerObj = PlayerManager.Instance.FindPlayer();
+        var playerObj = GamePlayManager.Instance.FindPlayer();
         if (playerObj != null)
         {
             _targetPlayer = playerObj.transform;
