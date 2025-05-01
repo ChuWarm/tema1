@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class MemoryUpgradeData
+public class MemoryUpgradeData : IGameData
 {
     public enum UpgradeTpye
     {
