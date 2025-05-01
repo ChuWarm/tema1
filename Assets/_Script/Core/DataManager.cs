@@ -89,17 +89,4 @@ public class DataManager : Singleton<DataManager>
             return null;
         }
     }
-
-    public static MemoryUpgradeData GetUpgradeData(string upgradeID)
-    {
-        if (Instance.enemyDatas.ContainsKey(upgradeID))
-        {
-            return Instance.upgradeDatas[upgradeID];
-        }
-        else
-        {
-            Debug.LogError($"잘못된 upgradeID 입니다: {upgradeID}");
-            return null;
-        }
-    }
 }
