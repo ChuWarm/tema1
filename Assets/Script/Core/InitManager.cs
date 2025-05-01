@@ -18,7 +18,7 @@ public class InitManager : Singleton<InitManager>
     {
         // 순서 보장
         MapGenerator.Instance.GenerateMap();
-        GameManager.Instance.InstantiatePlayer();
+        GamePlayManager.Instance.InstantiatePlayer();
         CameraController.Instance.CameraInit();
     }
 }

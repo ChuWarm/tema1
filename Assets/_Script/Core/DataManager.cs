@@ -3,21 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public static class DataSheetURLHolder
 {
     public static string DATA_SHEET_URL = "https://script.google.com/macros/s/AKfycbyUd5sR4KJbcy8iaSWgNcuPUJbMuK_OH9CYZA3Tli7Qf0BRNr-H8iiSCABHMcupnFnl/exec";
-
 }
 
-public class DataManager : MonoBehaviour
-{
+public class DataManager : Singleton<DataManager>
+{  
+
+battle
     public Dictionary<string, EnemyData> enemyDatas = new();
+    public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
 
-    public List<EnemyData> enemyDataList = new();
-
-    public List<MemoryUpgradeData> memoryUpgradeDataList = new();
 
     void Start()
     {
@@ -36,7 +36,8 @@ public class DataManager : MonoBehaviour
         for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
         {
             var item = enemySheet.enemyDataSheet[i];
-            enemyDataList.Add(item);
+ battle
+            enemyDatas.Add(item.enemyID, item);
         }
 
 
@@ -45,7 +46,9 @@ public class DataManager : MonoBehaviour
         for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
         {
             var item = memoryDataSheet.memoryUpgradeSheet[i];
-            memoryUpgradeDataList.Add(item);
+ battle
+            upgradeDatas.Add(item.upgradeID, item);
+
         }
     }
 
@@ -65,11 +68,32 @@ public class DataManager : MonoBehaviour
             }
         }
     }
+ battle
 
-    public EnemyData GetEnemyData(string enemyID)
+    public static EnemyData GetEnemyData(string enemyID)
     {
-        if(enemyDatas.ContainsKey(enemyID))
-            return enemyDatas[enemyID];
-        else return null;
+        if (Instance.enemyDatas.ContainsKey(enemyID))
+        {
+            return Instance.enemyDatas[enemyID];
+        }
+        else
+        {
+            Debug.LogError($"�߸��� enemyID �Դϴ�: {enemyID}");
+            return null;
+        }
+    }
+
+
+    public static MemoryUpgradeData GetUpgradeData(string upgradeID)
+    {
+        if (Instance.enemyDatas.ContainsKey(upgradeID))
+        {
+            return Instance.upgradeDatas[upgradeID];
+        }
+        else
+        {
+            Debug.LogError($"�߸��� upgradeID �Դϴ�: {upgradeID}");
+            return null;
+        }
     }
 }

@@ -24,15 +24,15 @@ public static class EnemyFactory
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] Transform m_visualHolder;
+    [SerializeField] private EnemyData m_enemyData;
+    public int health;
+    float lastAttack;
 
-    string m_enemyID;
-    int m_health;
-    
     public EnemyBase Init(EnemyData data)
     {
         gameObject.name = data.enemyName;
-        this.m_health = data.health;
-        this.m_enemyID = data.enemyID;
+        health = data.health;
+        lastAttack = 0;
 
         /*
         var visual = Resources.Load<Transform>($"{data.visualResourceID}");
@@ -42,5 +42,55 @@ public class EnemyBase : MonoBehaviour
         */
 
         return this;    
+ battle
+    }
+
+    private void Update()
+    {
+        var player = GamePlayManager.Instance.gamePlayLogic.m_Player;
+
+        if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
+        {
+            if (Time.time >= lastAttack + m_enemyData.attackCooldown)
+                Attack();
+        }
+        else
+        {
+            transform.Translate(player.transform.position);
+        }
+
+
+    }
+
+    public void TakeDamage(int damage)
+    {
+        damage -= m_enemyData.resistance;
+        
+        health -= damage;
+
+        if(health <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Attack()
+    {
+        // ����
+        // �Ƹ� ������Ʈ �߻�
+
+        lastAttack = Time.time;
+    }
+
+    void Die()
+    {
+        GameEventBus.Publish<PlayerEXPAdded>(new PlayerEXPAdded
+        {
+            amount = m_enemyData.experienceGiven
+        });
     }
 }
+
+
+
+
