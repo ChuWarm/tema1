@@ -5,9 +5,9 @@ using UnityEngine;
 public interface IGameEvent { }
 
 public class PlayerHPChanged : IGameEvent 
-{
-    public int HP, MaxHP;
-}
+    {
+        public int HP, MaxHP;
+    }
 
 public  class PlayerEXPAdded : IGameEvent
 {
@@ -22,6 +22,10 @@ public class RoomEnterEvent : IGameEvent
     // public RewordTable // �������̺�
 }
 
+public class PlayerDeath : IGameEvent { }
+
+public class NewGameStart : IGameEvent { }
+
 public class RoomClearedEvent : IGameEvent
 {
     public RoomEventProcessor sender;
@@ -33,16 +37,9 @@ public class RoomEnemyDeadEvent : IGameEvent
     public EnemyBase enemy;
 }
 
-
-public class NewGameStart : IGameEvent
-{
-
-}
-
 public static class GameEventBus
 {
     private static readonly Dictionary<Type, List<Action<IGameEvent>>> _handlers = new();
-
     public static void Subscribe<T>(Action<T> handler) where T : IGameEvent
     {
         Type type = typeof(T);
