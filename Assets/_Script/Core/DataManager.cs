@@ -13,7 +13,6 @@ public static class DataSheetURLHolder
 
 public class DataManager : Singleton<DataManager>
 {  
-
     public Dictionary<string, EnemyData> enemyDatas = new();
     public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
 
@@ -73,6 +72,20 @@ public class DataManager : Singleton<DataManager>
         else
         {
             Debug.LogError($"잘못된 enemyID 입니다: {enemyID}");
+            return null;
+        }
+    }
+
+
+    public static MemoryUpgradeData GetUpgradeData(string upgradeID)
+    {
+        if (Instance.enemyDatas.ContainsKey(upgradeID))
+        {
+            return Instance.upgradeDatas[upgradeID];
+        }
+        else
+        {
+            Debug.LogError($"잘못된 enemyID 입니다: {upgradeID}");
             return null;
         }
     }

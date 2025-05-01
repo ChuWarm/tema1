@@ -9,12 +9,10 @@ public class RestRoomState : IRoomState
         Debug.Log("휴식 방: 체력 회복");
         processor.OnRoomCleared(new RoomClearedEvent());
     }
-
     public void Update(RoomEventProcessor processor)
     {
         
     }
-
     public void Exit(RoomEventProcessor processor)
     {
         _roomEventProcessor = null;

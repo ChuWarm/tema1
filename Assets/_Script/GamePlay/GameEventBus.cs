@@ -18,17 +18,8 @@ public class RoomEnterEvent : IGameEvent
 {
     public List<EnemyData> enemyDatas;
     public List<Vector3> spawnPosition;
-}
-
-public class RoomClearedEvent : IGameEvent
-{
-    public RoomEventProcessor sender;
-}
-
-public class RoomEnemyDeadEvent : IGameEvent
-{
-    public RoomEventProcessor sender;
-    public EnemyBase enemy;
+    
+    // public RewordTable // �������̺�
 }
 
 public class NewGameStart : IGameEvent

@@ -7,7 +7,7 @@ public class GamePlayManager : Singleton<GamePlayManager>
     [SerializeField] private GameObject player;
 
     public GamePlayLogic gamePlayLogic;
-    
+    private Transform _spawnPoint;
     private void Start()
     {
         gamePlayLogic = new GamePlayLogic(player.GetComponent<PlayerController>());

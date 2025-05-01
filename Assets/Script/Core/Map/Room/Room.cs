@@ -39,9 +39,7 @@ public class Room : MonoBehaviour
             {
                 _entered = true;
                 ActivateDoors();
-
                 GetComponent<RoomEventProcessor>()?.OnPlayerEnterRoom();
-                
                 Debug.Log($"방 {_mapData.gridPos} 진입 완료, 문 활성화");
             }
         }
