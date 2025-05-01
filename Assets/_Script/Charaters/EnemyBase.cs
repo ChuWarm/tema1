@@ -33,14 +33,14 @@ public class EnemyBase : MonoBehaviour
         gameObject.name = data.enemyName;
         health = data.health;
         lastAttack = 0;
-
+        
         /*
         var visual = Resources.Load<Transform>($"{data.visualResourceID}");
 
         visual.SetParent(visualHolder);
         visual.transform.localPosition = Vector3.zero;
         */
-
+        
         return this;    
     }
 
@@ -57,8 +57,6 @@ public class EnemyBase : MonoBehaviour
         {
             transform.Translate(player.transform.position);
         }
-
-
     }
 
     public void TakeDamage(int damage)
@@ -77,7 +75,6 @@ public class EnemyBase : MonoBehaviour
     {
         // 공격
         // 아마 오브젝트 발사
-
         lastAttack = Time.time;
     }
 
