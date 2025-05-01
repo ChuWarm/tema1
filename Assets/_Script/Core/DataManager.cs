@@ -13,7 +13,6 @@ public static class DataSheetURLHolder
 
 public class DataManager : Singleton<DataManager>
 {  
-
     public Dictionary<string, EnemyData> enemyDatas = new();
     public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
 
