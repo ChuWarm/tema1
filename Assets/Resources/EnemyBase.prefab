@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7492397091261312618}
+  - component: {fileID: 1465977972825754392}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Untagged
@@ -32,6 +33,39 @@ Transform:
   - {fileID: 2331702599826360873}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1465977972825754392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1015854932561616353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0f016da7b7670c44babe030c355425d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_visualHolder: {fileID: 2331702599826360873}
+  m_enemyData:
+    enemyID: 
+    enemyName: 
+    enemyClass: 0
+    persionalityType: 0
+    health: 0
+    moveSpeed: 0
+    resistance: 0
+    attackPower: 0
+    attackSpeed: 0
+    attackRange: 0
+    attackCooldown: 0
+    experienceGiven: 0
+    dropTalbeID: 
+    visualResourceID: 
+    soundResourceID_Attack: 
+    soundResourceID_Hit: 
+    soundResourceID_Death: 
+    notes: 
+  health: 0
 --- !u!1 &3479509579042630349
 GameObject:
   m_ObjectHideFlags: 0

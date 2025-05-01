@@ -3,50 +3,44 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public static class EnemyFactory
 {
-    // Vector3 position 매개변수 추가
-    public static EnemyBase SpawnEnemy(RoomEventHolder room, EnemyData enemyData, Vector3 position)
+    // RoomEventHolder 빼고 Vector3 position 매개변수 추가
+    public static EnemyBase SpawnEnemy(EnemyData enemyData, Vector3 position, Transform parent = null)
     {
-        if (room.IsUnityNull()) return null;
-
         var basePrefab = Resources.Load<GameObject>("EnemyBase");
 
-        // 추가된 코드
-        var instance = MonoBehaviour.Instantiate(basePrefab, position, Quaternion.identity, room.transform);
-
-        if (instance.TryGetComponent<EnemyBase>(out var enemyBase))
+        // 변경된 코드
+        if (basePrefab == null)
         {
-            var enemy = enemyBase.Init(enemyData);
-            room.RegisterEnemy(enemy);
-            return enemy;
+            Debug.LogError("EnemyBase 프리팹이 Resources/EnemyBase 에 없음");
+            return null;
         }
         
-        return null;
-        //
+        var instance = Object.Instantiate(basePrefab, position, Quaternion.identity, parent);
+
+        if (instance.TryGetComponent<EnemyBase>(out var enemy))
+        {
+            return enemy.Init(enemyData);
+        }
         
-        // MonoBehaviour.Instantiate(basePrefab, room.transform);
-        //
-        // if (!basePrefab.TryGetComponent<EnemyBase>(out var enemyBase))
-        //     return null;
-        //
-        // return enemyBase.Init(enemyData);
+        Debug.LogError("EnemyBase 컴포넌트를 찾을 수 없음");
+        return null;
     }
 }
 
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] Transform m_visualHolder;
-    [SerializeField] private EnemyData m_enemyData;
+    private EnemyData m_enemyData;
     public int health;
     float lastAttack;
 
     public EnemyBase Init(EnemyData data)
     {
-        // 임시
         m_enemyData = data;
-        //
         gameObject.name = data.enemyName;
         health = data.health;
         lastAttack = 0;
@@ -64,16 +58,22 @@ public class EnemyBase : MonoBehaviour
     private void Update()
     {
         var player = GamePlayManager.Instance.gamePlayLogic.m_Player;
-
-        if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
+        
+        // 디버깅용
+        if (Input.GetKeyDown(KeyCode.C))
         {
-            if (Time.time >= lastAttack + m_enemyData.attackCooldown)
-                Attack();
+            TakeDamage(999);
         }
-        else
-        { 
-            transform.Translate(player.transform.position);
-        }
+
+        // if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
+        // {
+        //     if (Time.time >= lastAttack + m_enemyData.attackCooldown) 
+        //         Attack();
+        // }
+        // else
+        // { 
+        //     transform.Translate(player.transform.position);
+        // }
     }
 
     public void TakeDamage(int damage)
@@ -95,17 +95,18 @@ public class EnemyBase : MonoBehaviour
 
     void Die()
     {
-        // 추가된 코드
-        RoomEventHolder holder = GetComponent<RoomEventHolder>();
-        holder?.OnEnemyDead(this);
-        //
-        
         GameEventBus.Publish<PlayerEXPAdded>(new PlayerEXPAdded
         {
             amount = m_enemyData.experienceGiven
         });
         
         // 추가된 코드
+        GameEventBus.Publish(new RoomEnemyDeadEvent
+        {
+            sender = GetComponentInParent<RoomEventProcessor>(),
+            enemy = this
+        });
+        
         Destroy(gameObject);
     }
 }
