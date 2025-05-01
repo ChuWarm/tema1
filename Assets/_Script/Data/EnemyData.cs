@@ -12,7 +12,6 @@ public class EnemyData : IGameData
     {
         Enforcer,   //
         Warden,     //
-
     }
 
     public enum PersionalityType

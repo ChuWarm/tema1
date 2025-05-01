@@ -33,14 +33,14 @@ public class EnemyBase : MonoBehaviour
         gameObject.name = data.enemyName;
         health = data.health;
         lastAttack = 0;
-
+        
         /*
         var visual = Resources.Load<Transform>($"{data.visualResourceID}");
 
         visual.SetParent(visualHolder);
         visual.transform.localPosition = Vector3.zero;
         */
-
+        
         return this;    
     }
 
@@ -57,8 +57,6 @@ public class EnemyBase : MonoBehaviour
         {
             transform.Translate(player.transform.position);
         }
-
-
     }
 
     public void TakeDamage(int damage)
@@ -75,9 +73,8 @@ public class EnemyBase : MonoBehaviour
 
     void Attack()
     {
-        // ∞¯∞›
-        // æ∆∏∂ ø¿∫Í¡ß∆Æ πﬂªÁ
-
+        // Í≥µÍ≤©
+        // ÏïÑÎßà Ïò§Î∏åÏ†ùÌä∏ Î∞úÏÇ¨
         lastAttack = Time.time;
     }
 

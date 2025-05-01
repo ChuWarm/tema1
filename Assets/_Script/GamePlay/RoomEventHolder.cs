@@ -8,6 +8,7 @@ public class RoomEventHolder : MonoBehaviour
 
     private void OnEnable()
     {
+
         m_enemies = new List<EnemyBase>();
 
         for (int i = 0; i < 2; i++)
