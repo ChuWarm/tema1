@@ -13,8 +13,6 @@ public static class DataSheetURLHolder
 
 public class DataManager : Singleton<DataManager>
 {  
-
-battle
     public Dictionary<string, EnemyData> enemyDatas = new();
     public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
 
@@ -36,7 +34,6 @@ battle
         for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
         {
             var item = enemySheet.enemyDataSheet[i];
- battle
             enemyDatas.Add(item.enemyID, item);
         }
 
@@ -46,9 +43,7 @@ battle
         for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
         {
             var item = memoryDataSheet.memoryUpgradeSheet[i];
- battle
             upgradeDatas.Add(item.upgradeID, item);
-
         }
     }
 
@@ -68,7 +63,6 @@ battle
             }
         }
     }
- battle
 
     public static EnemyData GetEnemyData(string enemyID)
     {

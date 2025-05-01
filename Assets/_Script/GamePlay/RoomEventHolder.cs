@@ -5,7 +5,6 @@ using UnityEngine;
 public class RoomEventHolder : MonoBehaviour
 {
     List<EnemyBase> m_enemies;
- battle
 
     private void OnEnable()
     {
@@ -17,7 +16,4 @@ public class RoomEventHolder : MonoBehaviour
             EnemyFactory.SpawnEnemy(this, DataManager.GetEnemyData("dummy_enemy"));
         }
     }
-
- battle
-
 }

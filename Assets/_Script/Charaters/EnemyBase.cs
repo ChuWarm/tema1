@@ -42,7 +42,6 @@ public class EnemyBase : MonoBehaviour
         */
 
         return this;    
- battle
     }
 
     private void Update()
@@ -76,8 +75,8 @@ public class EnemyBase : MonoBehaviour
 
     void Attack()
     {
-        // ����
-        // �Ƹ� ������Ʈ �߻�
+        // 공격
+        // 아마 오브젝트 발사
 
         lastAttack = Time.time;
     }
