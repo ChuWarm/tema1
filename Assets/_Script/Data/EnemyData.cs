@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+public interface IGameData { }
+
 [System.Serializable]
-public class EnemyData
+public class EnemyData : IGameData
 {
     public enum EnemyClass
     {

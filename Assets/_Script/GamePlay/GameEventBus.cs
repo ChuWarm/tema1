@@ -22,10 +22,9 @@ public class RoomEnterEvent : IGameEvent
     // public RewordTable // 보상테이블
 }
 
-public class NewGameStart : IGameEvent
-{
+public class PlayerDeath : IGameEvent { }
 
-}
+public class NewGameStart : IGameEvent { }
 
 public static class GameEventBus
 {

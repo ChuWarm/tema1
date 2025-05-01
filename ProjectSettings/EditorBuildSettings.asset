@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/KHS_Sample.unity
-    guid: 11cdba6d20484754580c8d8e04d1fed9
+    path: Assets/Scenes/Main.unity
+    guid: dc1387af27e68b949a7b5a71cda49d32
   - enabled: 1
-    path: Assets/Scenes/KHS_Sample 1.unity
-    guid: 24559c0eb522f1d45be41ba74a0f6f5d
+    path: Assets/Scenes/Stage1.unity
+    guid: e0fecb4d20ff6a74785f0b54b5cb7d7b
   m_configObjects: {}

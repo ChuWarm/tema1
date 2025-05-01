@@ -15,6 +15,4 @@ public class RoomEventHolder : MonoBehaviour
             EnemyFactory.SpawnEnemy(this, DataManager.GetEnemyData("dummy_enemy"));
         }
     }
-
-
 }

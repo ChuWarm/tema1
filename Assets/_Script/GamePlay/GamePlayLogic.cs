@@ -25,6 +25,7 @@ public class GamePlayLogic
         if (playerHP <= 0)
         {
             m_Player = null;
+            GameEventBus.Publish<PlayerDeath>(new PlayerDeath());
         }
     }
 }
