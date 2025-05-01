@@ -27,6 +27,15 @@ public class DataManager : Singleton<DataManager>
 
     async UniTaskVoid GetGoogleData()
     {
+        try
+        {
+
+        }
+        catch (Exception e)
+        {
+
+        }
+
         var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
 
         var enemyTask = UniTask.RunOnThreadPool(() =>
