@@ -59,8 +59,6 @@ public class DataManager : Singleton<DataManager>
                 return upgDatas;
             });
 
-
-
             await UniTask.SwitchToMainThread();
 
             datas.Add(typeof(EnemyData), enemyTask);
@@ -71,7 +69,7 @@ public class DataManager : Singleton<DataManager>
         {
             Debug.LogError(e);
         }
-        print("DataManager - Ready");
+        print("DataManager - Ready    asd");
         IsReady = true;
     }
 
