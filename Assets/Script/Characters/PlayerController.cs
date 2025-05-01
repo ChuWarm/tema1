@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Update = UnityEngine.PlayerLoop.Update;
 
-public enum PlayerState { None, Idle, Move }
+public enum PlayerState { None, Idle, Move, Attack, Hit }
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     private PlayerStateIdle _playerStateIdle;
     private PlayerStateMove _playerStateMove;
+    private PlayerStateAttack _playerStateAttack;
+    private PlayerStateHit _playerStateHit;
     
     public PlayerState CurrentState { get; private set; }
     
@@ -29,11 +30,15 @@ public class PlayerController : MonoBehaviour
     {
         _playerStateIdle = new PlayerStateIdle();
         _playerStateMove = new PlayerStateMove();
-
+        _playerStateAttack = new PlayerStateAttack();
+        _playerStateHit = new PlayerStateHit();
+        
         _playerStates = new Dictionary<PlayerState, IPlayerState>()
         {
             { PlayerState.Idle, _playerStateIdle },
             { PlayerState.Move, _playerStateMove },
+            { PlayerState.Attack, _playerStateAttack},
+            { PlayerState.Hit, _playerStateHit}
         };
         
         Init();

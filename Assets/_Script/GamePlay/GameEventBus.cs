@@ -19,7 +19,7 @@ public class RoomEnterEvent : IGameEvent
     public List<EnemyData> enemyDatas;
     public List<Vector3> spawnPosition;
     
-    // public RewordTable // º¸»óÅ×ÀÌºí
+    // public RewordTable // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìºï¿½
 }
 
 public class NewGameStart : IGameEvent

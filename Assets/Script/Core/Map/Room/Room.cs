@@ -8,23 +8,18 @@ public class Room : MonoBehaviour
 {
     [SerializeField] private GameObject doorNorth, doorSouth, doorEast, doorWest;
     
-    private float _enterThreshold = 40f;
+    private float _enterThreshold = 45f;
+    private bool _entered = false;
+    private Transform _playerTransform;
     private GameObject[] _doors;
     private MapData _mapData;
-    private Transform _playerTransform;
-    private bool _entered = false;
+    private RoomEventProcessor _eventProcessor;
+    
+    public RoomType RoomType => _mapData?.roomType ?? RoomType.Normal;
 
     private void OnEnable()
     {
         _doors = new GameObject[] { doorNorth, doorSouth, doorEast, doorWest };
-    }
-
-    private void Update()
-    {
-        if (_entered && Input.GetKeyDown(KeyCode.C))
-        {
-            MarkRoomCleared();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -44,6 +39,7 @@ public class Room : MonoBehaviour
             {
                 _entered = true;
                 ActivateDoors();
+                GetComponent<RoomEventProcessor>()?.OnPlayerEnterRoom();
                 Debug.Log($"방 {_mapData.gridPos} 진입 완료, 문 활성화");
             }
         }
@@ -80,10 +76,8 @@ public class Room : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (_mapData.doors[i] && _mapData.isCleared)
-            {
+            if (_mapData.doors[i] && _mapData.isCleared) 
                 _doors[i].SetActive(false);
-            }
         }
         
         Debug.Log($"방 {_mapData.gridPos} 클리어, 문 비활성화");

@@ -16,7 +16,6 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<string, EnemyData> enemyDatas = new();
     public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
 
-
     void Start()
     {
         GetGoogleData().Forget();
@@ -72,7 +71,7 @@ public class DataManager : Singleton<DataManager>
         }
         else
         {
-            Debug.LogError($"�߸��� enemyID �Դϴ�: {enemyID}");
+            Debug.LogError($"잘못된 enemyID 입니다: {enemyID}");
             return null;
         }
     }
@@ -86,7 +85,20 @@ public class DataManager : Singleton<DataManager>
         }
         else
         {
-            Debug.LogError($"�߸��� upgradeID �Դϴ�: {upgradeID}");
+            Debug.LogError($"잘못된 enemyID 입니다: {upgradeID}");
+            return null;
+        }
+    }
+
+    public static MemoryUpgradeData GetUpgradeData(string upgradeID)
+    {
+        if (Instance.enemyDatas.ContainsKey(upgradeID))
+        {
+            return Instance.upgradeDatas[upgradeID];
+        }
+        else
+        {
+            Debug.LogError($"잘못된 upgradeID 입니다: {upgradeID}");
             return null;
         }
     }

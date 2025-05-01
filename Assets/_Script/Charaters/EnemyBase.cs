@@ -1,23 +1,33 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public static class EnemyFactory
 {
-    public static EnemyBase SpawnEnemy(RoomEventHolder room, EnemyData enemyData)
+    // RoomEventHolder 빼고 Vector3 position 매개변수 추가
+    public static EnemyBase SpawnEnemy(EnemyData enemyData, Vector3 position, Transform parent = null)
     {
-        if (room.IsUnityNull()) return null;
-
         var basePrefab = Resources.Load<GameObject>("EnemyBase");
 
-        MonoBehaviour.Instantiate(basePrefab, room.transform);
-
-        if (!basePrefab.TryGetComponent<EnemyBase>(out var enemyBase))
+        // 변경된 코드
+        if (basePrefab == null)
+        {
+            Debug.LogError("EnemyBase 프리팹이 Resources/EnemyBase 에 없음");
             return null;
+        }
+        
+        var instance = Object.Instantiate(basePrefab, position, Quaternion.identity, parent);
 
-        return enemyBase.Init(enemyData);
-
+        if (instance.TryGetComponent<EnemyBase>(out var enemy))
+        {
+            return enemy.Init(enemyData);
+        }
+        
+        Debug.LogError("EnemyBase 컴포넌트를 찾을 수 없음");
+        return null;
     }
 }
 
@@ -30,10 +40,10 @@ public class EnemyBase : MonoBehaviour
 
     public EnemyBase Init(EnemyData data)
     {
+        m_enemyData = data;
         gameObject.name = data.enemyName;
         health = data.health;
         lastAttack = 0;
-        
         /*
         var visual = Resources.Load<Transform>($"{data.visualResourceID}");
 
@@ -47,7 +57,6 @@ public class EnemyBase : MonoBehaviour
     private void Update()
     {
         var player = GamePlayManager.Instance.gamePlayLogic.m_Player;
-
         if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
         {
             if (Time.time >= lastAttack + m_enemyData.attackCooldown)
