@@ -34,7 +34,7 @@ public static class EnemyFactory
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] Transform m_visualHolder;
-    private EnemyData m_enemyData;
+    [SerializeField] private EnemyData m_enemyData;
     public int health;
     float lastAttack;
 
@@ -44,36 +44,28 @@ public class EnemyBase : MonoBehaviour
         gameObject.name = data.enemyName;
         health = data.health;
         lastAttack = 0;
-
         /*
         var visual = Resources.Load<Transform>($"{data.visualResourceID}");
 
         visual.SetParent(visualHolder);
         visual.transform.localPosition = Vector3.zero;
         */
-
+        
         return this;    
     }
 
     private void Update()
     {
         var player = GamePlayManager.Instance.gamePlayLogic.m_Player;
-        
-        // 디버깅용
-        if (Input.GetKeyDown(KeyCode.C))
+        if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
         {
-            TakeDamage(999);
+            if (Time.time >= lastAttack + m_enemyData.attackCooldown)
+                Attack();
         }
-
-        // if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
-        // {
-        //     if (Time.time >= lastAttack + m_enemyData.attackCooldown) 
-        //         Attack();
-        // }
-        // else
-        // { 
-        //     transform.Translate(player.transform.position);
-        // }
+        else
+        {
+            transform.Translate(player.transform.position);
+        }
     }
 
     public void TakeDamage(int damage)
@@ -90,6 +82,8 @@ public class EnemyBase : MonoBehaviour
 
     void Attack()
     {
+        // 공격
+        // 아마 오브젝트 발사
         lastAttack = Time.time;
     }
 
@@ -99,14 +93,9 @@ public class EnemyBase : MonoBehaviour
         {
             amount = m_enemyData.experienceGiven
         });
-        
-        // 추가된 코드
-        GameEventBus.Publish(new RoomEnemyDeadEvent
-        {
-            sender = GetComponentInParent<RoomEventProcessor>(),
-            enemy = this
-        });
-        
-        Destroy(gameObject);
     }
 }
+
+
+
+

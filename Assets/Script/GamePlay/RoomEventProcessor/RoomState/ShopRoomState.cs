@@ -15,7 +15,6 @@ public class ShopRoomState : IRoomState
     {
         
     }
-
     public void Exit(RoomEventProcessor processor)
     {
         _roomEventProcessor = null;
