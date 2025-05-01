@@ -18,7 +18,10 @@ public class DataManager : Singleton<DataManager>
 
     public Dictionary<string, EnemyData> enemyDatas = new();
     public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
+<<<<<<< HEAD
     public static bool IsReady { get; private set; }
+=======
+>>>>>>> 86c9093f55c3b781a43b05554e36499b4dd50bb9
 
     void Start()
     {
@@ -96,7 +99,11 @@ public class DataManager : Singleton<DataManager>
         }
         else
         {
+<<<<<<< HEAD
             Debug.LogError($"Àß¸øµÈ enemyID ÀÔ´Ï´Ù: {enemyID}");
+=======
+            Debug.LogError($"ìž˜ëª»ëœ enemyID ìž…ë‹ˆë‹¤: {enemyID}");
+>>>>>>> 86c9093f55c3b781a43b05554e36499b4dd50bb9
             return null;
         }
     }
@@ -109,6 +116,7 @@ public class DataManager : Singleton<DataManager>
         }
         else
         {
+<<<<<<< HEAD
             Debug.LogError($"Àß¸øµÈ upgradeID ÀÔ´Ï´Ù: {upgradeID}");
             return null;
         }
@@ -130,3 +138,10 @@ public class DataManager : Singleton<DataManager>
 
     }
 }
+=======
+            Debug.LogError($"ìž˜ëª»ëœ enemyID ìž…ë‹ˆë‹¤: {upgradeID}");
+            return null;
+        }
+    }
+}
+>>>>>>> 86c9093f55c3b781a43b05554e36499b4dd50bb9

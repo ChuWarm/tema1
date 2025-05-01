@@ -7,48 +7,50 @@ public class RoomEventProcessor : MonoBehaviour
 {
     private IRoomState _currentRoomState;
     private RoomType _roomType;
-
+    private Room _room;
+    private bool _eventTriggered;
+    
     private void Start()
     {
-        // _roomType = GetComponentInParent<Room>()?.RoomType ?? RoomType.Normal;
+        _room = GetComponent<Room>();
+        _roomType = _room.RoomType;
         
-        
+        SetState(CreateState(_roomType));
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        _currentRoomState?.Update(this);
+        GameEventBus.RemoveAllSubscribes();
     }
 
     private IRoomState CreateState(RoomType roomType)
     {
         return roomType switch
         {
-            RoomType.Normal => new BattleRoomState(),
-            RoomType.Elite => new BattleRoomState(),
+            RoomType.Normal => new BattleRoomState(this),
+            RoomType.Elite => new BattleRoomState(this),
             RoomType.Rest => new RestRoomState(),
             RoomType.Shop => new ShopRoomState(),
             RoomType.Boss => new BossRoomState(),
-            _ => new BattleRoomState()
+            _ => new BattleRoomState(this)
         };
     }
 
     public void SetState(IRoomState newState)
     {
         _currentRoomState = newState;
+    }
+
+    public void OnPlayerEnterRoom()
+    {
+        if (_eventTriggered) return;
+
+        _eventTriggered = true;
         _currentRoomState?.Enter(this);
     }
-
-    public void OnEnemyDead()
+    
+    public void OnRoomCleared(RoomClearedEvent roomClearedEvent)
     {
-        if (_currentRoomState is BattleRoomState battleRoomState)
-        {
-            // battleRoomState.OnEnemyDead(this);
-        }
-    }
-
-    public void MarkRoomCleared()
-    {
-        GetComponentInParent<Room>()?.MarkRoomCleared();
+        _room.MarkRoomCleared();
     }
 }
