@@ -3,23 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public static class EnemyFactory
-{
-    public static EnemyBase SpawnEnemy(RoomEventHolder room, EnemyData enemyData)
-    {
-        if (room.IsUnityNull()) return null;
 
-        var basePrefab = Resources.Load<GameObject>("EnemyBase");
-
-        MonoBehaviour.Instantiate(basePrefab, room.transform);
-
-        if (!basePrefab.TryGetComponent<EnemyBase>(out var enemyBase))
-            return null;
-
-        return enemyBase.Init(enemyData);
-
-    }
-}
 
 public class EnemyBase : MonoBehaviour
 {

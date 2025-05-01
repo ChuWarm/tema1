@@ -29,41 +29,44 @@ public class DataManager : Singleton<DataManager>
     {
         try
         {
+            var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
+
+            var enemyTask = await UniTask.RunOnThreadPool(() =>
+            {
+                var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
+                var enemyDatas = new Dictionary<string, IGameData>();
+                for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
+                {
+                    var item = enemySheet.enemyDataSheet[i];
+                    enemyDatas.Add(item.enemyID, item);
+                }
+                return enemyDatas;
+            });
+
+            var memoryTask = await UniTask.RunOnThreadPool(() =>
+            {
+                var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
+                var upgDatas = new Dictionary<string, IGameData>();
+                for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
+                {
+                    var item = memoryDataSheet.memoryUpgradeSheet[i];
+                    upgDatas.Add(item.upgradeID, item);
+                }
+
+                return upgDatas;
+            });
+
+
+            await UniTask.SwitchToMainThread();
+
+            datas.Add(typeof(EnemyData), enemyTask);
+            datas.Add(typeof(MemoryUpgradeData), memoryTask);
 
         }
         catch (Exception e)
         {
-
+            Debug.LogError(e);
         }
-
-        var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
-
-        var enemyTask = UniTask.RunOnThreadPool(() =>
-        {
-            var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
-            var enemyDatas = new Dictionary<string, IGameData>();   
-            for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
-            {
-                var item = enemySheet.enemyDataSheet[i];
-                enemyDatas.Add(item.enemyID, item);
-            }
-            datas.Add(typeof(EnemyData), enemyDatas);
-        });
-
-        /*
-        
-        var memoryTask = UniTask.RunOnThreadPool(() =>
-        {
-            var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
-            for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
-            {
-                var item = memoryDataSheet.memoryUpgradeSheet[i];
-                upgradeDatas.Add(item.upgradeID, item);
-            }
-        });
-        */
-        await UniTask.WhenAll(enemyTask); //, memoryTask);
-
         print("DataManager - Ready");
         IsReady = true;
     }
