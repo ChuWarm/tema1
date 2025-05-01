@@ -42,6 +42,7 @@ public class EnemyBase : MonoBehaviour
         */
 
         return this;    
+ battle
     }
 
     private void Update()
@@ -75,8 +76,8 @@ public class EnemyBase : MonoBehaviour
 
     void Attack()
     {
-        // °ø°Ý
-        // ¾Æ¸¶ ¿ÀºêÁ§Æ® ¹ß»ç
+        // ï¿½ï¿½ï¿½ï¿½
+        // ï¿½Æ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ß»ï¿½
 
         lastAttack = Time.time;
     }

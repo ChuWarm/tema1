@@ -8,8 +8,10 @@ public class EnemyData
 {
     public enum EnemyClass
     {
+ battle
         Enforcer,   //
         Warden,     //
+
 
     }
 

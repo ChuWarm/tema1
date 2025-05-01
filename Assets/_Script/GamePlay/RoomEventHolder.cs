@@ -5,9 +5,11 @@ using UnityEngine;
 public class RoomEventHolder : MonoBehaviour
 {
     List<EnemyBase> m_enemies;
+ battle
 
     private void OnEnable()
     {
+
         m_enemies = new List<EnemyBase>();
 
         for (int i = 0; i < 2; i++)
@@ -16,5 +18,6 @@ public class RoomEventHolder : MonoBehaviour
         }
     }
 
+ battle
 
 }

@@ -14,8 +14,10 @@ public static class DataSheetURLHolder
 public class DataManager : Singleton<DataManager>
 {  
 
+battle
     public Dictionary<string, EnemyData> enemyDatas = new();
     public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
+
 
     void Start()
     {
@@ -34,6 +36,7 @@ public class DataManager : Singleton<DataManager>
         for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
         {
             var item = enemySheet.enemyDataSheet[i];
+ battle
             enemyDatas.Add(item.enemyID, item);
         }
 
@@ -43,7 +46,9 @@ public class DataManager : Singleton<DataManager>
         for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
         {
             var item = memoryDataSheet.memoryUpgradeSheet[i];
+ battle
             upgradeDatas.Add(item.upgradeID, item);
+
         }
     }
 
@@ -63,6 +68,7 @@ public class DataManager : Singleton<DataManager>
             }
         }
     }
+ battle
 
     public static EnemyData GetEnemyData(string enemyID)
     {
@@ -72,10 +78,11 @@ public class DataManager : Singleton<DataManager>
         }
         else
         {
-            Debug.LogError($"Àß¸øµÈ enemyID ÀÔ´Ï´Ù: {enemyID}");
+            Debug.LogError($"ï¿½ß¸ï¿½ï¿½ï¿½ enemyID ï¿½Ô´Ï´ï¿½: {enemyID}");
             return null;
         }
     }
+
 
     public static MemoryUpgradeData GetUpgradeData(string upgradeID)
     {
@@ -85,7 +92,7 @@ public class DataManager : Singleton<DataManager>
         }
         else
         {
-            Debug.LogError($"Àß¸øµÈ upgradeID ÀÔ´Ï´Ù: {upgradeID}");
+            Debug.LogError($"ï¿½ß¸ï¿½ï¿½ï¿½ upgradeID ï¿½Ô´Ï´ï¿½: {upgradeID}");
             return null;
         }
     }
