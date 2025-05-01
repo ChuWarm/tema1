@@ -40,7 +40,6 @@ public class RoomEnemyDeadEvent : IGameEvent
 public static class GameEventBus
 {
     private static readonly Dictionary<Type, List<Action<IGameEvent>>> _handlers = new();
-
     public static void Subscribe<T>(Action<T> handler) where T : IGameEvent
     {
         Type type = typeof(T);
