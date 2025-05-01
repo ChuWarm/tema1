@@ -5,9 +5,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-<<<<<<< HEAD
-
-=======
 public static class EnemyFactory
 {
     // RoomEventHolder 빼고 Vector3 position 매개변수 추가
@@ -33,7 +30,6 @@ public static class EnemyFactory
         return null;
     }
 }
->>>>>>> 86c9093f55c3b781a43b05554e36499b4dd50bb9
 
 public class EnemyBase : MonoBehaviour
 {

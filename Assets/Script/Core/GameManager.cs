@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public static class GameConstValues
 {
-<<<<<<< HEAD
 
 }
 
@@ -22,6 +21,4 @@ public class GameManager : Singleton<GameManager>
     {
         Application.Quit();
     }
-=======
->>>>>>> 86c9093f55c3b781a43b05554e36499b4dd50bb9
 }
