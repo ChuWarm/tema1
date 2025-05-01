@@ -22,6 +22,18 @@ public class RoomEnterEvent : IGameEvent
     // public RewordTable // �������̺�
 }
 
+public class RoomClearedEvent : IGameEvent
+{
+    public RoomEventProcessor sender;
+}
+
+public class RoomEnemyDeadEvent : IGameEvent
+{
+    public RoomEventProcessor sender;
+    public EnemyBase enemy;
+}
+
+
 public class NewGameStart : IGameEvent
 {
 
