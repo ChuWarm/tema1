@@ -6,24 +6,32 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public enum PlayerState { None, Idle, Move, Attack, Hit }
+public enum LookMode { None, Movement, Mouse }
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
+    private const float gravity = -9.81f;
+    
+    private Dictionary<PlayerState, IPlayerState> _playerStates;
     private PlayerStateIdle _playerStateIdle;
     private PlayerStateMove _playerStateMove;
     private PlayerStateAttack _playerStateAttack;
     private PlayerStateHit _playerStateHit;
+    private float _moveSpeed = 15f;
+    private Vector3 _velocity;
     
     public PlayerState CurrentState { get; private set; }
-    
-    private Dictionary<PlayerState, IPlayerState> _playerStates;
-    
+
+    public LookMode currentLookMode = LookMode.Movement;
     public CharacterController characterController;
+    public Animator animator;
     
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -65,5 +73,48 @@ public class PlayerController : MonoBehaviour
         }
         CurrentState = state;
         _playerStates[CurrentState].EnterState(this);
+    }
+    
+    public void Move(Vector3 inputDirection)
+    {
+        inputDirection.Normalize();
+        
+        Vector3 cameraForward = Camera.main.transform.forward;
+        Vector3 cameraRight = Camera.main.transform.right;
+        
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+        
+        Vector3 moveDirection = cameraForward * inputDirection.z 
+                                + cameraRight * inputDirection.x;
+        
+        if (moveDirection.magnitude > 0.1f)
+        {
+            if (currentLookMode == LookMode.Movement)
+                transform.rotation = Quaternion.LookRotation(moveDirection);
+            
+            _velocity.y += gravity * Time.deltaTime;
+            moveDirection.y = _velocity.y;
+            
+            characterController.Move(moveDirection * (_moveSpeed * Time.deltaTime));
+        }
+    }
+
+    public void LookAtMouse()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out var hit, 100f))
+        {
+            Vector3 lookDirection = hit.point - transform.position;
+            lookDirection.y = 0f;
+
+            if (lookDirection.magnitude > 0.1f)
+            {
+                transform.rotation = Quaternion.LookRotation(lookDirection);
+            }
+        }
     }
 }

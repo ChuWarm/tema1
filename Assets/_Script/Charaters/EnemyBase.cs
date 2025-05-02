@@ -93,6 +93,14 @@ public class EnemyBase : MonoBehaviour
         {
             amount = m_enemyData.experienceGiven
         });
+        
+        GameEventBus.Publish(new RoomEnemyDeadEvent
+        {
+            sender = GetComponentInParent<RoomEventProcessor>(),
+            enemy = this
+        });
+        
+        Destroy(gameObject);
     }
 }
 

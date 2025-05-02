@@ -20,6 +20,12 @@ public class PlayerStateIdle : IPlayerState
             _playerController.SetState(PlayerState.Move);
             return;
         }
+        
+        // 공격
+        if (Input.GetButtonDown("Fire1"))
+        {
+            _playerController.SetState(PlayerState.Attack);
+        }
     }
 
     public void ExitState()
