@@ -13,18 +13,20 @@ public  class PlayerEXPAdded : IGameEvent
 {
     public int amount;
 }
-
-public class RoomEnterEvent : IGameEvent
+public class HitPlayer: IGameEvent
 {
-    public List<EnemyData> enemyDatas;
-    public List<Vector3> spawnPosition;
-    
-    // public RewordTable // �������̺�
+    public EnemyData enemyData;
 }
 
 public class PlayerDeath : IGameEvent { }
 
 public class NewGameStart : IGameEvent { }
+
+
+public class RoomEnterEvent : IGameEvent
+{
+    public RoomData roomData;
+}
 
 public class RoomClearedEvent : IGameEvent
 {

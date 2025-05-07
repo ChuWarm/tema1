@@ -44,7 +44,7 @@ public class BattleRoomState : IRoomState
 
     public void Exit(RoomEventProcessor processor)
     {
-        GameEventBus.RemoveAllSubscribes();
+
     }
     
     private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)
