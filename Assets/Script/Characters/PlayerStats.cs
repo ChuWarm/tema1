@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerStats : MonoBehaviour
 {
+    [System.Serializable]
+    public class LevelUpEvent : UnityEvent<int, int> { } // (oldLevel, newLevel)
+
+    public LevelUpEvent OnLevelUp = new LevelUpEvent();
+
     public int playerLevel = 1;
     public int currentExp = 0;
     public int expToNextLevel = 100;
@@ -13,10 +19,16 @@ public class PlayerStats : MonoBehaviour
     public int currentHealth = 100;
     public int currentStamina = 10;
 
-    public float moveSpeed;
-    public int resistance;
-    public int attackPower;
-    public float attackSpeed;
+    public float moveSpeed = 3.5f;
+    public int resistance = 10;
+    public int attackPower = 10;
+    public float attackSpeed = 0.8f;
+
+    [Header("레벨업시 상승하는 스탯값")]
+    public int healthIncreasePerLevel = 10;
+    public int attackPowerIncreasePerLevel = 10;
+    public int staminaIncreasePerLevel = 2;
+    public int expToNextLevelIncrease = 10;
 
     private void Start()
     {
@@ -37,18 +49,21 @@ public class PlayerStats : MonoBehaviour
 
     private void LevelUp()
     {
+        int oldLevel = playerLevel;
         playerLevel++;
         currentExp -= expToNextLevel;
-        expToNextLevel += 10;// 레벨업 요구량 증가
+        expToNextLevel += expToNextLevelIncrease;
         
-        maxHealth += 10;
-        attackPower += 10;
-        stamina += 2;
+        maxHealth += healthIncreasePerLevel;
+        attackPower += attackPowerIncreasePerLevel;
+        stamina += staminaIncreasePerLevel;
         
         currentHealth = maxHealth;
         currentStamina = stamina;
-    }
 
+        // 레벨업 이벤트 발생
+        OnLevelUp.Invoke(oldLevel, playerLevel);
+    }
 }
 
 [System.Serializable]
