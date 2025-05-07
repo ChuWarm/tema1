@@ -4,22 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public static class GameConstValues
+{
+
+}
+
+
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private GameObject player;
-    
-    private Transform _spawnPoint;
-    
-    public void InstantiatePlayer()
+    public void LoadScene(int targetScene)
     {
-        var newSpawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
-        var playerObj = Instantiate(player, newSpawnPoint.position, Quaternion.identity);
+        SceneManager.LoadScene(targetScene);
     }
 
-    public GameObject FindPlayer()
+    public void Quit()
     {
-        var player = GameObject.FindGameObjectWithTag("Player");
-
-        return player;
+        Application.Quit();
     }
 }

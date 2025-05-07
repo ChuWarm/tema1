@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1384010665216083999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3808922880145420637}
+  - component: {fileID: 8907593328387002860}
+  m_Layer: 0
+  m_Name: Map Generator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3808922880145420637
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384010665216083999}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8907593328387002860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384010665216083999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58d6e91f20d76b649b96f478041b4654, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomPrefabs:
+  - {fileID: 5897335972713401436, guid: b1bb3aa302d8b544592d26b010241fad, type: 3}
+  - {fileID: 5897335972713401436, guid: d1a70b7a005474a4d96176353c0f11f7, type: 3}
+  - {fileID: 5897335972713401436, guid: cdfa3bdfa1b3e404882d9a8cf8fc94b4, type: 3}
+  - {fileID: 5897335972713401436, guid: 7ba25f2b72f67ad44a97278050c5572b, type: 3}
+  - {fileID: 5897335972713401436, guid: 1002619306a3dcc4f8c89a9544554062, type: 3}
+  - {fileID: 5897335972713401436, guid: dfe94500a4626f5488612dc200e59d8b, type: 3}
+  horizontalPath: {fileID: 4230057313008605981, guid: 39d4724520ecb784d8addf0281a62fde, type: 3}
+  verticalPath: {fileID: 3228727595221246441, guid: be5967972078b4d45b495f4c956e2c42, type: 3}
