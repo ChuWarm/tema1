@@ -80,7 +80,7 @@ public class InventorySlot : MonoBehaviour, IPointerClickHandler, IPointerEnterH
             if (eventData.button == PointerEventData.InputButton.Left)
             {
                 // 왼쪽 클릭: 아이템 사용/장착
-                ItemManager.Instance.UseItem(item.itemData.itemID, PlayerStats.Instance);
+                ItemManager.Instance.UseItem(item.itemData.itemID, PlayerManager.Instance);
             }
             else if (eventData.button == PointerEventData.InputButton.Right)
             {

@@ -3,8 +3,8 @@ using System;
 
 public interface IItemEffect
 {
-    void ApplyEffect(PlayerStats player);
-    void RemoveEffect(PlayerStats player);
+    void ApplyEffect(PlayerManager player);
+    void RemoveEffect(PlayerManager player);
 }
 
 [System.Serializable]
@@ -43,7 +43,7 @@ public class ItemEffect : IItemEffect
         this.isPermanent = duration <= 0f;
     }
 
-    public virtual void ApplyEffect(PlayerStats player)
+    public virtual void ApplyEffect(PlayerManager player)
     {
         foreach (var modifier in modifiers)
         {
@@ -73,7 +73,7 @@ public class ItemEffect : IItemEffect
         }
     }
 
-    public virtual void RemoveEffect(PlayerStats player)
+    public virtual void RemoveEffect(PlayerManager player)
     {
         foreach (var modifier in modifiers)
         {

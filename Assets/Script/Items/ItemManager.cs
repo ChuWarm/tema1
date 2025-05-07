@@ -41,7 +41,7 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    public void UseItem(string itemId, PlayerStats player)
+    public void UseItem(string itemId, PlayerManager player)
     {
         var itemData = DataManager.GetData<ItemData>(itemId);
         if (itemData == null) return;
@@ -57,7 +57,7 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    private void UseConsumable(ItemData item, PlayerStats player)
+    private void UseConsumable(ItemData item, PlayerManager player)
     {
         // 아이템 효과 생성 및 적용
         var effect = CreateItemEffect(item);
@@ -78,7 +78,7 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    private void EquipWeapon(ItemData item, PlayerStats player)
+    private void EquipWeapon(ItemData item, PlayerManager player)
     {
         // 이미 장착된 무기 해제
         var currentItems = Inventory.Instance.GetAllItems();
