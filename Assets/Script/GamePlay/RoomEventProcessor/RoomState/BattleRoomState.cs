@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Script.Characters;
 using UnityEngine;
 
 public class BattleRoomState : IRoomState

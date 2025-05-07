@@ -1,3 +1,4 @@
+using Script.Characters;
 using UnityEngine;
 
 public class PlayerStateIdle : IPlayerState

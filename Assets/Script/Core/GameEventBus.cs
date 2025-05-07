@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Script.Characters;
 using UnityEngine;
 
 public interface IGameEvent { }

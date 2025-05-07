@@ -1,40 +1,49 @@
 using UnityEngine;
 using TMPro;
 
-public class DamageText : MonoBehaviour
+namespace Script.UI
 {
-    private TextMeshProUGUI textMesh;
-    private float moveSpeed = 1f;
-    private float fadeSpeed = 1f;
-    private float lifeTime = 1f;
-
-    private void Awake()
+    public class DamageText : MonoBehaviour
     {
-        textMesh = GetComponent<TextMeshProUGUI>();
-    }
+        private TextMeshProUGUI damageText;
+        private float moveSpeed = 1f;
+        private float fadeSpeed = 1f;
+        private float lifeTime = 1f;
+        private float currentLifeTime;
+        private Vector3 moveDirection;
 
-    public void Initialize(int amount, Color color)
-    {
-        textMesh.text = amount.ToString();
-        textMesh.color = color;
-        StartCoroutine(FadeOut());
-    }
-
-    private System.Collections.IEnumerator FadeOut()
-    {
-        float currentTime = 0f;
-        Vector3 startPosition = transform.position;
-        Vector3 targetPosition = startPosition + Vector3.up * 2f;
-
-        while (currentTime < lifeTime)
+        private void Awake()
         {
-            currentTime += Time.deltaTime;
-            float alpha = 1f - (currentTime / lifeTime);
-            textMesh.alpha = alpha;
-            transform.position = Vector3.Lerp(startPosition, targetPosition, currentTime / lifeTime);
-            yield return null;
+            damageText = GetComponent<TextMeshProUGUI>();
+            moveDirection = Vector3.up;
+            currentLifeTime = lifeTime;
         }
 
-        Destroy(gameObject);
+        private void Update()
+        {
+            // 수직으로 이동
+            transform.position += moveDirection * moveSpeed * Time.deltaTime;
+
+            // 페이드 아웃
+            float alpha = currentLifeTime / lifeTime;
+            Color color = damageText.color;
+            color.a = alpha;
+            damageText.color = color;
+
+            // 수명 감소
+            currentLifeTime -= Time.deltaTime;
+
+            // 수명이 다하면 제거
+            if (currentLifeTime <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        public void Initialize(int damage, Color color)
+        {
+            damageText.text = damage.ToString();
+            damageText.color = color;
+        }
     }
 } 
