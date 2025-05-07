@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1776bfe6515854b449fda9709d340edd, type: 3}
   m_Name: RoomDataEx
   m_EditorClassIdentifier: 
-  spawnEnemys: []
+  spawnEnemys:
+  - enemyID: dummy_id
+    spawnCount: 10
