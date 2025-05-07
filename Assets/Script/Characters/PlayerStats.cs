@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    public int playerLevel;
-    public int currentExp;
-    public int expToNextLevel;
+    public int playerLevel = 1;
+    public int currentExp = 0;
+    public int expToNextLevel = 100;
     
-    public int maxHealth;
-    public int stamina;
-    public int currentHealth;
-    public int currentStamina;
+    public int maxHealth = 100;
+    public int stamina = 10;
+    public int currentHealth = 100;
+    public int currentStamina = 10;
 
     public float moveSpeed;
     public int resistance;
