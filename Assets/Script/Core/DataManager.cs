@@ -2,6 +2,8 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -14,7 +16,6 @@ public static class DataSheetURLHolder
 public class DataManager : Singleton<DataManager>
 {
     public Dictionary<Type, Dictionary<string, IGameData>> datas = new();
-
     public static bool IsReady { get; private set; }
 
     void Start()
@@ -41,19 +42,18 @@ public class DataManager : Singleton<DataManager>
                 for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
                 {
                     var item = enemySheet.enemyDataSheet[i];
-
-                    // ID À¯È¿¼º °Ë»ç Ãß°¡
+                    // ID ï¿½ï¿½È¿ï¿½ï¿½ ï¿½Ë»ï¿½ ï¿½ß°ï¿½
                     if (string.IsNullOrEmpty(item.enemyID))
                     {
-                        Debug.LogError($"Àß¸øµÈ enemyID: ÀÎµ¦½º {i}");
+                        Debug.LogError($"ï¿½ß¸ï¿½ï¿½ï¿½ enemyID: ï¿½Îµï¿½ï¿½ï¿½ {i}");
                         continue;
                     }
 
-                    // Áßº¹ Å° Ã¼Å©
+                    // ï¿½ßºï¿½ Å° Ã¼Å©
                     if (enemyDatas.ContainsKey(item.enemyID))
                     {
-                        Debug.LogWarning($"Áßº¹ enemyID: {item.enemyID}");
-                        continue; // ¶Ç´Â ±âÁ¸ µ¥ÀÌÅÍ µ¤¾î¾²±â
+                        Debug.LogWarning($"ï¿½ßºï¿½ enemyID: {item.enemyID}");
+                        continue; // ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¾²ï¿½ï¿½
                     }
 
                     enemyDatas.Add(item.enemyID, (IGameData)item);
@@ -67,28 +67,25 @@ public class DataManager : Singleton<DataManager>
                 for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
                 {
                     var item = memoryDataSheet.memoryUpgradeSheet[i];
-
-                    // ID À¯È¿¼º °Ë»ç Ãß°¡
+                    // ID ï¿½ï¿½È¿ï¿½ï¿½ ï¿½Ë»ï¿½ ï¿½ß°ï¿½
                     if (string.IsNullOrEmpty(item.upgradeID))
                     {
-                        Debug.LogError($"Àß¸øµÈ enemyID: ÀÎµ¦½º {i}");
+                        Debug.LogError($"ï¿½ß¸ï¿½ï¿½ï¿½ enemyID: ï¿½Îµï¿½ï¿½ï¿½ {i}");
                         continue;
                     }
 
-                    // Áßº¹ Å° Ã¼Å©
+                    // ï¿½ßºï¿½ Å° Ã¼Å©
                     if (upgDatas.ContainsKey(item.upgradeID))
                     {
-                        Debug.LogWarning($"Áßº¹ enemyID: {item.upgradeID}");
-                        continue; // ¶Ç´Â ±âÁ¸ µ¥ÀÌÅÍ µ¤¾î¾²±â
+                        Debug.LogWarning($"ï¿½ßºï¿½ enemyID: {item.upgradeID}");
+                        continue; // ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¾²ï¿½ï¿½
                     }
-
+                    
                     upgDatas.Add(item.upgradeID, item);
                 }
 
                 return upgDatas;
             });
-
-
             var itemTask = await UniTask.RunOnThreadPool(() =>
             {
                 var itemDatas = new Dictionary<string, IGameData>();
@@ -98,13 +95,13 @@ public class DataManager : Singleton<DataManager>
 
                     if (string.IsNullOrEmpty(item.itemID))
                     {
-                        Debug.LogError($"Àß¸øµÈ enemyID: ÀÎµ¦½º {i}");
+                        Debug.LogError($"ï¿½ß¸ï¿½ï¿½ï¿½ enemyID: ï¿½Îµï¿½ï¿½ï¿½ {i}");
                         continue;
                     }
                     if (itemDatas.ContainsKey(item.itemID))
                     {
-                        Debug.LogWarning($"Áßº¹ enemyID: {item.itemID}");
-                        continue; // ¶Ç´Â ±âÁ¸ µ¥ÀÌÅÍ µ¤¾î¾²±â
+                        Debug.LogWarning($"ï¿½ßºï¿½ enemyID: {item.itemID}");
+                        continue; // ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¾²ï¿½ï¿½
                     }
 
                     itemDatas.Add(item.itemID, item);
@@ -144,7 +141,7 @@ public class DataManager : Singleton<DataManager>
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"¿äÃ» ¿À·ù: {request.error}");
+                    Debug.LogError($"ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½: {request.error}");
                     return null;
                 }
 
@@ -152,12 +149,11 @@ public class DataManager : Singleton<DataManager>
             }
             catch (Exception e)
             {
-                Debug.LogError($"¿äÃ» ¿À·ù: {e.Message}");
+                Debug.LogError($"ï¿½ï¿½Ã» ï¿½ï¿½ï¿½ï¿½: {e.Message}");
                 return null;
             }
         }
     }
-
 
     public static T GetData<T>(string id) where T : IGameData
     {

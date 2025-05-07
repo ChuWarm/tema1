@@ -8,12 +8,14 @@ public class ItemData : IGameData
     public enum ItemType
     {
         weapon,
-        consumable,
+        comsumalble,
     }
+
 
     public string itemID;
     public string itemName;
     public ItemType itemType;
+    public string ammo;
     public string effect;
     public float effectTime;
     public int value;
@@ -21,7 +23,7 @@ public class ItemData : IGameData
     public string iconID;
 }
 
-
+[System.Serializable]   
 public class ItemDataSheet
 {
     public ItemData[] itemDataSheet;
