@@ -60,14 +60,27 @@ namespace Script.Characters
         private void Update()
         {
             var player = GamePlayManager.Instance.gamePlayLogic.m_Player;
-            if(Vector3.Distance(transform.position, player.transform.position) <= m_enemyData.attackRange)
+            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+
+            if (distanceToPlayer <= m_enemyData.attackRange)
             {
                 if (Time.time >= lastAttack + m_enemyData.attackCooldown)
+                {
                     Attack();
+                }
             }
             else
             {
-                transform.Translate(player.transform.position);
+                // 플레이어를 향해 이동
+                Vector3 direction = (player.transform.position - transform.position).normalized;
+                transform.position += direction * m_enemyData.moveSpeed * Time.deltaTime;
+                
+                // 플레이어를 향해 회전
+                if (direction != Vector3.zero)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10f * Time.deltaTime);
+                }
             }
         }
 
@@ -83,20 +96,19 @@ namespace Script.Characters
             }
         }
 
-        void Attack()
+        protected virtual void Attack()
         {
-            // 공격
-            // 아마 오브젝트 발사
             lastAttack = Time.time;
-            // GameEventBus.Publish<HitPlayer>(new HitPlayer { enemyData = m_enemyData });
+            GameEventBus.Publish(new HitPlayer { enemyData = m_enemyData });
         }
 
-        void Die()
+        protected virtual void Die()
         {
-            GameEventBus.Publish<PlayerEXPAdded>(new PlayerEXPAdded
+            GameEventBus.Publish(new PlayerEXPAdded
             {
                 amount = m_enemyData.experienceGiven
             });
+            Destroy(gameObject);
         }
     }
 }

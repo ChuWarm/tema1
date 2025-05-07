@@ -22,7 +22,7 @@ namespace Script.UI
         private void Update()
         {
             // 수직으로 이동
-            transform.position += moveDirection * moveSpeed * Time.deltaTime;
+            transform.position += moveSpeed * Time.deltaTime * moveDirection;
 
             // 페이드 아웃
             float alpha = currentLifeTime / lifeTime;
