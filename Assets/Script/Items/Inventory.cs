@@ -7,6 +7,7 @@ public class Inventory : MonoBehaviour
     public static Inventory Instance { get; private set; }
 
     [SerializeField] private int maxSlots = 20;
+    public int MaxSlots => maxSlots;
     private Dictionary<string, InventoryItem> items = new Dictionary<string, InventoryItem>();
 
     public class InventoryItem
@@ -27,6 +28,7 @@ public class Inventory : MonoBehaviour
     public event Action<InventoryItem> OnItemRemoved;
     public event Action<InventoryItem> OnItemEquipped;
     public event Action<InventoryItem> OnItemUnequipped;
+    public event Action OnItemsSwapped;
 
     private void Awake()
     {
@@ -105,6 +107,32 @@ public class Inventory : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void SwapItems(string itemId1, string itemId2)
+    {
+        if (string.IsNullOrEmpty(itemId1) || string.IsNullOrEmpty(itemId2)) return;
+
+        if (items.TryGetValue(itemId1, out InventoryItem item1) && 
+            items.TryGetValue(itemId2, out InventoryItem item2))
+        {
+            // 아이템 데이터 스왑
+            var tempData = item1.itemData;
+            item1.itemData = item2.itemData;
+            item2.itemData = tempData;
+
+            // 수량 스왑
+            var tempQuantity = item1.quantity;
+            item1.quantity = item2.quantity;
+            item2.quantity = tempQuantity;
+
+            // 장착 상태 스왑
+            var tempEquipped = item1.isEquipped;
+            item1.isEquipped = item2.isEquipped;
+            item2.isEquipped = tempEquipped;
+
+            OnItemsSwapped?.Invoke();
+        }
     }
 
     public InventoryItem GetItem(string itemId)
