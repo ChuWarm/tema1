@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Script.Characters;
 
 public class ItemManager : MonoBehaviour
 {

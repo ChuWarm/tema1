@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Script.Characters;
 
 public interface IItemEffect
 {

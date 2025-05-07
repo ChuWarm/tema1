@@ -4,157 +4,160 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Script.Characters;
+using Script.Core;
 
-public enum PlayerState { None, Idle, Move, Attack, Hit }
-
-[RequireComponent(typeof(CharacterController))]
-public class PlayerController : MonoBehaviour
+namespace Script.Characters
 {
-    [Header("이동 설정")]
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 10f;
-    public float jumpForce = 5f;
-    public float gravity = -9.81f;
+    public enum PlayerState { None, Idle, Move, Attack, Hit }
 
-    [Header("상태 체크")]
-    public bool isGrounded;
-    public LayerMask groundLayer;
-
-    [Header("참조")]
-    public PlayerManager playerManager;
-    public CharacterController characterController;
-    public Animator animator;
-
-    private Vector3 moveDirection;
-    private float verticalVelocity;
-    private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
-    private static readonly int JumpAnim = Animator.StringToHash("Jump");
-    private static readonly int AttackAnim = Animator.StringToHash("Attack");
-
-    private PlayerStateIdle _playerStateIdle;
-    private PlayerStateMove _playerStateMove;
-    private PlayerStateAttack _playerStateAttack;
-    private PlayerStateHit _playerStateHit;
-    
-    public PlayerState CurrentState { get; private set; }
-    
-    private Dictionary<PlayerState, IPlayerState> _playerStates;
-
-    private void Awake()
+    [RequireComponent(typeof(CharacterController))]
+    public class PlayerController : MonoBehaviour
     {
-        characterController = GetComponent<CharacterController>();
-        if (animator == null)
-            animator = GetComponent<Animator>();
-    }
+        [Header("이동 설정")]
+        public float moveSpeed = 5f;
+        public float rotationSpeed = 10f;
+        public float jumpForce = 5f;
+        public float gravity = -9.81f;
 
-    private void Start()
-    {
-        _playerStateIdle = new PlayerStateIdle();
-        _playerStateMove = new PlayerStateMove();
-        _playerStateAttack = new PlayerStateAttack();
-        _playerStateHit = new PlayerStateHit();
+        [Header("상태 체크")]
+        public bool isGrounded;
+        public LayerMask groundLayer;
+
+        [Header("참조")]
+        public PlayerManager playerManager;
+        public CharacterController characterController;
+        public Animator animator;
+
+        private Vector3 moveDirection;
+        private float verticalVelocity;
+        private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
+        private static readonly int JumpAnim = Animator.StringToHash("Jump");
+        private static readonly int AttackAnim = Animator.StringToHash("Attack");
+
+        private PlayerStateIdle _playerStateIdle;
+        private PlayerStateMove _playerStateMove;
+        private PlayerStateAttack _playerStateAttack;
+        private PlayerStateHit _playerStateHit;
         
-        _playerStates = new Dictionary<PlayerState, IPlayerState>()
-        {
-            { PlayerState.Idle, _playerStateIdle },
-            { PlayerState.Move, _playerStateMove },
-            { PlayerState.Attack, _playerStateAttack},
-            { PlayerState.Hit, _playerStateHit}
-        };
+        public PlayerState CurrentState { get; private set; }
         
-        Init();
-    }
+        private Dictionary<PlayerState, IPlayerState> _playerStates;
 
-    private void Update()
-    {
-        HandleMovement();
-        HandleJump();
-        HandleAttack();
-        ApplyGravity();
-
-        if (CurrentState != PlayerState.None)
+        private void Awake()
         {
-            _playerStates[CurrentState].UpdateState();
-        }
-    }
-
-    private void Init()
-    {
-        SetState(PlayerState.Idle);
-    }
-
-    public void SetState(PlayerState state)
-    {
-        if (CurrentState != PlayerState.None)
-        {
-            _playerStates[CurrentState].ExitState();
-        }
-        CurrentState = state;
-        _playerStates[CurrentState].EnterState(this);
-    }
-
-    private void HandleMovement()
-    {
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-
-        Vector3 movement = new Vector3(horizontal, 0f, vertical).normalized;
-
-        if (movement.magnitude >= 0.1f)
-        {
-            // 이동 방향으로 회전
-            float targetAngle = Mathf.Atan2(movement.x, movement.z) * Mathf.Rad2Deg;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref rotationSpeed, 0.1f);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
-
-            // 이동
-            moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-            characterController.Move(moveSpeed * Time.deltaTime * moveDirection);
-
-            animator?.SetBool(IsWalkingAnim, true);
-        }
-        else
-        {
-            animator?.SetBool(IsWalkingAnim, false);
-        }
-    }
-
-    private void HandleJump()
-    {
-        isGrounded = characterController.isGrounded;
-
-        if (isGrounded && verticalVelocity < 0)
-        {
-            verticalVelocity = -2f;
+            characterController = GetComponent<CharacterController>();
+            if (animator == null)
+                animator = GetComponent<Animator>();
         }
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        private void Start()
         {
-            verticalVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
-            animator?.SetTrigger(JumpAnim);
+            _playerStateIdle = new PlayerStateIdle();
+            _playerStateMove = new PlayerStateMove();
+            _playerStateAttack = new PlayerStateAttack();
+            _playerStateHit = new PlayerStateHit();
+            
+            _playerStates = new Dictionary<PlayerState, IPlayerState>()
+            {
+                { PlayerState.Idle, _playerStateIdle },
+                { PlayerState.Move, _playerStateMove },
+                { PlayerState.Attack, _playerStateAttack},
+                { PlayerState.Hit, _playerStateHit}
+            };
+            
+            Init();
         }
-    }
 
-    private void HandleAttack()
-    {
-        if (Input.GetMouseButtonDown(0))
+        private void Update()
         {
-            animator?.SetTrigger(AttackAnim);
-            // 공격 로직은 PlayerManager에서 처리
+            HandleMovement();
+            HandleJump();
+            HandleAttack();
+            ApplyGravity();
+
+            if (CurrentState != PlayerState.None)
+            {
+                _playerStates[CurrentState].UpdateState();
+            }
         }
-    }
 
-    private void ApplyGravity()
-    {
-        verticalVelocity += gravity * Time.deltaTime;
-        characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
-    }
+        private void Init()
+        {
+            SetState(PlayerState.Idle);
+        }
 
-    private void OnDrawGizmosSelected()
-    {
-        // 지면 체크 범위 시각화
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, 0.2f);
+        public void SetState(PlayerState state)
+        {
+            if (CurrentState != PlayerState.None)
+            {
+                _playerStates[CurrentState].ExitState();
+            }
+            CurrentState = state;
+            _playerStates[CurrentState].EnterState(this);
+        }
+
+        private void HandleMovement()
+        {
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+
+            Vector3 movement = new Vector3(horizontal, 0f, vertical).normalized;
+
+            if (movement.magnitude >= 0.1f)
+            {
+                // 이동 방향으로 회전
+                float targetAngle = Mathf.Atan2(movement.x, movement.z) * Mathf.Rad2Deg;
+                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref rotationSpeed, 0.1f);
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
+
+                // 이동
+                moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                characterController.Move(moveSpeed * Time.deltaTime * moveDirection);
+
+                animator?.SetBool(IsWalkingAnim, true);
+            }
+            else
+            {
+                animator?.SetBool(IsWalkingAnim, false);
+            }
+        }
+
+        private void HandleJump()
+        {
+            isGrounded = characterController.isGrounded;
+
+            if (isGrounded && verticalVelocity < 0)
+            {
+                verticalVelocity = -2f;
+            }
+
+            if (Input.GetButtonDown("Jump") && isGrounded)
+            {
+                verticalVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
+                animator?.SetTrigger(JumpAnim);
+            }
+        }
+
+        private void HandleAttack()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                animator?.SetTrigger(AttackAnim);
+                // 공격 로직은 PlayerManager에서 처리
+            }
+        }
+
+        private void ApplyGravity()
+        {
+            verticalVelocity += gravity * Time.deltaTime;
+            characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            // 지면 체크 범위 시각화
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, 0.2f);
+        }
     }
 }

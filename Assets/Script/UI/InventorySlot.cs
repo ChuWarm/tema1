@@ -1,3 +1,4 @@
+using Script.Characters;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
