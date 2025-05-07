@@ -1,4 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public static class DataSheetURLHolder
 {
@@ -15,10 +16,6 @@ public static class DataSheetURLHolder
 public class DataManager : Singleton<DataManager>
 {
     public Dictionary<Type, Dictionary<string, IGameData>> datas = new();
-
-    public Dictionary<string, EnemyData> enemyDatas = new();
-    public Dictionary<string, MemoryUpgradeData> upgradeDatas = new();
-    public Dictionary<string, PlayerStats> PlayerStats = new();
     public static bool IsReady { get; private set; }
 
     void Start()
@@ -33,38 +30,98 @@ public class DataManager : Singleton<DataManager>
             var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
 
             print("Asd");
+            var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
+            var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
+            var itemDataSheet = JsonUtility.FromJson<ItemDataSheet>(json);
 
+            print("parse suc");
 
             var enemyTask = await UniTask.RunOnThreadPool(() =>
             {
-                var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
                 var enemyDatas = new Dictionary<string, IGameData>();
                 for (int i = 0; i < enemySheet.enemyDataSheet.Length; i++)
                 {
                     var item = enemySheet.enemyDataSheet[i];
-                    enemyDatas.Add(item.enemyID, item);
+                    // ID ��ȿ�� �˻� �߰�
+                    if (string.IsNullOrEmpty(item.enemyID))
+                    {
+                        Debug.LogError($"�߸��� enemyID: �ε��� {i}");
+                        continue;
+                    }
+
+                    // �ߺ� Ű üũ
+                    if (enemyDatas.ContainsKey(item.enemyID))
+                    {
+                        Debug.LogWarning($"�ߺ� enemyID: {item.enemyID}");
+                        continue; // �Ǵ� ���� ������ �����
+                    }
+
+                    enemyDatas.Add(item.enemyID, (IGameData)item);
                 }
                 return enemyDatas;
             });
 
             var memoryTask = await UniTask.RunOnThreadPool(() =>
             {
-                var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
                 var upgDatas = new Dictionary<string, IGameData>();
                 for (int i = 0; i < memoryDataSheet.memoryUpgradeSheet.Length; i++)
                 {
                     var item = memoryDataSheet.memoryUpgradeSheet[i];
+                    // ID ��ȿ�� �˻� �߰�
+                    if (string.IsNullOrEmpty(item.upgradeID))
+                    {
+                        Debug.LogError($"�߸��� enemyID: �ε��� {i}");
+                        continue;
+                    }
+
+                    // �ߺ� Ű üũ
+                    if (upgDatas.ContainsKey(item.upgradeID))
+                    {
+                        Debug.LogWarning($"�ߺ� enemyID: {item.upgradeID}");
+                        continue; // �Ǵ� ���� ������ �����
+                    }
+                    
                     upgDatas.Add(item.upgradeID, item);
                 }
 
                 return upgDatas;
             });
+            var itemTask = await UniTask.RunOnThreadPool(() =>
+            {
+                var itemDatas = new Dictionary<string, IGameData>();
+                for (int i = 0; i < itemDataSheet.itemDataSheet.Length; i++)
+                {
+                    var item = itemDataSheet.itemDataSheet[i];
+
+                    if (string.IsNullOrEmpty(item.itemID))
+                    {
+                        Debug.LogError($"�߸��� enemyID: �ε��� {i}");
+                        continue;
+                    }
+                    if (itemDatas.ContainsKey(item.itemID))
+                    {
+                        Debug.LogWarning($"�ߺ� enemyID: {item.itemID}");
+                        continue; // �Ǵ� ���� ������ �����
+                    }
+
+                    itemDatas.Add(item.itemID, item);
+                }
+
+                return itemDatas;
+            });
+
+
 
             await UniTask.SwitchToMainThread();
 
+            print($"added - enemyData count: {enemyTask.Count}");
             datas.Add(typeof(EnemyData), enemyTask);
+
+            print($"added - memoryData count: {memoryTask.Count}");
             datas.Add(typeof(MemoryUpgradeData), memoryTask);
 
+            print($"added - itemData count: {itemTask.Count}");
+            datas.Add(typeof(ItemData), itemTask);
         }
         catch (Exception e)
         {
@@ -76,59 +133,28 @@ public class DataManager : Singleton<DataManager>
 
     async UniTask<string> LoadDataGoogleSheet(string url)
     {
-        using (HttpClient client = new HttpClient())
+        using (var request = UnityWebRequest.Get(url))
         {
             try
             {
-                byte[] dataBytes = await client.GetByteArrayAsync(url);
-                return Encoding.UTF8.GetString(dataBytes);
+                await request.SendWebRequest();
+
+                if (request.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError($"��û ����: {request.error}");
+                    return null;
+                }
+
+                return request.downloadHandler.text;
             }
-            catch (HttpRequestException e)
+            catch (Exception e)
             {
-                Debug.LogError($"Request error: {e.Message}");
+                Debug.LogError($"��û ����: {e.Message}");
                 return null;
             }
         }
     }
 
-    public static EnemyData GetEnemyData(string enemyID)
-    {
-        if (Instance.enemyDatas.TryGetValue(enemyID, out var data))
-        {
-            return data;
-        }
-        else
-        {
-            Debug.LogError($"�߸��� enemyID �Դϴ�: {enemyID}");
-            return null;
-        }
-    }
-
-    public static MemoryUpgradeData GetUpgradeData(string upgradeID)
-    {
-        if (Instance.upgradeDatas.TryGetValue(upgradeID, out var data))
-        {
-            return data;
-        }
-        else
-        {
-            Debug.LogError($"�߸��� upgradeID �Դϴ�: {upgradeID}");
-            return null;
-        }
-    }
-    public static PlayerStats GetPlayerData(string playerID)
-    {
-        if (Instance.PlayerStats.TryGetValue(playerID, out var data))
-        {
-            return data;
-        }
-        else
-        {
-            Debug.LogError($"playerID : {playerID}");
-            return null;
-        }
-    }
-    
     public static T GetData<T>(string id) where T : IGameData
     {
         if (Instance.IsUnityNull()) 
