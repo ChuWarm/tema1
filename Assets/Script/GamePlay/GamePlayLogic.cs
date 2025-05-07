@@ -12,7 +12,6 @@ public class GamePlayLogic
     
     int playerHP;
     int playerEXP;
-
     public GamePlayLogic(PlayerController player)
     {
         GameEventBus.Subscribe<PlayerHPChanged>(OnPlayerHPChanged);
@@ -32,10 +31,10 @@ public class GamePlayLogic
         }
     }
 
-    void OnEnemyDeadEvent(RoomEnemyDeadEvent e)
+  void OnEnemyDeadEvent(RoomEnemyDeadEvent e)
     {
-        // enemy Á×À½ È¿°ú Ãâ·Â ?
-        // ÀÌ°Å ¿©±â¼­ È£ÃâÇÏ´Â°Ô ¸Â³ª?
+        // enemy ï¿½ï¿½ï¿½ï¿½ È¿ï¿½ï¿½ ï¿½ï¿½ï¿½ ?
+        // ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½â¼­ È£ï¿½ï¿½ï¿½Ï´Â°ï¿½ ï¿½Â³ï¿½?
 
         playerEXP += e.enemy.GetEnemyData.experienceGiven;
     }

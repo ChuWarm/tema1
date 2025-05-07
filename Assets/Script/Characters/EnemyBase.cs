@@ -37,9 +37,7 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] private EnemyData m_enemyData;
     public int health;
     float lastAttack;
-
     public EnemyData GetEnemyData => m_enemyData;
-
     public EnemyBase Init(EnemyData data)
     {
         m_enemyData = data;
@@ -87,7 +85,6 @@ public class EnemyBase : MonoBehaviour
         // 공격
         // 아마 오브젝트 발사
         lastAttack = Time.time;
-
         // GameEventBus.Publish<HitPlayer>(new HitPlayer { enemyData = m_enemyData });
     }
 
