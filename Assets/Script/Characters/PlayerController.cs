@@ -10,6 +10,8 @@ public enum PlayerState { None, Idle, Move, Attack, Hit }
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
+    public PlayerStats playerStats;
+
     private PlayerStateIdle _playerStateIdle;
     private PlayerStateMove _playerStateMove;
     private PlayerStateAttack _playerStateAttack;
