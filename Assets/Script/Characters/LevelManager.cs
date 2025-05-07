@@ -1,19 +1,31 @@
 using UnityEngine;
+using UnityEngine.Events;
 using Script.Core;
 
 namespace Script.Characters
 {
+    [System.Serializable]
+    public class LevelUpEvent : UnityEvent<int, int> { } // (oldLevel, newLevel)
+
     public class LevelManager : MonoBehaviour
     {
-        public static LevelManager Instance; // 싱글톤
+        public static LevelManager Instance { get; private set; }
 
-        public int accountLevel = 1; // 기억 레벨
-        public int currentExp = 0;  // 현재 기억 경험치
-        public int expToNextLevel = 500; // 다음 기억 레벨까지 필요한 경험치
+        [Header("레벨 설정")]
+        [SerializeField] private int accountLevel = 1;
+        [SerializeField] private int currentExp = 0;
+        [SerializeField] private int expToNextLevel = 500;
+        [SerializeField] private int expIncreasePerLevel = 100;
+
+        public LevelUpEvent OnLevelUp = new LevelUpEvent();
+
+        public int AccountLevel => accountLevel;
+        public int CurrentExp => currentExp;
+        public int ExpToNextLevel => expToNextLevel;
+        public float ExpProgress => (float)currentExp / expToNextLevel;
 
         private void Awake()
         {
-            // 싱글톤 패턴 구현
             if (Instance == null)
             {
                 Instance = this;
@@ -27,12 +39,19 @@ namespace Script.Characters
 
         public void GainAccountExperience(int amount)
         {
+            if (amount <= 0) return;
+
+            int oldLevel = accountLevel;
             currentExp += amount;
 
-            // 기억 경험치가 다음 레벨 요구 경험치를 초과하면 레벨업
             while (currentExp >= expToNextLevel)
             {
                 LevelUp();
+            }
+
+            if (oldLevel != accountLevel)
+            {
+                OnLevelUp?.Invoke(oldLevel, accountLevel);
             }
         }
 
@@ -40,9 +59,7 @@ namespace Script.Characters
         {
             accountLevel++;
             currentExp -= expToNextLevel;
-
-            // 기억 레벨업에 따라 다음 기억 요구량 증가
-            expToNextLevel += 100;
+            expToNextLevel += expIncreasePerLevel;
         }
     }
 }
