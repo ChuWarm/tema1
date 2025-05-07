@@ -13,18 +13,20 @@ public  class PlayerEXPAdded : IGameEvent
 {
     public int amount;
 }
-
-public class RoomEnterEvent : IGameEvent
+public class HitPlayer: IGameEvent
 {
-    public List<EnemyData> enemyDatas;
-    public List<Vector3> spawnPosition;
-    
-    // public RewordTable // �������̺�
+    public EnemyData enemyData;
 }
 
 public class PlayerDeath : IGameEvent { }
 
 public class NewGameStart : IGameEvent { }
+
+
+public class RoomEnterEvent : IGameEvent
+{
+    public RoomData roomData;
+}
 
 public class RoomClearedEvent : IGameEvent
 {
@@ -40,6 +42,7 @@ public class RoomEnemyDeadEvent : IGameEvent
 public static class GameEventBus
 {
     private static readonly Dictionary<Type, List<Action<IGameEvent>>> _handlers = new();
+
     public static void Subscribe<T>(Action<T> handler) where T : IGameEvent
     {
         Type type = typeof(T);
