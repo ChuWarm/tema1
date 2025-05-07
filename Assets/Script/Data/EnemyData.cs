@@ -27,7 +27,7 @@ public class EnemyData : IGameData
     public int health;
     public float moveSpeed;
     public int resistance;
-    public int attackPower;
+    public float attackPower;
     public float attackSpeed;
     public float attackRange;
     public float attackCooldown;
