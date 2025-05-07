@@ -12,6 +12,7 @@ public class GamePlayLogic
     
     int playerHP;
     int playerEXP;
+    List<EnemyBase> enemyBases;
 
     public GamePlayLogic(PlayerController player)
     {

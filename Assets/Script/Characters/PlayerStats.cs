@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    public int PlayerLevel = 1;
-    public int currentExp = 0;
-    public int expToNextLevel = 100;
+    public int playerLevel;
+    public int currentExp;
+    public int expToNextLevel;
     
-    public int maxHealth = 100;
-    public int stamina = 10;
-    public int currentHealth = 100;
-    public int currentstamina = 10;
+    public int maxHealth;
+    public int stamina;
+    public int currentHealth;
+    public int currentStamina;
 
-    public float moveSpeed = 3.5f;
-    public int resistance = 10;
-    public int attackPower = 10;
-    public float attackSpeed = 0.8f;
+    public float moveSpeed;
+    public int resistance;
+    public int attackPower;
+    public float attackSpeed;
 
     private void Start()
     {
@@ -37,7 +37,7 @@ public class PlayerStats : MonoBehaviour
 
     private void LevelUp()
     {
-        PlayerLevel++;
+        playerLevel++;
         currentExp -= expToNextLevel;
         expToNextLevel += 10;// 레벨업 요구량 증가
         
@@ -46,7 +46,13 @@ public class PlayerStats : MonoBehaviour
         stamina += 2;
         
         currentHealth = maxHealth;
-        currentstamina = stamina;
+        currentStamina = stamina;
     }
 
+}
+
+[System.Serializable]
+public class PlayerStatsSheet
+{
+    public PlayerStats[] playerStatsSheet;
 }

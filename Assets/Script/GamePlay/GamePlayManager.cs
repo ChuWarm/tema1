@@ -39,21 +39,4 @@ public class GamePlayManager : Singleton<GamePlayManager>
         player = playerObj;
         return playerObj;
     }
-
-
-
-    public void InstantiatePlayer()
-    {
-        var newSpawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
-        var playerObj = Instantiate(player, newSpawnPoint.position, Quaternion.identity);
-    }
-
-
-
-    public GameObject FindPlayer()
-    {
-        var player = GameObject.FindGameObjectWithTag("Player");
-
-        return player;
-    }
 }
