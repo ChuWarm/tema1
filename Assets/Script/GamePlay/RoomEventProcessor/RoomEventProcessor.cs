@@ -32,7 +32,7 @@ public class RoomEventProcessor : MonoBehaviour
         };
     }
 
-    public void SetState(IRoomState newState)
+    private void SetState(IRoomState newState)
     {
         _currentRoomState = newState;
     }

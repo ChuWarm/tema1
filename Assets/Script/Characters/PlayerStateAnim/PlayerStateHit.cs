@@ -5,7 +5,7 @@ public class PlayerStateHit : IPlayerState
 {
     private PlayerController _player;
     
-    public void EnterState(PlayerController playerController)
+    public void EnterState(Script.Characters.PlayerController playerController)
     {
         _player = playerController;
     }
