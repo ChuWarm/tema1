@@ -13,6 +13,7 @@ public class HealthBar : MonoBehaviour
     private int maxValue;
     private Transform target;
     private Vector3 offset;
+    
 
     public void Initialize(int maxValue, Transform target = null)
     {
