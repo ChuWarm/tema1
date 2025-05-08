@@ -1,3 +1,5 @@
+using Script.Characters;
+
 public interface IPlayerAttackBehavior
 {
     void Enter(PlayerController player);

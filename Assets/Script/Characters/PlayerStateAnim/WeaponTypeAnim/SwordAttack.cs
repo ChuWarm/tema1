@@ -1,4 +1,5 @@
 using UnityEngine;
+using Script.Characters;
 
 public class SwordAttack : IPlayerAttackBehavior
 {

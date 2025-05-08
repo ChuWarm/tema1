@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Script.Characters;
 using UnityEngine;
 
 public class BattleRoomState : IRoomState
@@ -44,6 +45,7 @@ public class BattleRoomState : IRoomState
 
     public void Exit(RoomEventProcessor processor)
     {
+
     }
     
     private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)

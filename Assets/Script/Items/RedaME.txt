@@ -1,0 +1,17 @@
+사용 예시:
+
+// 아이템 사용
+ItemManager.Instance.UseItem("item_001", playerStats);
+
+// 아이템 추가
+Inventory.Instance.AddItem(itemData);
+
+// 아이템 장착
+Inventory.Instance.EquipItem("weapon_001");
+
+
+이 시스템을 사용하기 위해서는:
+
+1. 빈 게임 오브젝트를 만들고 Inventory와 ItemManager 컴포넌트를 추가
+2. 아이템 데이터를 Google Sheet에 등록 (effect 필드에 "Health:10,AttackPower:5" 형식으로 효과 입력)
+3. UI 시스템에서 Inventory의 이벤트를 구독하여 인벤토리 UI 업데이트

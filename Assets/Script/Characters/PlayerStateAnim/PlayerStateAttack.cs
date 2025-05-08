@@ -1,3 +1,4 @@
+using Script.Characters;
 using UnityEngine;
 
 public class PlayerStateAttack : IPlayerState
@@ -5,7 +6,7 @@ public class PlayerStateAttack : IPlayerState
     private IPlayerAttackBehavior _attackBehavior;
     private PlayerController _player;
     
-    public void EnterState(PlayerController playerController)
+    public void EnterState(Script.Characters.PlayerController playerController)
     {
         _player = playerController;
         _attackBehavior = _player.GetAttackBehavior();

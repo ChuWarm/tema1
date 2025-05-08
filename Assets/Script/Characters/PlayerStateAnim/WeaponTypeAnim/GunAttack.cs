@@ -1,4 +1,6 @@
+using Script.Characters;
 using UnityEngine;
+using Script.Characters;
 
 public class GunAttack : IPlayerAttackBehavior
 {
@@ -10,13 +12,10 @@ public class GunAttack : IPlayerAttackBehavior
         _playerController = player;
         _playerController.currentLookMode = LookMode.Mouse;
         _playerController.TirggerAttack();
-
     }
 
     public void Update()
     {
-        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        _playerController.Move(input, moveSpeedDuringAttack);
     }
 
     public void Exit()

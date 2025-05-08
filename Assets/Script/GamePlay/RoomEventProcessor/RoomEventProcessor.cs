@@ -18,10 +18,6 @@ public class RoomEventProcessor : MonoBehaviour
         SetState(CreateState(_roomType));
     }
 
-    private void OnDisable()
-    {
-        GameEventBus.RemoveAllSubscribes();
-    }
 
     private IRoomState CreateState(RoomType roomType)
     {
