@@ -44,6 +44,4 @@ public class PlayerStateMove : IPlayerState
         _playerController.Animator.SetBool(IsRun, false);
         _playerController = null;
     }
-    
-    
 }

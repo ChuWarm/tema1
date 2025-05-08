@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class PlayerStateAttack : IPlayerState
 {
+    private static readonly int Attack = Animator.StringToHash("Attack");
     private PlayerController _player;
     
     public void EnterState(PlayerController playerController)
     {
         _player = playerController;
-        _player.currentLookMode = LookMode.None;
+        _player.Animator.SetTrigger(Attack);
     }
 
     public void UpdateState()
     { 
         if (Input.GetButtonDown("Fire1"))
         {
-            _player.LookAtMouse();
-            Debug.Log("공격!");
+            _player.Animator.SetTrigger(Attack);
             return;
         }
         
