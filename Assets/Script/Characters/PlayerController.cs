@@ -7,24 +7,30 @@ using UnityEngine.Serialization;
 
 public enum PlayerState { None, Idle, Move, Attack, Hit }
 public enum LookMode { None, Movement, Mouse }
+public enum WeaponType { Sword = 0, Gun = 1 }
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
     private const float gravity = -9.81f;
-    
+    private static readonly int Attack = Animator.StringToHash("Attack");
+
     private Dictionary<PlayerState, IPlayerState> _playerStates;
+    private Dictionary<WeaponType, IPlayerAttackBehavior> _attackBehaviors;
     private PlayerStateIdle _playerStateIdle;
     private PlayerStateMove _playerStateMove;
     private PlayerStateAttack _playerStateAttack;
     private PlayerStateHit _playerStateHit;
-    private float _moveSpeed = 15f;
     private Vector3 _velocity;
+    private IPlayerAttackBehavior _currentAttackBehavior;
+    public IPlayerAttackBehavior GetAttackBehavior() => _currentAttackBehavior;
     
     public PlayerState CurrentState { get; private set; }
     public Animator Animator { get; private set; }
+    public WeaponType CurrentWeapon { get; private set; } = WeaponType.Sword;
 
+    public float moveSpeed = 15f;
     public LookMode currentLookMode = LookMode.Movement;
     public CharacterController characterController;
     
@@ -48,6 +54,13 @@ public class PlayerController : MonoBehaviour
             { PlayerState.Attack, _playerStateAttack},
             { PlayerState.Hit, _playerStateHit}
         };
+
+        _attackBehaviors = new()
+        {
+            { WeaponType.Sword, new SwordAttack() },
+            { WeaponType.Gun, new GunAttack() }
+        };
+        _currentAttackBehavior = _attackBehaviors[CurrentWeapon];
         
         Init();
     }
@@ -68,6 +81,9 @@ public class PlayerController : MonoBehaviour
 
     public void SetState(PlayerState state)
     {
+        if (state == PlayerState.Attack && CurrentWeapon == WeaponType.Sword)
+            _velocity = Vector3.zero;
+        
         if (CurrentState != PlayerState.None)
         {
             _playerStates[CurrentState].ExitState();
@@ -76,8 +92,18 @@ public class PlayerController : MonoBehaviour
         _playerStates[CurrentState].EnterState(this);
     }
     
-    public void Move(Vector3 inputDirection)
+    public void SetWeapon(WeaponType type)
     {
+        CurrentWeapon = type;
+        Animator.SetInteger("WeaponType", (int)type);
+        _currentAttackBehavior = _attackBehaviors[type];
+    }
+    
+    public void Move(Vector3 inputDirection, float speed)
+    {
+        if (CurrentState == PlayerState.Attack && CurrentWeapon == WeaponType.Sword)
+            return;
+        
         inputDirection.Normalize();
         
         Vector3 cameraForward = Camera.main.transform.forward;
@@ -100,14 +126,15 @@ public class PlayerController : MonoBehaviour
             _velocity.y += gravity * Time.deltaTime;
             moveDirection.y = _velocity.y;
             
-            characterController.Move(moveDirection * (_moveSpeed * Time.deltaTime));
+            characterController.Move(moveDirection * (moveSpeed * Time.deltaTime));
         }
     }
 
     public void LookAtMouse()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out var hit, 100f))
+        Debug.Log($"좌표 : {ray}");
+        if (Physics.Raycast(ray, out var hit, 300f))
         {
             Vector3 lookDirection = hit.point - transform.position;
             lookDirection.y = 0f;
@@ -117,5 +144,11 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(lookDirection);
             }
         }
+    }
+
+    public void TirggerAttack()
+    {
+        LookAtMouse();
+        Animator.SetTrigger(Attack);
     }
 }

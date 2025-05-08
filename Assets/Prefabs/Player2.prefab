@@ -133,7 +133,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 943a92cf6ef953c4c85597018f0198d6, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
   m_WarningMessage: 
@@ -179,6 +179,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d00063d48d18c41ae160bf32984c43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 15
   currentLookMode: 1
   characterController: {fileID: 682543427527632376}
 --- !u!54 &3201424534032826102

@@ -8,8 +8,8 @@ public class PlayerStateMove : IPlayerState
     public void EnterState(PlayerController playerController)
     {
         _playerController = playerController;
-        _playerController.currentLookMode = LookMode.Movement;
         _playerController.Animator.SetBool(IsRun, true);
+        _playerController.currentLookMode = LookMode.Movement;
     }
 
     public void UpdateState()
@@ -19,7 +19,7 @@ public class PlayerStateMove : IPlayerState
         
         if (speed > 0.1f)
         {
-            _playerController.Move(input);
+            _playerController.Move(input, _playerController.moveSpeed);
         }
         else
         {
