@@ -23,15 +23,15 @@ public class PlayerController : MonoBehaviour
     private Vector3 _velocity;
     
     public PlayerState CurrentState { get; private set; }
+    public Animator Animator { get; private set; }
 
     public LookMode currentLookMode = LookMode.Movement;
     public CharacterController characterController;
-    public Animator animator;
     
     private void Awake()
     {
+        Animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -63,6 +63,7 @@ public class PlayerController : MonoBehaviour
     private void Init()
     {
         SetState(PlayerState.Idle);
+        _velocity = Vector3.zero;
     }
 
     public void SetState(PlayerState state)
