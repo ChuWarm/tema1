@@ -21,10 +21,6 @@ public class PlayerStateAttack : IPlayerState
             _attackBehavior?.Update();
             return;
         }
-        // if (Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0 && !IsAttacking)
-        // {
-        //     _player.SetState(PlayerState.Idle);
-        // }
     }
 
     public void ExitState()

@@ -8,7 +8,7 @@ using Script.Core;
 
 namespace Script.Characters
 {
-    public enum PlayerState { None, Idle, Move, Attack, Hit }
+    public enum PlayerState { None, Idle, Move, Attack, Hit, Spawn }
     public enum WeaponType { Sword = 0, Gun = 1 }
 
     [RequireComponent(typeof(CharacterController))]
@@ -28,7 +28,10 @@ namespace Script.Characters
 
         private Vector3 moveDirection;
         private float verticalVelocity;
+        private bool isAttackMoving = false;
+        private float attackMoveSpeed = 15f;
         public static readonly int IsRun = Animator.StringToHash("IsRun");
+        public static readonly int Spawn = Animator.StringToHash("Spawn");
         private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
         private static readonly int JumpAnim = Animator.StringToHash("Jump");
         private static readonly int AttackAnim = Animator.StringToHash("Attack");
@@ -37,6 +40,7 @@ namespace Script.Characters
         private PlayerStateMove _playerStateMove;
         private PlayerStateAttack _playerStateAttack;
         private PlayerStateHit _playerStateHit;
+        private PlayerStateSpawn _playerStateSpawn;
 
         private Dictionary<PlayerState, IPlayerState> _playerStates;
         private Dictionary<WeaponType, IPlayerAttackBehavior> _attackBehaviors;
@@ -60,13 +64,15 @@ namespace Script.Characters
             _playerStateMove = new PlayerStateMove();
             _playerStateAttack = new PlayerStateAttack();
             _playerStateHit = new PlayerStateHit();
+            _playerStateSpawn = new PlayerStateSpawn();
 
             _playerStates = new Dictionary<PlayerState, IPlayerState>()
             {
                 { PlayerState.Idle, _playerStateIdle },
                 { PlayerState.Move, _playerStateMove },
                 { PlayerState.Attack, _playerStateAttack },
-                { PlayerState.Hit, _playerStateHit }
+                { PlayerState.Hit, _playerStateHit },
+                { PlayerState.Spawn, _playerStateSpawn },
             };
 
             _attackBehaviors = new()
@@ -75,7 +81,7 @@ namespace Script.Characters
                 { WeaponType.Gun, new GunAttack() }
             };
             _currentAttackBehavior = _attackBehaviors[CurrentWeapon];
-
+            
             Init();
         }
 
@@ -90,11 +96,13 @@ namespace Script.Characters
             {
                 _playerStates[CurrentState].UpdateState();
             }
+
+            AttackStep();
         }
 
         private void Init()
         {
-            SetState(PlayerState.Idle);
+            SetState(PlayerState.Spawn);
         }
 
         public void SetState(PlayerState state)
@@ -206,6 +214,15 @@ namespace Script.Characters
         //     }
         // }
 
+        private void AttackStep()
+        {
+            if (isAttackMoving)
+            {
+                Vector3 forward = transform.forward;
+                characterController.Move(forward * ((attackMoveSpeed) * Time.deltaTime));
+            }
+        }
+        
         private void LookAtMouse()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -224,16 +241,25 @@ namespace Script.Characters
         public void TriggerAttack()
         {
             animator.SetBool(IsRun, false);
-            animator.speed = 1.7f;
+            animator.speed = 1.6f;
             animator.SetTrigger(AttackAnim);
         }
 
         public void AttackStart()
         {
             LookAtMouse();
-            transform.position += transform.forward.normalized;
             _playerStateMove.IsRun = false;
             _playerStateAttack.IsAttacking = true;
+        }
+
+        public void AttackMoveStep()
+        {
+           isAttackMoving = true; 
+        }
+
+        public void AttackMoveStepEnd()
+        {
+            isAttackMoving = false;
         }
 
         public void AttackEnd()
@@ -241,6 +267,11 @@ namespace Script.Characters
             animator.speed = 1f;
             _playerStateMove.IsRun = true;
             _playerStateAttack.IsAttacking = false;
+        }
+
+        public void OnSpawnAnimationComplete()
+        {
+            SetState(PlayerState.Idle);
         }
     }
 }
