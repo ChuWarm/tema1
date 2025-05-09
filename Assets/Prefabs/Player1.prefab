@@ -963,8 +963,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 15
-  currentLookMode: 1
+  rotationSpeed: 10
+  jumpForce: 5
+  gravity: -9.81
+  isGrounded: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  playerManager: {fileID: 0}
   characterController: {fileID: 3282753185713313021}
+  animator: {fileID: 0}
 --- !u!54 &4817482682049005795
 Rigidbody:
   m_ObjectHideFlags: 0

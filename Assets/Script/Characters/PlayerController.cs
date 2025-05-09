@@ -9,7 +9,6 @@ using Script.Core;
 namespace Script.Characters
 {
     public enum PlayerState { None, Idle, Move, Attack, Hit }
-    public enum LookMode { None, Movement, Mouse }
     public enum WeaponType { Sword = 0, Gun = 1 }
 
     [RequireComponent(typeof(CharacterController))]
@@ -29,6 +28,7 @@ namespace Script.Characters
 
         private Vector3 moveDirection;
         private float verticalVelocity;
+        public static readonly int IsRun = Animator.StringToHash("IsRun");
         private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
         private static readonly int JumpAnim = Animator.StringToHash("Jump");
         private static readonly int AttackAnim = Animator.StringToHash("Attack");
@@ -46,7 +46,6 @@ namespace Script.Characters
 
         public PlayerState CurrentState { get; private set; }
         public WeaponType CurrentWeapon { get; private set; } = WeaponType.Sword;
-        public LookMode currentLookMode = LookMode.Movement;
 
         private void Awake()
         {
@@ -82,8 +81,8 @@ namespace Script.Characters
 
         private void Update()
         {
-            HandleMovement();
-            HandleJump();
+            // HandleMovement();
+            // HandleJump();
             HandleAttack();
             ApplyGravity();
 
@@ -104,12 +103,11 @@ namespace Script.Characters
             {
                 _playerStates[CurrentState].ExitState();
             }
-
             CurrentState = state;
             _playerStates[CurrentState].EnterState(this);
         }
 
-        private void HandleMovement()
+        public void HandleMovement()
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
@@ -155,7 +153,7 @@ namespace Script.Characters
         {
             if (Input.GetMouseButtonDown(0))
             {
-                animator?.SetTrigger(AttackAnim);
+                // animator?.SetTrigger(AttackAnim);
                 // 공격 로직은 PlayerManager에서 처리
             }
         }
@@ -208,7 +206,7 @@ namespace Script.Characters
         //     }
         // }
 
-        public void LookAtMouse()
+        private void LookAtMouse()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit, 300f))
@@ -216,17 +214,33 @@ namespace Script.Characters
                 Vector3 lookDirection = hit.point - transform.position;
                 lookDirection.y = 0f;
 
-                if (lookDirection.magnitude > 0.1f)
+                if (lookDirection.sqrMagnitude > 0.01f)
                 {
-                    transform.rotation = Quaternion.LookRotation(lookDirection);
+                    transform.forward = lookDirection.normalized;
                 }
             }
         }
 
-        public void TirggerAttack()
+        public void TriggerAttack()
+        {
+            animator.SetBool(IsRun, false);
+            animator.speed = 1.7f;
+            animator.SetTrigger(AttackAnim);
+        }
+
+        public void AttackStart()
         {
             LookAtMouse();
-            animator.SetTrigger(AttackAnim);
+            transform.position += transform.forward.normalized;
+            _playerStateMove.IsRun = false;
+            _playerStateAttack.IsAttacking = true;
+        }
+
+        public void AttackEnd()
+        { 
+            animator.speed = 1f;
+            _playerStateMove.IsRun = true;
+            _playerStateAttack.IsAttacking = false;
         }
     }
 }

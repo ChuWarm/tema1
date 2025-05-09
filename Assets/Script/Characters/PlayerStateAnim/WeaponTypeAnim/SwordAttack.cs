@@ -8,17 +8,14 @@ public class SwordAttack : IPlayerAttackBehavior
     public void Enter(PlayerController player)
     {
         _playerController = player;
-        _playerController.currentLookMode = LookMode.Mouse;
-        _playerController.LookAtMouse();
-        _playerController.TirggerAttack();
+        _playerController.TriggerAttack();
     }
 
     public void Update()
     {
         if (Input.GetButtonDown("Fire1"))
-        {
-            _playerController.LookAtMouse();
-            _playerController.TirggerAttack();
+        { 
+            _playerController.TriggerAttack();
         }
     }
 

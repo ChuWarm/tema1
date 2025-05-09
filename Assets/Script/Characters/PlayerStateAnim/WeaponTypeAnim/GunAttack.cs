@@ -10,8 +10,7 @@ public class GunAttack : IPlayerAttackBehavior
     public void Enter(PlayerController player)
     {
         _playerController = player;
-        _playerController.currentLookMode = LookMode.Mouse;
-        _playerController.TirggerAttack();
+        _playerController.TriggerAttack();
     }
 
     public void Update()
