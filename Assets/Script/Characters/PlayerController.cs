@@ -8,7 +8,7 @@ using Script.Core;
 
 namespace Script.Characters
 {
-    public enum PlayerState { None, Idle, Move, Attack, Hit, Spawn }
+    public enum PlayerState { None, Idle, Move, Attack, Hit, Dash, Spawn }
     public enum WeaponType { Sword = 0, Gun = 1 }
 
     [RequireComponent(typeof(CharacterController))]
@@ -26,20 +26,24 @@ namespace Script.Characters
         public CharacterController characterController;
         public Animator animator;
 
-        private Vector3 moveDirection;
-        private float verticalVelocity;
-        private bool isAttackMoving = false;
-        private float attackMoveSpeed = 15f;
-        public static readonly int IsRun = Animator.StringToHash("IsRun");
-        public static readonly int Spawn = Animator.StringToHash("Spawn");
-        private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
+        private Vector3 _moveDirection;
+        private float _verticalVelocity;
+        private float _attackMoveSpeed = 15f;
+        private float _attackStepDuration = 0.15f;
+        private float _attackStepElapsed = 0f;
+        public static readonly int Idle = Animator.StringToHash("Idle");
+        public static readonly int IsWalkingAnim = Animator.StringToHash("IsRun");
+        public static readonly int SpawnAnim = Animator.StringToHash("Spawn");
+        public static readonly int DashAnim = Animator.StringToHash("Dash");
+        public static readonly int AttackAnim = Animator.StringToHash("Attack");
         private static readonly int JumpAnim = Animator.StringToHash("Jump");
-        private static readonly int AttackAnim = Animator.StringToHash("Attack");
+        private static readonly int DeadAnim = Animator.StringToHash("Dead");
 
         private PlayerStateIdle _playerStateIdle;
         private PlayerStateMove _playerStateMove;
         private PlayerStateAttack _playerStateAttack;
         private PlayerStateHit _playerStateHit;
+        private PlayerStateDash _playerStateDash;
         private PlayerStateSpawn _playerStateSpawn;
 
         private Dictionary<PlayerState, IPlayerState> _playerStates;
@@ -47,6 +51,11 @@ namespace Script.Characters
 
         private IPlayerAttackBehavior _currentAttackBehavior;
         public IPlayerAttackBehavior GetAttackBehavior() => _currentAttackBehavior;
+
+        public bool IsRun { get; set; } = true;
+        public bool IsAttacking { get; set; }
+        public bool IsAttackMoving { get; set; }
+
 
         public PlayerState CurrentState { get; private set; }
         public WeaponType CurrentWeapon { get; private set; } = WeaponType.Sword;
@@ -64,6 +73,7 @@ namespace Script.Characters
             _playerStateMove = new PlayerStateMove();
             _playerStateAttack = new PlayerStateAttack();
             _playerStateHit = new PlayerStateHit();
+            _playerStateDash = new PlayerStateDash();
             _playerStateSpawn = new PlayerStateSpawn();
 
             _playerStates = new Dictionary<PlayerState, IPlayerState>()
@@ -72,6 +82,7 @@ namespace Script.Characters
                 { PlayerState.Move, _playerStateMove },
                 { PlayerState.Attack, _playerStateAttack },
                 { PlayerState.Hit, _playerStateHit },
+                { PlayerState.Dash, _playerStateDash },
                 { PlayerState.Spawn, _playerStateSpawn },
             };
 
@@ -81,7 +92,7 @@ namespace Script.Characters
                 { WeaponType.Gun, new GunAttack() }
             };
             _currentAttackBehavior = _attackBehaviors[CurrentWeapon];
-            
+
             Init();
         }
 
@@ -111,6 +122,7 @@ namespace Script.Characters
             {
                 _playerStates[CurrentState].ExitState();
             }
+
             CurrentState = state;
             _playerStates[CurrentState].EnterState(this);
         }
@@ -130,8 +142,8 @@ namespace Script.Characters
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
                 // 이동
-                moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                characterController.Move(moveSpeed * Time.deltaTime * moveDirection);
+                _moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                characterController.Move(moveSpeed * Time.deltaTime * _moveDirection);
 
                 animator?.SetBool(IsWalkingAnim, true);
             }
@@ -145,14 +157,14 @@ namespace Script.Characters
         {
             isGrounded = characterController.isGrounded;
 
-            if (isGrounded && verticalVelocity < 0)
+            if (isGrounded && _verticalVelocity < 0)
             {
-                verticalVelocity = -2f;
+                _verticalVelocity = -2f;
             }
 
             if (Input.GetButtonDown("Jump") && isGrounded)
             {
-                verticalVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
+                _verticalVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
                 animator?.SetTrigger(JumpAnim);
             }
         }
@@ -168,8 +180,8 @@ namespace Script.Characters
 
         private void ApplyGravity()
         {
-            verticalVelocity += gravity * Time.deltaTime;
-            characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
+            _verticalVelocity += gravity * Time.deltaTime;
+            characterController.Move(new Vector3(0, _verticalVelocity, 0) * Time.deltaTime);
         }
 
         private void OnDrawGizmosSelected()
@@ -216,13 +228,22 @@ namespace Script.Characters
 
         private void AttackStep()
         {
-            if (isAttackMoving)
+            if (IsAttackMoving && CurrentState == PlayerState.Attack)
             {
-                Vector3 forward = transform.forward;
-                characterController.Move(forward * ((attackMoveSpeed) * Time.deltaTime));
+                _attackStepElapsed += Time.deltaTime;
+
+                if (_attackStepElapsed < _attackStepDuration)
+                {
+                    characterController.Move(transform.forward * (_attackMoveSpeed * Time.deltaTime));
+                }
+                else
+                {
+                    IsAttackMoving = false;
+                    _attackStepElapsed = 0f;
+                }
             }
         }
-        
+
         private void LookAtMouse()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -240,38 +261,58 @@ namespace Script.Characters
 
         public void TriggerAttack()
         {
-            animator.SetBool(IsRun, false);
+            animator.SetBool(IsWalkingAnim, false);
             animator.speed = 1.6f;
             animator.SetTrigger(AttackAnim);
         }
 
+        public void TriggerDash()
+        {
+            if (CurrentState == PlayerState.Dash) return;
+
+            animator.speed = 1f;
+            SetState(PlayerState.Dash);
+        }
+        
+        public void IsPlayerDead()
+        {
+            if (PlayerManager.Instance.currentHealth <= 0)
+                animator.Play(DeadAnim);
+        }
+
+        
+        #region 애니메이션 이벤트
+        
         public void AttackStart()
         {
             LookAtMouse();
-            _playerStateMove.IsRun = false;
-            _playerStateAttack.IsAttacking = true;
+            IsRun = false;
+            IsAttacking = true;
         }
 
         public void AttackMoveStep()
         {
-           isAttackMoving = true; 
+            IsAttackMoving = true;
+            _attackStepElapsed = 0f;
         }
 
         public void AttackMoveStepEnd()
         {
-            isAttackMoving = false;
+            IsAttackMoving = false;
         }
 
         public void AttackEnd()
-        { 
+        {
             animator.speed = 1f;
-            _playerStateMove.IsRun = true;
-            _playerStateAttack.IsAttacking = false;
+            IsRun = true;
+            IsAttacking = false;
         }
 
         public void OnSpawnAnimationComplete()
         {
             SetState(PlayerState.Idle);
         }
+        
+        #endregion
     }
 }

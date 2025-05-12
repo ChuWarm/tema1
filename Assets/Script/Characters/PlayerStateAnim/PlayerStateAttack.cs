@@ -5,9 +5,8 @@ public class PlayerStateAttack : IPlayerState
 {
     private IPlayerAttackBehavior _attackBehavior;
     private PlayerController _player;
-    public bool IsAttacking { get; set; }
     
-    public void EnterState(Script.Characters.PlayerController playerController)
+    public void EnterState(PlayerController playerController)
     {
         _player = playerController;
         _attackBehavior = _player.GetAttackBehavior();
@@ -16,10 +15,9 @@ public class PlayerStateAttack : IPlayerState
 
     public void UpdateState()
     {
-        if (IsAttacking)
+        if (_player.IsAttacking)
         {
             _attackBehavior?.Update();
-            return;
         }
     }
 

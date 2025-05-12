@@ -3,13 +3,12 @@ using UnityEngine;
 
 public class PlayerStateIdle : IPlayerState
 {
-    public static readonly int Idle = Animator.StringToHash("Idle");
     private PlayerController _playerController;
     
     public void EnterState(Script.Characters.PlayerController playerController)
     {
         _playerController = playerController;
-        _playerController.animator.SetBool(Idle, true);
+        _playerController.animator.SetBool(PlayerController.Idle, true);
     }
 
     public void UpdateState()
@@ -30,11 +29,17 @@ public class PlayerStateIdle : IPlayerState
             _playerController.SetState(PlayerState.Attack);
             return;
         }
+        
+        // 대쉬
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _playerController.TriggerDash();
+        }
     }
 
     public void ExitState()
     {
-        _playerController.animator.SetBool(Idle, false);
+        _playerController.animator.SetBool(PlayerController.Idle, false);
         _playerController = null;
     }
 }

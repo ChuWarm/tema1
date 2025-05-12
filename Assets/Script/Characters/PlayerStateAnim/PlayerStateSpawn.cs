@@ -7,7 +7,7 @@ public class PlayerStateSpawn : IPlayerState
     public void EnterState(PlayerController playerController)
     {
         _player = playerController;
-        _player.animator.SetTrigger(PlayerController.Spawn);
+        _player.animator.SetTrigger(PlayerController.SpawnAnim);
     }
 
     public void UpdateState()

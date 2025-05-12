@@ -64,7 +64,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.27851412
+      - time: 0.23369619
         functionName: AttackMoveStep
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -78,7 +78,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.97191006
+      - time: 0.95510334
         functionName: AttackEnd
         data: 
         objectReferenceParameter: {instanceID: 0}
