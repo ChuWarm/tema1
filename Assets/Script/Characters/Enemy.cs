@@ -7,22 +7,29 @@ namespace Script.Characters
 {
     public class Enemy : MonoBehaviour, IDamageable, IAttacker
     {
-        [Header("기본 스탯")]
-        public int maxHealth = 100;
-        public int currentHealth;
-        public int attackDamage = 10;
-        public float attackRange = 2f;
-        public float attackCooldown = 1f;
-        public float moveSpeed = 3f;
+        [Header("Enemy ID")]
+        public string enemyID; // Inspector에서 설정할 적 ID
 
-        [Header("전투 설정")]
-        public float detectionRange = 10f;
-        public float attackAngle = 45f;
+        [Header("기본 스탯")]
+        private int health;
+        private int currentHealth;
+        private int attackPower;
+        private float attackRange;
+        private float attackCooldown;
+        private float moveSpeed;
+
+        [Header("감지 및 추적")]
+        private float detectionRange = 10f;  // 플레이어 감지 범위
+        private float attackAngle = 45f;     // 공격 가능한 각도
+        private float rotationSpeed = 5f;    // 회전 속도
+        private Vector3 lastKnownPosition;   // 마지막으로 발견한 플레이어 위치
+        private bool isPlayerDetected;       // 플레이어 감지 상태
+        private float searchTimer;           // 플레이어 추적 타이머
+        private float maxSearchTime = 5f;    // 최대 추적 시간
 
         [Header("보상 설정")]
-        public int expReward = 10;
+        private int experienceGiven;
         public ItemDropData[] possibleDrops;
-        public float dropChance = 0.3f;
 
         [Header("애니메이션")]
         public Animator animator;
@@ -41,38 +48,107 @@ namespace Script.Characters
 
         private void Start()
         {
-            currentHealth = maxHealth;
+            LoadEnemyData();
+            currentHealth = health;
             playerTransform = PlayerManager.Instance.transform;
+        }
+
+        private void LoadEnemyData()
+        {
+            if (string.IsNullOrEmpty(enemyID))
+            {
+                Debug.LogError($"Enemy {gameObject.name} has no enemyID set!");
+                return;
+            }
+
+            var enemyData = DataManager.GetData<EnemyData>(enemyID);
+            if (enemyData == null)
+            {
+                Debug.LogError($"Failed to load enemy data for ID: {enemyID}");
+                return;
+            }
+
+            // 스탯 로드
+            health = enemyData.health;
+            attackPower = enemyData.attackPower;
+            attackRange = enemyData.attackRange;
+            attackCooldown = enemyData.attackCooldown;
+            moveSpeed = enemyData.moveSpeed;
+            experienceGiven = enemyData.experienceGiven;
+
+            Debug.Log($"Loaded enemy data for {enemyData.enemyName} (ID: {enemyID})");
         }
 
         private void Update()
         {
             if (isDead) return;
 
-            // 플레이어 감지 및 추적
             float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
-            
+            Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
+            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+
+            // 플레이어 감지 로직
             if (distanceToPlayer <= detectionRange)
             {
-                // 플레이어를 향해 회전
-                Vector3 direction = (playerTransform.position - transform.position).normalized;
-                transform.rotation = Quaternion.LookRotation(direction);
-
-                if (distanceToPlayer <= attackRange)
+                // 시야각 체크
+                if (angleToPlayer <= attackAngle * 2)
                 {
-                    // 공격 가능한 각도인지 확인
-                    float angle = Vector3.Angle(transform.forward, direction);
-                    if (angle <= attackAngle && CanAttack())
+                    // 레이캐스트로 장애물 체크
+                    RaycastHit hit;
+                    if (Physics.Raycast(transform.position, directionToPlayer, out hit, detectionRange))
                     {
-                        PerformAttack(PlayerManager.Instance);
+                        if (hit.transform == playerTransform)
+                        {
+                            isPlayerDetected = true;
+                            lastKnownPosition = playerTransform.position;
+                            searchTimer = 0f;
+                        }
                     }
-                    animator?.SetBool(IsWalkingAnim, false);
+                }
+            }
+
+            // 플레이어 추적 및 공격 로직
+            if (isPlayerDetected)
+            {
+                if (distanceToPlayer <= detectionRange)
+                {
+                    // 플레이어를 향해 부드럽게 회전
+                    Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+                    if (distanceToPlayer <= attackRange)
+                    {
+                        // 공격 가능한 각도인지 확인
+                        if (angleToPlayer <= attackAngle && CanAttack())
+                        {
+                            PerformAttack(PlayerManager.Instance);
+                        }
+                        animator?.SetBool(IsWalkingAnim, false);
+                    }
+                    else
+                    {
+                        // 플레이어에게 이동
+                        transform.position += moveSpeed * Time.deltaTime * transform.forward;
+                        animator?.SetBool(IsWalkingAnim, true);
+                    }
                 }
                 else
                 {
-                    // 플레이어에게 이동
-                    transform.position += moveSpeed * Time.deltaTime * transform.forward;
-                    animator?.SetBool(IsWalkingAnim, true);
+                    // 플레이어가 감지 범위를 벗어나면 마지막 위치로 이동
+                    searchTimer += Time.deltaTime;
+                    if (searchTimer < maxSearchTime)
+                    {
+                        Vector3 directionToLastKnown = (lastKnownPosition - transform.position).normalized;
+                        transform.rotation = Quaternion.Slerp(transform.rotation, 
+                            Quaternion.LookRotation(directionToLastKnown), rotationSpeed * Time.deltaTime);
+                        transform.position += moveSpeed * Time.deltaTime * transform.forward;
+                        animator?.SetBool(IsWalkingAnim, true);
+                    }
+                    else
+                    {
+                        isPlayerDetected = false;
+                        animator?.SetBool(IsWalkingAnim, false);
+                    }
                 }
             }
             else
@@ -108,30 +184,13 @@ namespace Script.Characters
             EffectManager.Instance.PlayEffect("Death", transform.position, Quaternion.identity);
             
             // 경험치 지급
-            PlayerManager.Instance.GainExperience(expReward);
-            EffectManager.Instance.ShowExpText(expReward, transform.position + Vector3.up);
+            PlayerManager.Instance.GainExperience(experienceGiven);
+            EffectManager.Instance.ShowExpText(experienceGiven, transform.position + Vector3.up);
             
-            // 아이템 드롭
-            DropItems();
             
             Destroy(gameObject, 2f);
         }
-
-        private void DropItems()
-        {
-            if (Random.value > dropChance) return;
-
-            foreach (var dropData in possibleDrops)
-            {
-                if (Random.value <= dropData.dropChance)
-                {
-                    Vector3 dropPosition = transform.position + Random.insideUnitSphere * 0.5f;
-                    dropPosition.y = transform.position.y;
-                    Instantiate(dropData.itemPrefab, dropPosition, Quaternion.identity);
-                }
-            }
-        }
-
+        
         public bool IsDead()
         {
             return isDead;
@@ -164,7 +223,7 @@ namespace Script.Characters
         private IEnumerator DelayedDamage(IDamageable target)
         {
             yield return new WaitForSeconds(0.3f); // 애니메이션 타이밍에 맞춰 조정
-            target.TakeDamage(attackDamage);
+            target.TakeDamage(attackPower);
         }
 
         public bool CanAttack()
@@ -179,7 +238,7 @@ namespace Script.Characters
 
         public int GetAttackDamage()
         {
-            return attackDamage;
+            return attackPower;
         }
 
         private void OnDrawGizmosSelected()
