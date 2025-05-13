@@ -16,6 +16,12 @@ public class RoomEventProcessor : MonoBehaviour
         _roomType = _room.RoomType;
         
         SetState(CreateState(_roomType));
+
+        if (_roomType == RoomType.Spawn)
+        {
+            _eventTriggered = true;
+            _currentRoomState.Enter(this);
+        }
     }
 
 
@@ -23,6 +29,7 @@ public class RoomEventProcessor : MonoBehaviour
     {
         return roomType switch
         {
+            RoomType.Spawn => new SpawnRoomState(),
             RoomType.Normal => new BattleRoomState(this),
             RoomType.Elite => new BattleRoomState(this),
             RoomType.Rest => new RestRoomState(),

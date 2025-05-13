@@ -46,10 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomPrefabs:
   - {fileID: 5897335972713401436, guid: b1bb3aa302d8b544592d26b010241fad, type: 3}
-  - {fileID: 5897335972713401436, guid: d1a70b7a005474a4d96176353c0f11f7, type: 3}
-  - {fileID: 5897335972713401436, guid: cdfa3bdfa1b3e404882d9a8cf8fc94b4, type: 3}
-  - {fileID: 5897335972713401436, guid: 7ba25f2b72f67ad44a97278050c5572b, type: 3}
-  - {fileID: 5897335972713401436, guid: 1002619306a3dcc4f8c89a9544554062, type: 3}
-  - {fileID: 5897335972713401436, guid: dfe94500a4626f5488612dc200e59d8b, type: 3}
+  - {fileID: 5897335972713401436, guid: 598c7ea62540c0b4a8330e768c5785b6, type: 3}
+  - {fileID: 5897335972713401436, guid: 339d5ca989bb82d4cbc681324c798748, type: 3}
+  - {fileID: 5897335972713401436, guid: 4afac00e71bec7f4c90e503873276be4, type: 3}
+  - {fileID: 5897335972713401436, guid: 85c9dd410a093074caa09d7769636d88, type: 3}
+  - {fileID: 5897335972713401436, guid: 85aace67cd625a2408c0ca164f79396a, type: 3}
   horizontalPath: {fileID: 4230057313008605981, guid: 39d4724520ecb784d8addf0281a62fde, type: 3}
   verticalPath: {fileID: 3228727595221246441, guid: be5967972078b4d45b495f4c956e2c42, type: 3}
+  map: {fileID: 0}

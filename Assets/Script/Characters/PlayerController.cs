@@ -247,14 +247,17 @@ namespace Script.Characters
         private void LookAtMouse()
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out var hit, 300f))
-            {
-                Vector3 lookDirection = hit.point - transform.position;
-                lookDirection.y = 0f;
+            Plane plane = new Plane(Vector3.up, transform.position);
 
-                if (lookDirection.sqrMagnitude > 0.01f)
+            if (plane.Raycast(ray, out float distance))
+            {
+                Vector3 point = ray.GetPoint(distance);
+                Vector3 direction = point - transform.position;
+                direction.y = 0f;
+
+                if (direction.sqrMagnitude > 0.01f)
                 {
-                    transform.forward = lookDirection.normalized;
+                    transform.forward = direction.normalized;
                 }
             }
         }
