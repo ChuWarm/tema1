@@ -29,7 +29,6 @@ namespace Script.Characters
 
         [Header("보상 설정")]
         private int experienceGiven;
-        public ItemDropData[] possibleDrops;
 
         [Header("애니메이션")]
         public Animator animator;
@@ -251,12 +250,5 @@ namespace Script.Characters
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, attackRange);
         }
-    }
-
-    [System.Serializable]
-    public class ItemDropData
-    {
-        public GameObject itemPrefab;
-        public float dropChance = 0.1f;
     }
 } 
