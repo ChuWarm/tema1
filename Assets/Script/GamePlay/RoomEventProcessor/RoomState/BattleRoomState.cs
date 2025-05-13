@@ -18,24 +18,24 @@ public class BattleRoomState : IRoomState
     {
         Debug.Log("Normal Room 입장: 적 스폰 시작");
         
-        var positions = new List<Vector3>();
-
-        for (int i = 0; i < 3; i++)
-        {
-            positions.Add(processor.transform.position + 
-                          new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f)));
-
-            EnemyData dummydata = new EnemyData
-            {
-                enemyID = "dummy_enemy",
-                enemyName = "더미",
-                health = 10
-            };
-            
-            var enemy = EnemyFactory.SpawnEnemy(dummydata, positions[i], processor.transform);
-            if (enemy != null)
-                _activeEnemies.Add(enemy);
-        }
+        // var positions = new List<Vector3>();
+        //
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     positions.Add(processor.transform.position + 
+        //                   new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f)));
+        //
+        //     EnemyData dummydata = new EnemyData
+        //     {
+        //         enemyID = "dummy_enemy",
+        //         enemyName = "더미",
+        //         health = 10
+        //     };
+        //     
+        //     var enemy = EnemyFactory.SpawnEnemy(dummydata, positions[i], processor.transform);
+        //     if (enemy != null)
+        //         _activeEnemies.Add(enemy);
+        // }
     }
 
     public void Update(RoomEventProcessor processor)

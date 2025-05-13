@@ -236,7 +236,6 @@ namespace Script.Characters
                 }
             }
         }
-
         public ItemData GetEquippedItem(string slot)
         {
             return equippedItems.ContainsKey(slot) ? equippedItems[slot] : null;
