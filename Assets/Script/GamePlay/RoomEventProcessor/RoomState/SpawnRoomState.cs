@@ -1,24 +1,47 @@
+using UnityEngine;
+
 public class SpawnRoomState : IRoomState
 {
-    private RoomEventProcessor _roomEventProcessor;
-    public void Enter(RoomEventProcessor processor)
+    private readonly RoomEventProcessor _processor;
+    private readonly Room _room;
+
+    public SpawnRoomState(RoomEventProcessor processor)
     {
-        _roomEventProcessor = processor;
-        processor.OnRoomCleared(new RoomClearedEvent());
+        _processor = processor;
+        _room = processor.GetRoom();
+    }
+
+    public void OnStateEnter(RoomEventProcessor processor)
+    {
+        Debug.Log($"[스폰방] {_room.gameObject.name}: 시작 지점 준비");
+    }
+
+    public void OnStateExit(RoomEventProcessor processor)
+    {
+        Debug.Log($"[스폰방] {_room.gameObject.name}: 시작 지점 종료");
     }
 
     public void OnPlayerEnter(RoomEventProcessor processor)
     {
-        // 스폰룸은 이미 클리어된 상태이므로 추가 작업이 필요 없음
+        if (_room.IsCleared) return;
+        InitializeSpawnPoint();
     }
 
-    public void Update(RoomEventProcessor processor)
+    public void OnRoomCleared(RoomEventProcessor processor)
     {
-
+        Debug.Log($"[스폰방] {_room.gameObject.name}: 시작 지점 활성화");
     }
 
-    public void Exit(RoomEventProcessor processor)
+    public void OnStateUpdate(RoomEventProcessor processor)
     {
-        _roomEventProcessor = null;
+        if (!_room.IsCleared)
+        {
+            processor.OnRoomCleared(null);
+        }
+    }
+
+    private void InitializeSpawnPoint()
+    {
+        Debug.Log($"[스폰방] {_room.gameObject.name}: 시작 지점 초기화");
     }
 }

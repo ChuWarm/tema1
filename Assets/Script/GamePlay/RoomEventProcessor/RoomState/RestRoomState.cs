@@ -2,25 +2,47 @@ using UnityEngine;
 
 public class RestRoomState : IRoomState
 {
-    private RoomEventProcessor _roomEventProcessor;
+    private readonly RoomEventProcessor _processor;
+    private readonly Room _room;
 
-    public void Enter(RoomEventProcessor processor)
+    public RestRoomState(RoomEventProcessor processor)
     {
-        _roomEventProcessor = processor;
+        _processor = processor;
+        _room = processor.GetRoom();
+    }
+
+    public void OnStateEnter(RoomEventProcessor processor)
+    {
+        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 준비");
+    }
+
+    public void OnStateExit(RoomEventProcessor processor)
+    {
+        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 종료");
     }
 
     public void OnPlayerEnter(RoomEventProcessor processor)
     {
-        // 휴식방은 자동으로 클리어됨
-        processor.OnRoomCleared(new RoomClearedEvent());
+        if (_room.IsCleared) return;
+        StartRest();
     }
 
-    public void Update(RoomEventProcessor processor)
+    public void OnRoomCleared(RoomEventProcessor processor)
     {
+        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 완료");
     }
 
-    public void Exit(RoomEventProcessor processor)
+    public void OnStateUpdate(RoomEventProcessor processor)
     {
-        _roomEventProcessor = null;
+        if (!_room.IsCleared)
+        {
+            processor.OnRoomCleared(null);
+        }
+    }
+
+    private void StartRest()
+    {
+        // TODO: 플레이어 체력 회복 로직
+        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 시작");
     }
 }

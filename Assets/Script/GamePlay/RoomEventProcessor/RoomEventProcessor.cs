@@ -2,109 +2,149 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public class RoomEventProcessor : MonoBehaviour
 {
     private IRoomState _currentRoomState;
     private RoomType _roomType;
     private Room _room;
-    private bool _isInitialized = false;
+    private bool _isInitialized;
     public bool IsInitialized => _isInitialized;
     private EnemySpawnManager _enemySpawnManager;
+    private UniTaskCompletionSource<bool> _initCompletionSource;
     
     private void Awake()
+    {
+        _initCompletionSource = new UniTaskCompletionSource<bool>();
+        InitializeComponents();
+        StartCoroutine(InitializeRoom());
+    }
+
+    private void Update()
+    {
+        if (_isInitialized)
+        {
+            _currentRoomState?.OnStateUpdate(this);
+        }
+    }
+
+    private void InitializeComponents()
     {
         _room = GetComponent<Room>();
         if (_room == null)
         {
-            Debug.LogError($"RoomEventProcessor {gameObject.name}: Room component not found!");
+            Debug.LogError($"[방이벤트] {gameObject.name}: Room 컴포넌트를 찾을 수 없음");
             return;
         }
 
         _roomType = _room.RoomType;
-        Debug.Log($"RoomEventProcessor {gameObject.name}: Initializing for room type {_roomType}");
         
         // Normal과 Elite 방에서만 EnemySpawnManager 생성
-        if (_roomType == RoomType.Normal || _roomType == RoomType.Elite)
+        if (_roomType == RoomType.Normal || _roomType == RoomType.Elite || _roomType == RoomType.Boss)
         {
             _enemySpawnManager = GetComponent<EnemySpawnManager>();
             if (_enemySpawnManager == null)
             {
                 _enemySpawnManager = gameObject.AddComponent<EnemySpawnManager>();
-                Debug.Log($"RoomEventProcessor {gameObject.name}: Added EnemySpawnManager for {_roomType} room");
+                Debug.Log($"[방이벤트] {gameObject.name}: EnemySpawnManager 추가됨");
             }
-        }
-        else
-        {
-            Debug.Log($"RoomEventProcessor {gameObject.name}: Skipping EnemySpawnManager for {_roomType} room");
-        }
-        
-        SetState(CreateState(_roomType));
-        _isInitialized = true;
-
-        // 스폰 방 초기화는 MapData가 설정된 후에 수행
-        if (_roomType == RoomType.Spawn)
-        {
-            StartCoroutine(InitializeSpawnRoom());
         }
     }
 
-    private IEnumerator InitializeSpawnRoom()
+    private IEnumerator InitializeRoom()
     {
-        // MapData가 설정될 때까지 대기
-        while (_room.GetMapData() == null)
+        // MapData가 필요한 방의 경우 대기
+        if (RequiresMapData(_roomType))
         {
-            yield return null;
-        }
-        
-        // 모든 문 열기
-        foreach (var door in _room.GetDoors())
-        {
-            if (door != null)
+            while (_room.GetMapData() == null)
             {
-                door.Open();
-                Debug.Log($"RoomEventProcessor {gameObject.name}: Opening spawn room door {door.gameObject.name}");
+                yield return null;
             }
         }
-        
-        _currentRoomState.Enter(this);
+
+        try
+        {
+            // 상태 생성 및 초기화
+            _currentRoomState = CreateState(_roomType);
+            _currentRoomState.OnStateEnter(this);
+            _isInitialized = true;
+            
+            Debug.Log($"[방이벤트] {gameObject.name}: 초기화 완료 ({_roomType} 방)");
+            _initCompletionSource.TrySetResult(true);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[방이벤트] {gameObject.name}: 초기화 실패 - {e.Message}");
+            _initCompletionSource.TrySetException(e);
+        }
+    }
+
+    private bool RequiresMapData(RoomType roomType)
+    {
+        return roomType == RoomType.Spawn || roomType == RoomType.Boss;
     }
 
     private IRoomState CreateState(RoomType roomType)
     {
         return roomType switch
         {
-            RoomType.Spawn => new SpawnRoomState(),
+            RoomType.Spawn => new SpawnRoomState(this),
             RoomType.Normal => new BattleRoomState(this),
             RoomType.Elite => new BattleRoomState(this),
-            RoomType.Rest => new RestRoomState(),
-            RoomType.Shop => new ShopRoomState(),
-            RoomType.Boss => new BossRoomState(),
+            RoomType.Rest => new RestRoomState(this),
+            RoomType.Shop => new ShopRoomState(this),
+            RoomType.Boss => new BossRoomState(this),
             _ => new BattleRoomState(this)
         };
     }
 
-    private void SetState(IRoomState newState)
+    public async UniTask OnPlayerEnterRoomAsync()
     {
-        _currentRoomState = newState;
+        if (!_isInitialized)
+        {
+            Debug.Log($"[방이벤트] {gameObject.name}: 초기화 대기 중...");
+            try
+            {
+                await _initCompletionSource.Task;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[방이벤트] {gameObject.name}: 초기화 실패로 인한 플레이어 진입 실패 - {e.Message}");
+                return;
+            }
+        }
+
+        Debug.Log($"[방이벤트] {gameObject.name}: 플레이어 진입 ({_roomType} 방)");
+        _room.CloseAllDoors();
+        _currentRoomState?.OnPlayerEnter(this);
     }
 
     public void OnPlayerEnterRoom()
     {
-        if (!_isInitialized)
-        {
-            Debug.LogError($"RoomEventProcessor {gameObject.name}: Cannot process room enter - not initialized!");
-            return;
-        }
-
-        Debug.Log($"RoomEventProcessor {gameObject.name}: Processing room enter for type {_roomType}");
-        
-        // 방 상태 처리
-        _currentRoomState?.OnPlayerEnter(this);
+        OnPlayerEnterRoomAsync().Forget();
     }
     
     public void OnRoomCleared(RoomClearedEvent roomClearedEvent)
     {
-        _room.MarkRoomCleared();
+        if (!_isInitialized) return;
+
+        Debug.Log($"[방이벤트] {gameObject.name}: 방 클리어");
+        _currentRoomState?.OnRoomCleared(this);
+        _room.MarkRoomAsCleared();;
     }
+
+    private void OnDestroy()
+    {
+        if (_isInitialized)
+        {
+            _currentRoomState?.OnStateExit(this);
+        }
+        _initCompletionSource?.TrySetCanceled();
+    }
+
+    // 상태 클래스에서 사용할 수 있는 헬퍼 메서드들
+    public Room GetRoom() => _room;
+    public RoomType GetRoomType() => _roomType;
+    public EnemySpawnManager GetEnemySpawnManager() => _enemySpawnManager;
 }

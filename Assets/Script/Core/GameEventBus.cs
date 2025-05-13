@@ -38,7 +38,7 @@ public class RoomClearedEvent : IGameEvent
 public class RoomEnemyDeadEvent : IGameEvent
 {
     public RoomEventProcessor sender;
-    public EnemyBase enemy;
+    public Enemy enemy;
 }
 
 public static class GameEventBus

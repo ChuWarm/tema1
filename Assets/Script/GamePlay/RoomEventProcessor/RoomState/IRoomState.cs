@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IRoomState
 {
-    void Enter(RoomEventProcessor processor);
-    void Update(RoomEventProcessor processor);
-    void Exit(RoomEventProcessor processor);
+    void OnStateEnter(RoomEventProcessor processor);
+    void OnStateExit(RoomEventProcessor processor);
     void OnPlayerEnter(RoomEventProcessor processor);
+    void OnRoomCleared(RoomEventProcessor processor);
+    void OnStateUpdate(RoomEventProcessor processor);
 }

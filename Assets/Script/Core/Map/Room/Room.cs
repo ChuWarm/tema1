@@ -8,147 +8,172 @@ public class Room : MonoBehaviour
 {
     [SerializeField] private Door doorNorth, doorSouth, doorEast, doorWest;
     
+    [Header("진입 설정")]
+    [SerializeField] private float enterThreshold = 50f;
+    
     private Door[] _doors;
-    private float _enterThreshold = 50f;
-    private bool _entered = false;
     private Transform _playerTransform;
     private MapData _mapData;
-    private RoomEventProcessor _eventProcessor;
     private RoomPrefabType _roomPrefabType;
+    private RoomEventProcessor _eventProcessor;
     
-    public RoomType RoomType
+    public RoomType RoomType => _roomPrefabType?.roomType ?? _mapData?.roomType ?? RoomType.Normal;
+    public bool IsEventProcessorInitialized => _eventProcessor?.IsInitialized ?? false;
+    public bool IsCleared => _mapData?.isCleared ?? false;
+    public Vector2Int GridPosition => _mapData?.gridPos ?? Vector2Int.zero;
+
+    private void Awake()
     {
-        get
-        {
-            // RoomPrefabType 컴포넌트가 있으면 그 타입을 우선 사용
-            if (_roomPrefabType != null)
-            {
-                return _roomPrefabType.roomType;
-            }
-            // 없으면 MapData의 타입 사용
-            return _mapData?.roomType ?? RoomType.Normal;
-        }
+        InitializeComponents();
     }
 
-    private void OnEnable()
+    private void InitializeComponents()
     {
-        _doors = new Door[] { doorNorth, doorSouth, doorEast, doorWest };
+        _doors = new[] { doorNorth, doorSouth, doorEast, doorWest };
         _roomPrefabType = GetComponent<RoomPrefabType>();
+        _eventProcessor = GetComponent<RoomEventProcessor>();
+        
+        if (_eventProcessor == null)
+        {
+            _eventProcessor = gameObject.AddComponent<RoomEventProcessor>();
+            Debug.Log($"[방] {gameObject.name}: RoomEventProcessor가 없어 새로 추가됨.");
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("방 진입 : 플레이어 감지");
-        if (!_entered && other.CompareTag("Player"))
-        {
-            _playerTransform = other.transform;
-        }
+        if (!other.CompareTag("Player")) return;
+        
+        _playerTransform = other.transform;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (!_entered && other.CompareTag("Player"))
+        if (!other.CompareTag("Player") || _playerTransform == null) return;
+        if (!IsEventProcessorInitialized) return;
+
+        float distance = Vector3.Distance(_playerTransform.position, transform.position);
+        if (distance < enterThreshold)
         {
-            float distance = Vector3.Distance(_playerTransform.position, transform.position);
-            if (distance < _enterThreshold)
-            {
-                _entered = true;
-                CloseAllDoors();
-                GetComponent<RoomEventProcessor>()?.OnPlayerEnterRoom();
-                Debug.Log($"방 {_mapData.gridPos} 진입 완료, 문 활성화");
-            }
+            _eventProcessor.OnPlayerEnterRoom();
         }
     }
     
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("방 퇴장");
-        if (other.CompareTag("Player"))
-        {
-            _playerTransform = null;
-        }
+        if (!other.CompareTag("Player")) return;
+        
+        _playerTransform = null;
     }
     
     public void Init(MapData data)
     {
         _mapData = data;
+        Debug.Log($"[방] {gameObject.name}: MapData로 초기화 완료 (타입: {RoomType})");
     }
 
-    public void ForceEnter()
+    public void ForcePlayerEnter()
     {
-        _entered = true;
-        CloseAllDoors();
-        GetComponent<RoomEventProcessor>()?.OnPlayerEnterRoom();
-    }
-
-    private void CloseAllDoors()
-    {
-        foreach (var door in _doors)
+        if (!IsEventProcessorInitialized) 
         {
-            door.Close();
+            Debug.LogWarning($"[방] {gameObject.name}: 이벤트 프로세서 미초기화");
         }
+        _eventProcessor.OnPlayerEnterRoom();
     }
 
-    public void MarkRoomCleared()
+    public void MarkRoomAsCleared()
     {
-        // 스폰 방이거나 _mapData가 null이면 문만 열고 리턴
-        if (_mapData == null || RoomType == RoomType.Spawn)
-        {
-            foreach (var door in _doors)
-            {
-                if (door != null)
-                    door.Open();
-            }
-            Debug.Log($"방 초기화 전 클리어 처리 (스폰 방 또는 _mapData null)");
-            return;
-        }
-
-        _mapData.isCleared = true;
-
-        // 현재 방 문 열기
-        for (int i = 0; i < 4; i++)
-        {
-            if (_mapData.doors[i]) 
-                _doors[i].Open();
-        }
-        
-        // 인접한 방 문 열기
-        OpenConnectedNeighborDoors();
-        Debug.Log($"방 {_mapData.gridPos} 클리어, 문 비활성화");
-    }
-    
-    private void OpenConnectedNeighborDoors()
-    {
-        // _mapData가 null이면 리턴
         if (_mapData == null)
         {
-            Debug.LogWarning("OpenConnectedNeighborDoors: _mapData is null");
+            Debug.LogWarning($"[방] {gameObject.name}: MapData가 없어 클리어 처리 불가.");
             return;
         }
 
-        Vector2Int[] directions = new Vector2Int[]
+        if (IsCleared)
         {
-            Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left
-        };
+            Debug.Log($"[방] {gameObject.name}: 이미 클리어된 방입니다. 문 상태만 업데이트합니다.");
+            UpdateDoorsAfterClear();
+            return;
+        }
+        
+        _mapData.isCleared = true;
+        Debug.Log($"[방] {gameObject.name}: 클리어됨.");
+        UpdateDoorsAfterClear();
+    }
 
-        for (int i = 0; i < directions.Length; i++)
+    private void UpdateDoorsAfterClear()
+    {
+        if (_mapData == null) return;
+
+        if (RoomType == RoomType.Spawn)
         {
-            if (_mapData.doors[i] == false) continue;
+            OpenAllDoors();
+            Debug.Log($"[방] {gameObject.name}: 스폰 방.");
+            return;
+        }
 
-            Vector2Int neighborPos = _mapData.gridPos + directions[i];
-            if (MapGenerator.Instance.TryGetRoom(neighborPos, out Room neighborRoom))
+        UpdateConnectedDoorsBasedOnMapData();
+        UpdateNeighboringRoomDoors();
+    }
+
+    private void UpdateConnectedDoorsBasedOnMapData()
+    {
+        if (_doors == null || _mapData == null || _mapData.doors == null) return;
+        for (int i = 0; i < _doors.Length && i < _mapData.doors.Length; i++)
+        {
+            if (_mapData.doors[i] && _doors[i] != null)
             {
-                neighborRoom.OpenDoorInDirection(OppositeIndex(i));
-                Debug.Log($"인접한 방 문 열기 : {neighborPos} , {neighborRoom}");
                 _doors[i].Open();
             }
         }
     }
-    
-    // 반대 방향 인덱스를 구함
-    private int OppositeIndex(int idx)
+
+    private void UpdateNeighboringRoomDoors()
     {
-        return idx switch
+        if (_mapData == null || MapGenerator.Instance == null) return;
+
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left };
+        for (int i = 0; i < directions.Length && i < _mapData.doors.Length; i++)
+        {
+            if (!_mapData.doors[i]) continue;
+
+            Vector2Int neighborPos = GridPosition + directions[i];
+            if (MapGenerator.Instance.TryGetRoom(neighborPos, out Room neighborRoom))
+            {
+                neighborRoom.OpenDoorInDirection(GetOppositeDirection(i));
+            }
+        }
+    }
+
+    public void CloseAllDoors()
+    {
+        if (_doors == null) return;
+        foreach (var door in _doors)
+        {
+            if (door != null) door.Close();
+        }
+    }
+
+    public void OpenAllDoors()
+    {
+        if (_doors == null) return;
+        foreach (var door in _doors)
+        {
+            if (door != null) door.Open();
+        }
+    }
+
+    public void OpenDoorInDirection(int directionIndex)
+    {
+        if (_doors != null && directionIndex >= 0 && directionIndex < _doors.Length && _doors[directionIndex] != null)
+        {
+            _doors[directionIndex].Open();
+        }
+    }
+
+    private int GetOppositeDirection(int directionIndex)
+    {
+        return directionIndex switch
         {
             0 => 1,
             1 => 0,
@@ -157,16 +182,7 @@ public class Room : MonoBehaviour
             _ => -1
         };
     }
-    
-    public void OpenDoorInDirection(int dirIndex)
-    {
-        if (_doors[dirIndex] != null)
-            _doors[dirIndex].Open();
-    }
 
-    // 문 배열을 외부에서 접근할 수 있도록 GetDoors 메서드 추가
-    public Door[] GetDoors() => _doors;
-
-    // MapData 접근자 추가
     public MapData GetMapData() => _mapData;
+    public Door[] GetDoors() => _doors;
 }

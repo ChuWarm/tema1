@@ -22,7 +22,7 @@ public class EnemySpawnManager : MonoBehaviour
     [SerializeField] private int maxEnemyCount = 5;
 
     private List<GameObject> spawnedEnemies = new List<GameObject>();
-    public event Action<EnemyBase> OnEnemySpawned;
+    public event Action<Enemy> OnEnemySpawned;
 
     private void Awake()
     {
@@ -59,12 +59,12 @@ public class EnemySpawnManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemiesForRoom(RoomType roomType, Transform roomTransform)
+    public List<Enemy> SpawnEnemiesForRoom(RoomType roomType, Transform roomTransform)
     {
         if (roomTransform == null)
         {
             Debug.LogError($"SpawnEnemiesForRoom: roomTransform is null for room type {roomType}");
-            return;
+            return new List<Enemy>();
         }
 
         ClearExistingEnemies();
@@ -72,16 +72,17 @@ public class EnemySpawnManager : MonoBehaviour
         if (roomType == RoomType.Spawn)
         {
             Debug.Log($"Skipping enemy spawn for Spawn room");
-            return;
+            return new List<Enemy>();
         }
 
         int enemyCount = Random.Range(minEnemyCount, maxEnemyCount + 1);
         List<EnemySpawnInfo> availableEnemies = GetEnemiesForRoomType(roomType);
+        List<Enemy> spawnedEnemyComponents = new List<Enemy>();
 
         if (availableEnemies == null || availableEnemies.Count == 0)
         {
             Debug.LogError($"No enemies configured for room type: {roomType} on {gameObject.name}");
-            return;
+            return new List<Enemy>();
         }
 
         Debug.Log($"Spawning {enemyCount} enemies for room type {roomType}");
@@ -112,8 +113,9 @@ public class EnemySpawnManager : MonoBehaviour
 
             spawnedEnemies.Add(enemy);
             
-            if (enemy.TryGetComponent<EnemyBase>(out var enemyBase))
+            if (enemy.TryGetComponent<Enemy>(out var enemyBase))
             {
+                spawnedEnemyComponents.Add(enemyBase);
                 OnEnemySpawned?.Invoke(enemyBase);
             }
             else
@@ -121,6 +123,8 @@ public class EnemySpawnManager : MonoBehaviour
                 Debug.LogError($"Spawned enemy {enemy.name} does not have EnemyBase component");
             }
         }
+
+        return spawnedEnemyComponents;
     }
 
     private List<EnemySpawnInfo> GetEnemiesForRoomType(RoomType roomType)

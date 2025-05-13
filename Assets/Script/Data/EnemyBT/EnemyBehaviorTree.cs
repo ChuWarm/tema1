@@ -8,7 +8,7 @@ public abstract class BTNode : ScriptableObject
     public enum BTNodeState { Idle, Chase, Battle }
     [HideInInspector] public BTNodeState state;
 
-    public abstract BTNodeState Evaluate(EnemyBase enemyBase);
+    public abstract BTNodeState Evaluate(Enemy enemyBase);
 }
 
 [CreateAssetMenu(menuName = "AI/Enemy/BT")]
@@ -17,7 +17,7 @@ public class EnemyBehaviorTree : ScriptableObject
     public BTNode rootNode;
     public List<BTNode> children;
 
-    public void Execute(EnemyBase enemyBase)
+    public void Execute(Enemy enemyBase)
     {
         rootNode?.Evaluate(enemyBase);
     }

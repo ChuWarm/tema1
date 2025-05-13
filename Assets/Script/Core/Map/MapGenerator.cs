@@ -85,7 +85,7 @@ public class MapGenerator : Singleton<MapGenerator>
 
         if (type == RoomType.Spawn)
         {
-            room.ForceEnter();
+            room.ForcePlayerEnter();
         }
     }
 

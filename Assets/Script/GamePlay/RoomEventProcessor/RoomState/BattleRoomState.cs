@@ -1,90 +1,78 @@
 using System.Collections.Generic;
-using Script.Characters;
 using UnityEngine;
+using Script.Characters;
 
 public class BattleRoomState : IRoomState
 {
-    private List<EnemyBase> _activeEnemies = new();
-    private RoomEventProcessor _roomEventProcessor;
-    private bool _isCleared = false;
+    private readonly RoomEventProcessor _processor;
+    private readonly HashSet<Enemy> _activeEnemies = new();
+    private readonly Room _room;
 
-    public BattleRoomState(RoomEventProcessor roomEventProcessor)
+    public BattleRoomState(RoomEventProcessor processor)
     {
-        _roomEventProcessor = roomEventProcessor;
+        _processor = processor;
+        _room = processor.GetRoom();
         GameEventBus.Subscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
     }
-    
-    public void Enter(RoomEventProcessor processor)
+
+    public void OnStateEnter(RoomEventProcessor processor)
     {
-        _isCleared = false;
-        Debug.Log($"BattleRoomState: Entering {processor.gameObject.name}");
+        _activeEnemies.Clear();
+        Debug.Log($"[전투방] {_room.gameObject.name}: 전투 준비");
+    }
+
+    public void OnStateExit(RoomEventProcessor processor)
+    {
+        GameEventBus.Unsubscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
+        Debug.Log($"[전투방] {_room.gameObject.name}: 전투 종료");
     }
 
     public void OnPlayerEnter(RoomEventProcessor processor)
     {
-        if (_isCleared) return;
+        if (_room.IsCleared) return;
 
-        var enemySpawnManager = processor.GetComponent<EnemySpawnManager>();
-        if (enemySpawnManager != null)
+        var enemySpawnManager = processor.GetEnemySpawnManager();
+        if (enemySpawnManager == null)
         {
-            // 적 생성 이벤트 구독
-            enemySpawnManager.OnEnemySpawned += OnEnemySpawned;
-            
-            // 적 생성 시작
-            enemySpawnManager.SpawnEnemiesForRoom(processor.GetComponent<Room>().RoomType, processor.transform);
-            Debug.Log($"BattleRoomState: Started enemy spawn in {processor.gameObject.name}");
+            Debug.LogError($"[전투방] {_room.gameObject.name}: EnemySpawnManager를 찾을 수 없음");
+            return;
         }
-        else
-        {
-            Debug.LogError($"BattleRoomState: EnemySpawnManager not found in {processor.gameObject.name}");
-            // 적 생성이 불가능한 경우 자동 클리어
-            _isCleared = true;
-            processor.OnRoomCleared(new RoomClearedEvent());
-        }
+
+        SpawnEnemies(enemySpawnManager);
     }
 
-    private void OnEnemySpawned(EnemyBase enemy)
+    public void OnRoomCleared(RoomEventProcessor processor)
     {
-        if (enemy != null && !_isCleared)
-        {
-            _activeEnemies.Add(enemy);
-            Debug.Log($"BattleRoomState: Enemy spawned, total count: {_activeEnemies.Count}");
-        }
+        Debug.Log($"[전투방] {_room.gameObject.name}: 전투 승리");
     }
 
-    public void Update(RoomEventProcessor processor)
+    public void OnStateUpdate(RoomEventProcessor processor)
     {
-        // 적이 없고 클리어되지 않은 상태라면 자동 클리어
-        if (!_isCleared && _activeEnemies.Count == 0)
-        {
-            _isCleared = true;
-            processor.OnRoomCleared(new RoomClearedEvent());
-        }
+        CheckAndClearRoomIfWon();
     }
 
-    public void Exit(RoomEventProcessor processor)
+    private void SpawnEnemies(EnemySpawnManager enemySpawnManager)
     {
-        var enemySpawnManager = processor.GetComponent<EnemySpawnManager>();
-        if (enemySpawnManager != null)
-        {
-            enemySpawnManager.OnEnemySpawned -= OnEnemySpawned;
-        }
-        GameEventBus.Unsubscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
-        _activeEnemies.Clear();
-        Debug.Log($"BattleRoomState: Exiting {processor.gameObject.name}");
+        Debug.Log($"[전투방] {_room.gameObject.name}: 적 스폰 시작");
+        var spawnedEnemies = enemySpawnManager.SpawnEnemiesForRoom(_processor.GetRoomType(), _room.transform);
+        _activeEnemies.UnionWith(spawnedEnemies);
     }
-    
+
     private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)
     {
-        if (enemyDeadEvent.sender != _roomEventProcessor || _isCleared) return;
+        if (enemyDeadEvent.sender != _processor) return;
 
         _activeEnemies.Remove(enemyDeadEvent.enemy);
-        Debug.Log($"BattleRoomState: Enemy died, remaining: {_activeEnemies.Count}");
+        Debug.Log($"[전투방] {_room.gameObject.name}: 적 처치 (남은 적: {_activeEnemies.Count}마리)");
 
-        if (_activeEnemies.Count == 0)
+        CheckAndClearRoomIfWon();
+    }
+
+    private void CheckAndClearRoomIfWon()
+    {
+        if (!_room.IsCleared && _activeEnemies.Count == 0)
         {
-            _isCleared = true;
-            _roomEventProcessor.OnRoomCleared(new RoomClearedEvent());
+            _processor.OnRoomCleared(null);
         }
     }
 }
