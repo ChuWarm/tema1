@@ -19,9 +19,9 @@ namespace Script.Characters
         private float moveSpeed;
 
         [Header("감지 및 추적")]
-        private float detectionRange = 10f;  // 플레이어 감지 범위
-        private float attackAngle = 45f;     // 공격 가능한 각도
-        private float rotationSpeed = 5f;    // 회전 속도
+        [SerializeField]private float detectionRange = 10f;  // 플레이어 감지 범위
+        [SerializeField]private float attackAngle = 45f;     // 공격 가능한 각도
+        [SerializeField]private float rotationSpeed = 5f;    // 회전 속도
         private Vector3 lastKnownPosition;   // 마지막으로 발견한 플레이어 위치
         private bool isPlayerDetected;       // 플레이어 감지 상태
         private float searchTimer;           // 플레이어 추적 타이머
@@ -155,6 +155,8 @@ namespace Script.Characters
                 animator?.SetBool(IsWalkingAnim, false);
             }
         }
+        
+        //ToDo 에너미 타입 클릭으로 설정
 
         public void TakeDamage(int damage)
         {
