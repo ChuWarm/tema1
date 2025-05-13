@@ -284,16 +284,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalRoomEnemies: []
   eliteRoomEnemies:
-  - enemyPrefab: {fileID: 0}
-    spawnWeight: 0
-  - enemyPrefab: {fileID: 0}
-    spawnWeight: 0
-  - enemyPrefab: {fileID: 0}
-    spawnWeight: 0
-  - enemyPrefab: {fileID: 0}
-    spawnWeight: 0
-  - enemyPrefab: {fileID: 0}
-    spawnWeight: 0
+  - enemyPrefab: {fileID: 9020515888227431456}
+    spawnWeight: 1
   minEnemyDistance: 2
   maxEnemyDistance: 4
   minEnemyCount: 3

@@ -1,6 +1,5 @@
 using Script.Characters;
 using UnityEngine;
-using Script.Characters;
 
 public class GunAttack : IPlayerAttackBehavior
 {

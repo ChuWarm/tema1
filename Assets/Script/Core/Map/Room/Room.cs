@@ -14,12 +14,26 @@ public class Room : MonoBehaviour
     private Transform _playerTransform;
     private MapData _mapData;
     private RoomEventProcessor _eventProcessor;
+    private RoomPrefabType _roomPrefabType;
     
-    public RoomType RoomType => _mapData?.roomType ?? RoomType.Normal;
+    public RoomType RoomType
+    {
+        get
+        {
+            // RoomPrefabType 컴포넌트가 있으면 그 타입을 우선 사용
+            if (_roomPrefabType != null)
+            {
+                return _roomPrefabType.roomType;
+            }
+            // 없으면 MapData의 타입 사용
+            return _mapData?.roomType ?? RoomType.Normal;
+        }
+    }
 
     private void OnEnable()
     {
         _doors = new Door[] { doorNorth, doorSouth, doorEast, doorWest };
+        _roomPrefabType = GetComponent<RoomPrefabType>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -77,6 +91,18 @@ public class Room : MonoBehaviour
 
     public void MarkRoomCleared()
     {
+        // 스폰 방이거나 _mapData가 null이면 문만 열고 리턴
+        if (_mapData == null || RoomType == RoomType.Spawn)
+        {
+            foreach (var door in _doors)
+            {
+                if (door != null)
+                    door.Open();
+            }
+            Debug.Log($"방 초기화 전 클리어 처리 (스폰 방 또는 _mapData null)");
+            return;
+        }
+
         _mapData.isCleared = true;
 
         // 현재 방 문 열기
@@ -93,6 +119,13 @@ public class Room : MonoBehaviour
     
     private void OpenConnectedNeighborDoors()
     {
+        // _mapData가 null이면 리턴
+        if (_mapData == null)
+        {
+            Debug.LogWarning("OpenConnectedNeighborDoors: _mapData is null");
+            return;
+        }
+
         Vector2Int[] directions = new Vector2Int[]
         {
             Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left
@@ -130,4 +163,10 @@ public class Room : MonoBehaviour
         if (_doors[dirIndex] != null)
             _doors[dirIndex].Open();
     }
+
+    // 문 배열을 외부에서 접근할 수 있도록 GetDoors 메서드 추가
+    public Door[] GetDoors() => _doors;
+
+    // MapData 접근자 추가
+    public MapData GetMapData() => _mapData;
 }

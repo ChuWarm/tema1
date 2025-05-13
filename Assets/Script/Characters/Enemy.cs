@@ -41,15 +41,35 @@ namespace Script.Characters
         private Transform playerTransform;
         private bool isDead;
 
+        private bool _isInitialized = false;
+
         [System.Serializable]
         public class EnemyDeathEvent : UnityEvent<Enemy> { }
         public EnemyDeathEvent OnEnemyDeath = new EnemyDeathEvent();
 
         private void Start()
         {
+            StartCoroutine(InitializeEnemy());
+        }
+
+        private IEnumerator InitializeEnemy()
+        {
+            // DataManager가 준비될 때까지 대기
+            while (!DataManager.IsReady)
+            {
+                yield return null;
+            }
+
+            // PlayerManager가 준비될 때까지 대기
+            while (PlayerManager.Instance == null)
+            {
+                yield return null;
+            }
+
             LoadEnemyData();
             currentHealth = health;
             playerTransform = PlayerManager.Instance.transform;
+            _isInitialized = true;
         }
 
         private void LoadEnemyData()
@@ -74,13 +94,11 @@ namespace Script.Characters
             attackCooldown = enemyData.attackCooldown;
             moveSpeed = enemyData.moveSpeed;
             experienceGiven = enemyData.experienceGiven;
-
-            Debug.Log($"Loaded enemy data for {enemyData.enemyName} (ID: {enemyID})");
         }
 
         private void Update()
         {
-            if (isDead) return;
+            if (!_isInitialized || isDead || playerTransform == null) return;
 
             float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
             Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
