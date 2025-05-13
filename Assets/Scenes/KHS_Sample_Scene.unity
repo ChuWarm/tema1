@@ -188,7 +188,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1832806132081411984, guid: b1bb3aa302d8b544592d26b010241fad, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2217790022231357154, guid: b1bb3aa302d8b544592d26b010241fad, type: 3}
       propertyPath: m_LocalPosition.x
@@ -931,6 +931,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &769661769
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 769661771}
+  - component: {fileID: 769661770}
+  m_Layer: 0
+  m_Name: Data Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &769661770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769661769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c9c9effa263f3240afc6f4f804ed72b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &769661771
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 769661769}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &833607135 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1919540029959125516, guid: b1bb3aa302d8b544592d26b010241fad, type: 3}
@@ -1055,6 +1099,73 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraSpeed: 5
+--- !u!1 &946967081
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 946967083}
+  - component: {fileID: 946967082}
+  m_Layer: 0
+  m_Name: Effect Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &946967082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946967081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf10d61e3bf1d5848842fa155c4abaa1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackEffect:
+    effectName: 
+    effectPrefab: {fileID: 0}
+    soundEffect: {fileID: 0}
+    duration: 1
+  hitEffect:
+    effectName: 
+    effectPrefab: {fileID: 0}
+    soundEffect: {fileID: 0}
+    duration: 1
+  deathEffect:
+    effectName: 
+    effectPrefab: {fileID: 0}
+    soundEffect: {fileID: 0}
+    duration: 1
+  healEffect:
+    effectName: 
+    effectPrefab: {fileID: 0}
+    soundEffect: {fileID: 0}
+    duration: 1
+  damageTextPrefab: {fileID: 0}
+  healTextPrefab: {fileID: 0}
+  expTextPrefab: {fileID: 0}
+--- !u!4 &946967083
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 946967081}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1200115702
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,3 +1424,5 @@ SceneRoots:
   - {fileID: 1200115703}
   - {fileID: 1674192073}
   - {fileID: 13238865}
+  - {fileID: 769661771}
+  - {fileID: 946967083}

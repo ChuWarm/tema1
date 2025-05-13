@@ -16,7 +16,7 @@ namespace Script.Characters
         private int attackPower;
         private float attackRange;
         private float attackCooldown;
-        private float moveSpeed;
+        [SerializeField] private float moveSpeed;
 
         [Header("감지 및 추적")]
         [SerializeField]private float detectionRange = 10f;  // 플레이어 감지 범위

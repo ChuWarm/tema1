@@ -77,6 +77,8 @@ GameObject:
   - component: {fileID: 682543427527632376}
   - component: {fileID: 8042332022960959140}
   - component: {fileID: 3201424534032826102}
+  - component: {fileID: 5654641860904691179}
+  - component: {fileID: 5748637341049248118}
   m_Layer: 0
   m_Name: Player2
   m_TagString: Player
@@ -198,6 +200,77 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &5654641860904691179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308215083808289460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b07314d3306cf1c4faa4b509fc838be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnLevelUp:
+    m_PersistentCalls:
+      m_Calls: []
+  OnEquipmentChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnStatsChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  playerLevel: 1
+  currentExp: 0
+  expToNextLevel: 100
+  maxHealth: 100
+  stamina: 10
+  currentHealth: 100
+  currentStamina: 10
+  moveSpeed: 3.5
+  resistance: 10
+  attackPower: 10
+  attackSpeed: 0.8
+  healthIncreasePerLevel: 10
+  attackPowerIncreasePerLevel: 10
+  staminaIncreasePerLevel: 2
+  expToNextLevelIncrease: 10
+  equipmentModifiers: []
+  attackRange: 2
+  attackCooldown: 0.5
+  healthBarPrefab: {fileID: 0}
+  staminaBarPrefab: {fileID: 0}
+  damageTextPrefab: {fileID: 0}
+  hitStopDuration: 0.1
+  hitShakeIntensity: 0.1
+  hitShakeDuration: 0.2
+  OnPlayerDeath:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!136 &5748637341049248118
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308215083808289460}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1 &539053548795740744
 GameObject:
   m_ObjectHideFlags: 0
