@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Script.Characters;
 using UnityEngine;
 
@@ -52,12 +53,26 @@ public static class GameEventBus
         _handlers[type].Add(e => handler((T)e));
     }
 
+    public static void Unsubscribe<T>(Action<T> handler) where T : IGameEvent
+    {
+        Type type = typeof(T);
+        if (_handlers.TryGetValue(type, out var handlers))
+        {
+            handlers.RemoveAll(h => h.Target == handler.Target && h.Method == handler.Method);
+            
+            if (handlers.Count == 0)
+            {
+                _handlers.Remove(type);
+            }
+        }
+    }
+
     public static void Publish<T>(T eventData) where T : IGameEvent
     {
         Type type = typeof(T);
         if (_handlers.TryGetValue(type, out var handlers))
         {
-            foreach (var handler in handlers)
+            foreach (var handler in handlers.ToList())
             {
                 handler.Invoke(eventData);
             }

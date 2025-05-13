@@ -7,7 +7,11 @@ public class ShopRoomState : IRoomState
     public void Enter(RoomEventProcessor processor)
     {
         _roomEventProcessor = processor;
-        Debug.Log("상점 오픈");
+    }
+
+    public void OnPlayerEnter(RoomEventProcessor processor)
+    {
+        // 상점방은 자동으로 클리어됨
         processor.OnRoomCleared(new RoomClearedEvent());
     }
 

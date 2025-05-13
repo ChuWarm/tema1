@@ -10,42 +10,26 @@ public class BattleRoomState : IRoomState
     public BattleRoomState(RoomEventProcessor roomEventProcessor)
     {
         _roomEventProcessor = roomEventProcessor;
-        
         GameEventBus.Subscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
     }
     
     public void Enter(RoomEventProcessor processor)
     {
-        Debug.Log("Normal Room 입장: 적 스폰 시작");
-        
-        // var positions = new List<Vector3>();
-        //
-        // for (int i = 0; i < 3; i++)
-        // {
-        //     positions.Add(processor.transform.position + 
-        //                   new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f)));
-        //
-        //     EnemyData dummydata = new EnemyData
-        //     {
-        //         enemyID = "dummy_enemy",
-        //         enemyName = "더미",
-        //         health = 10
-        //     };
-        //     
-        //     var enemy = EnemyFactory.SpawnEnemy(dummydata, positions[i], processor.transform);
-        //     if (enemy != null)
-        //         _activeEnemies.Add(enemy);
-        // }
+        Debug.Log("Battle Room 입장: 초기화");
+    }
+
+    public void OnPlayerEnter(RoomEventProcessor processor)
+    {
+        Debug.Log("Battle Room: 플레이어 진입 - 적 스폰 시작");
     }
 
     public void Update(RoomEventProcessor processor)
     {
-        
     }
 
     public void Exit(RoomEventProcessor processor)
     {
-
+        GameEventBus.Unsubscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
     }
     
     private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)

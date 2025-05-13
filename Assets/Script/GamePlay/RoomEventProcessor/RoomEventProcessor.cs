@@ -9,11 +9,19 @@ public class RoomEventProcessor : MonoBehaviour
     private RoomType _roomType;
     private Room _room;
     private bool _eventTriggered;
+    private bool _isInitialized = false;
+    public bool IsInitialized => _isInitialized;
+    private EnemySpawnManager _enemySpawnManager;
     
-    private void Start()
+    private void Awake()
     {
         _room = GetComponent<Room>();
         _roomType = _room.RoomType;
+        _enemySpawnManager = GetComponent<EnemySpawnManager>();
+        if (_enemySpawnManager == null)
+        {
+            _enemySpawnManager = gameObject.AddComponent<EnemySpawnManager>();
+        }
         
         SetState(CreateState(_roomType));
 
@@ -22,6 +30,8 @@ public class RoomEventProcessor : MonoBehaviour
             _eventTriggered = true;
             _currentRoomState.Enter(this);
         }
+
+        _isInitialized = true;
     }
 
 
@@ -46,10 +56,28 @@ public class RoomEventProcessor : MonoBehaviour
 
     public void OnPlayerEnterRoom()
     {
-        if (_eventTriggered) return;
+        if (!_isInitialized)
+        {
+            Debug.LogWarning($"RoomEventProcessor {gameObject.name}: Cannot process room enter - not initialized!");
+            return;
+        }
 
+        if (_eventTriggered)
+        {
+            Debug.Log($"RoomEventProcessor {gameObject.name}: Room event already triggered, skipping.");
+            return;
+        }
+
+        Debug.Log($"RoomEventProcessor {gameObject.name}: Player entered room of type {_roomType}");
         _eventTriggered = true;
-        _currentRoomState?.Enter(this);
+
+        // 적 생성
+        if (_roomType != RoomType.Spawn)
+        {
+            _enemySpawnManager.SpawnEnemiesForRoom(_roomType, transform);
+        }
+
+        _currentRoomState?.OnPlayerEnter(this);
     }
     
     public void OnRoomCleared(RoomClearedEvent roomClearedEvent)
