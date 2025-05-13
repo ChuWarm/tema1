@@ -6,7 +6,7 @@ public class PlayerStateAttack : IPlayerState
     private IPlayerAttackBehavior _attackBehavior;
     private PlayerController _player;
     
-    public void EnterState(Script.Characters.PlayerController playerController)
+    public void EnterState(PlayerController playerController)
     {
         _player = playerController;
         _attackBehavior = _player.GetAttackBehavior();
@@ -14,11 +14,10 @@ public class PlayerStateAttack : IPlayerState
     }
 
     public void UpdateState()
-    { 
-        _attackBehavior?.Update();
-        if (Input.GetAxisRaw("Horizontal") == 0 && Input.GetAxisRaw("Vertical") == 0)
+    {
+        if (_player.IsAttacking)
         {
-            _player.SetState(PlayerState.Idle);
+            _attackBehavior?.Update();
         }
     }
 

@@ -82,6 +82,11 @@ public class MapGenerator : Singleton<MapGenerator>
         _map[pos] = data;
         ConnectToNeighbors(pos);
         room.Init(data);
+
+        if (type == RoomType.Spawn)
+        {
+            room.ForceEnter();
+        }
     }
 
     private void ConnectToNeighbors(Vector2Int pos)
@@ -144,5 +149,16 @@ public class MapGenerator : Singleton<MapGenerator>
             int j = Random.Range(i, list.Count);
             (list[i], list[j]) = (list[j], list[i]);
         }
+    }
+
+    public bool TryGetRoom(Vector2Int pos, out Room room)
+    {
+        if (_map.TryGetValue(pos, out var data) && data.roomInstance != null)
+        {
+            room = data.roomInstance;
+            return true;
+        }
+        room = null;
+        return false;
     }
 }

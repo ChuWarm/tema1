@@ -8,8 +8,7 @@ using Script.Core;
 
 namespace Script.Characters
 {
-    public enum PlayerState { None, Idle, Move, Attack, Hit }
-    public enum LookMode { None, Movement, Mouse }
+    public enum PlayerState { None, Idle, Move, Attack, Hit, Dash, Spawn }
     public enum WeaponType { Sword = 0, Gun = 1 }
 
     [RequireComponent(typeof(CharacterController))]
@@ -27,16 +26,25 @@ namespace Script.Characters
         public CharacterController characterController;
         public Animator animator;
 
-        private Vector3 moveDirection;
-        private float verticalVelocity;
-        private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
+        private Vector3 _moveDirection;
+        private float _verticalVelocity;
+        private float _attackMoveSpeed = 15f;
+        private float _attackStepDuration = 0.15f;
+        private float _attackStepElapsed = 0f;
+        public static readonly int Idle = Animator.StringToHash("Idle");
+        public static readonly int IsWalkingAnim = Animator.StringToHash("IsRun");
+        public static readonly int SpawnAnim = Animator.StringToHash("Spawn");
+        public static readonly int DashAnim = Animator.StringToHash("Dash");
+        public static readonly int AttackAnim = Animator.StringToHash("Attack");
         private static readonly int JumpAnim = Animator.StringToHash("Jump");
-        private static readonly int AttackAnim = Animator.StringToHash("Attack");
+        private static readonly int DeadAnim = Animator.StringToHash("Dead");
 
         private PlayerStateIdle _playerStateIdle;
         private PlayerStateMove _playerStateMove;
         private PlayerStateAttack _playerStateAttack;
         private PlayerStateHit _playerStateHit;
+        private PlayerStateDash _playerStateDash;
+        private PlayerStateSpawn _playerStateSpawn;
 
         private Dictionary<PlayerState, IPlayerState> _playerStates;
         private Dictionary<WeaponType, IPlayerAttackBehavior> _attackBehaviors;
@@ -44,9 +52,13 @@ namespace Script.Characters
         private IPlayerAttackBehavior _currentAttackBehavior;
         public IPlayerAttackBehavior GetAttackBehavior() => _currentAttackBehavior;
 
+        public bool IsRun { get; set; } = true;
+        public bool IsAttacking { get; set; }
+        public bool IsAttackMoving { get; set; }
+
+
         public PlayerState CurrentState { get; private set; }
         public WeaponType CurrentWeapon { get; private set; } = WeaponType.Sword;
-        public LookMode currentLookMode = LookMode.Movement;
 
         private void Awake()
         {
@@ -61,13 +73,17 @@ namespace Script.Characters
             _playerStateMove = new PlayerStateMove();
             _playerStateAttack = new PlayerStateAttack();
             _playerStateHit = new PlayerStateHit();
+            _playerStateDash = new PlayerStateDash();
+            _playerStateSpawn = new PlayerStateSpawn();
 
             _playerStates = new Dictionary<PlayerState, IPlayerState>()
             {
                 { PlayerState.Idle, _playerStateIdle },
                 { PlayerState.Move, _playerStateMove },
                 { PlayerState.Attack, _playerStateAttack },
-                { PlayerState.Hit, _playerStateHit }
+                { PlayerState.Hit, _playerStateHit },
+                { PlayerState.Dash, _playerStateDash },
+                { PlayerState.Spawn, _playerStateSpawn },
             };
 
             _attackBehaviors = new()
@@ -82,8 +98,8 @@ namespace Script.Characters
 
         private void Update()
         {
-            HandleMovement();
-            HandleJump();
+            // HandleMovement();
+            // HandleJump();
             HandleAttack();
             ApplyGravity();
 
@@ -91,11 +107,13 @@ namespace Script.Characters
             {
                 _playerStates[CurrentState].UpdateState();
             }
+
+            AttackStep();
         }
 
         private void Init()
         {
-            SetState(PlayerState.Idle);
+            SetState(PlayerState.Spawn);
         }
 
         public void SetState(PlayerState state)
@@ -109,7 +127,7 @@ namespace Script.Characters
             _playerStates[CurrentState].EnterState(this);
         }
 
-        private void HandleMovement()
+        public void HandleMovement()
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
@@ -124,8 +142,8 @@ namespace Script.Characters
                 transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
                 // 이동
-                moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-                characterController.Move(moveSpeed * Time.deltaTime * moveDirection);
+                _moveDirection = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
+                characterController.Move(moveSpeed * Time.deltaTime * _moveDirection);
 
                 animator?.SetBool(IsWalkingAnim, true);
             }
@@ -139,14 +157,14 @@ namespace Script.Characters
         {
             isGrounded = characterController.isGrounded;
 
-            if (isGrounded && verticalVelocity < 0)
+            if (isGrounded && _verticalVelocity < 0)
             {
-                verticalVelocity = -2f;
+                _verticalVelocity = -2f;
             }
 
             if (Input.GetButtonDown("Jump") && isGrounded)
             {
-                verticalVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
+                _verticalVelocity = Mathf.Sqrt(jumpForce * -2f * gravity);
                 animator?.SetTrigger(JumpAnim);
             }
         }
@@ -155,15 +173,15 @@ namespace Script.Characters
         {
             if (Input.GetMouseButtonDown(0))
             {
-                animator?.SetTrigger(AttackAnim);
+                // animator?.SetTrigger(AttackAnim);
                 // 공격 로직은 PlayerManager에서 처리
             }
         }
 
         private void ApplyGravity()
         {
-            verticalVelocity += gravity * Time.deltaTime;
-            characterController.Move(new Vector3(0, verticalVelocity, 0) * Time.deltaTime);
+            _verticalVelocity += gravity * Time.deltaTime;
+            characterController.Move(new Vector3(0, _verticalVelocity, 0) * Time.deltaTime);
         }
 
         private void OnDrawGizmosSelected()
@@ -208,25 +226,96 @@ namespace Script.Characters
         //     }
         // }
 
-        public void LookAtMouse()
+        private void AttackStep()
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out var hit, 300f))
+            if (IsAttackMoving && CurrentState == PlayerState.Attack)
             {
-                Vector3 lookDirection = hit.point - transform.position;
-                lookDirection.y = 0f;
+                _attackStepElapsed += Time.deltaTime;
 
-                if (lookDirection.magnitude > 0.1f)
+                if (_attackStepElapsed < _attackStepDuration)
                 {
-                    transform.rotation = Quaternion.LookRotation(lookDirection);
+                    characterController.Move(transform.forward * (_attackMoveSpeed * Time.deltaTime));
+                }
+                else
+                {
+                    IsAttackMoving = false;
+                    _attackStepElapsed = 0f;
                 }
             }
         }
 
-        public void TirggerAttack()
+        private void LookAtMouse()
         {
-            LookAtMouse();
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Plane plane = new Plane(Vector3.up, transform.position);
+
+            if (plane.Raycast(ray, out float distance))
+            {
+                Vector3 point = ray.GetPoint(distance);
+                Vector3 direction = point - transform.position;
+                direction.y = 0f;
+
+                if (direction.sqrMagnitude > 0.01f)
+                {
+                    transform.forward = direction.normalized;
+                }
+            }
+        }
+
+        public void TriggerAttack()
+        {
+            animator.SetBool(IsWalkingAnim, false);
+            animator.speed = 1.6f;
             animator.SetTrigger(AttackAnim);
         }
+
+        public void TriggerDash()
+        {
+            if (CurrentState == PlayerState.Dash) return;
+
+            animator.speed = 1f;
+            SetState(PlayerState.Dash);
+        }
+        
+        public void IsPlayerDead()
+        {
+            if (PlayerManager.Instance.currentHealth <= 0)
+                animator.Play(DeadAnim);
+        }
+
+        
+        #region 애니메이션 이벤트
+        
+        public void AttackStart()
+        {
+            LookAtMouse();
+            IsRun = false;
+            IsAttacking = true;
+        }
+
+        public void AttackMoveStep()
+        {
+            IsAttackMoving = true;
+            _attackStepElapsed = 0f;
+        }
+
+        public void AttackMoveStepEnd()
+        {
+            IsAttackMoving = false;
+        }
+
+        public void AttackEnd()
+        {
+            animator.speed = 1f;
+            IsRun = true;
+            IsAttacking = false;
+        }
+
+        public void OnSpawnAnimationComplete()
+        {
+            SetState(PlayerState.Idle);
+        }
+        
+        #endregion
     }
 }
