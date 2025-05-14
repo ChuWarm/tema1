@@ -28,15 +28,13 @@ public class BattleRoomState : CombatRoomBaseState
         var enemySpawnManager = processor.GetEnemySpawnManager();
         if (enemySpawnManager == null)
         { 
-            Debug.LogError($"[{GetLogStateNameForEnter()}] {_room.gameObject.name}: EnemySpawnManager not found!");
             return;
         }
         
-        if (!_combatStarted)
-        { 
-            PerformSpecificSpawn(enemySpawnManager);
-            _combatStarted = true;
-        }
+        if (_combatStarted == false)
+{ 
+    PerformSpecificSpawn(enemySpawnManager);
+}
     }
 
     protected override void PerformSpecificSpawn(EnemySpawnManager enemySpawnManager)
@@ -45,7 +43,7 @@ public class BattleRoomState : CombatRoomBaseState
         
         if (spawnedEnemiesList == null)
         {
-            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: SpawnEnemiesForRoom returned null.");
+            Debug.LogWarning($"[BattleRoomState] {_room.gameObject.name}: SpawnEnemiesForRoom returned null.");
             return;
         }
 
@@ -59,9 +57,15 @@ public class BattleRoomState : CombatRoomBaseState
         
         _activeEnemies.UnionWith(spawnedEnemiesList);
 
+        Debug.Log($"[BattleRoomState] {_room.gameObject.name}: Enemies spawned and processor set. Active: {_activeEnemies.Count}, Spawned list: {spawnedEnemiesList.Count}");
+
         if (_activeEnemies.Count == 0 && spawnedEnemiesList.Count > 0)
         {
-            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: Spawned enemies but _activeEnemies (base) is still empty!");
+            Debug.LogWarning($"[BattleRoomState] {_room.gameObject.name}: Spawned enemies but _activeEnemies (base) is still empty!");
+        }
+        else if (_activeEnemies.Count == 0 && spawnedEnemiesList.Count == 0)
+        {
+            Debug.LogWarning($"[BattleRoomState] {_room.gameObject.name}: No enemies were spawned and _activeEnemies (base) is empty.");
         }
     }
 

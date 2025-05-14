@@ -34,7 +34,7 @@ namespace Script.Characters
         private Vector3 _moveDirection;
         private float _verticalVelocity;
         private float _attackMoveSpeed = 15f;
-        private float _attackStepDuration = 0.15f;
+        private float _attackStepDuration = 1f;
         private float _attackStepElapsed = 0f;
         public static readonly int Idle = Animator.StringToHash("Idle");
         public static readonly int IsWalkingAnim = Animator.StringToHash("IsRun");
@@ -70,6 +70,8 @@ namespace Script.Characters
         public float hitCheckDuration = 0.1f; 
         private bool _isDuringHitCheck = false; // 현재 공격 판정 지속 시간 중인지 여부
         private HashSet<IDamageable> _alreadyHitTargetsInCurrentAttack; // 현재 공격 모션에서 이미 맞은 타겟들
+
+        public float _forwardThrustAmount = 1f;
 
         private void Awake()
         {
@@ -184,10 +186,10 @@ namespace Script.Characters
 
         private void HandleAttack()
         {
+
             if (Input.GetMouseButtonDown(0))
             {
-                // animator?.SetTrigger(AttackAnim);
-                // 공격 로직은 PlayerManager에서 처리
+
             }
         }
 
@@ -274,7 +276,7 @@ namespace Script.Characters
 
         
         #region 애니메이션 이벤트
-        
+
         public void AttackStart()
         {
             LookAtMouse();
@@ -283,6 +285,10 @@ namespace Script.Characters
             _alreadyHitTargetsInCurrentAttack.Clear();
             _isDuringHitCheck = false;
             StopCoroutine("HitCheckCoroutine");
+
+            // AttackStep() 활성화를 위한 플래그 설정 및 타이머 초기화
+            IsAttackMoving = true;
+            _attackStepElapsed = 0f;
         }
 
         public void AttackMoveStep()
@@ -324,8 +330,6 @@ namespace Script.Characters
             
             if (hitColliders.Length > 0)
             {
-                 // 이 로그는 너무 자주 나올 수 있으므로, 필요할 때만 활성화
-                 // Debug.Log($"[PlayerController] OverlapSphere 결과, 감지된 콜라이더 수: {hitColliders.Length}");
             }
 
             foreach (var hitCollider in hitColliders)

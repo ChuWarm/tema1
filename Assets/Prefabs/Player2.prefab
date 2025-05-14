@@ -247,7 +247,7 @@ MonoBehaviour:
   attackCooldown: 0.5
   healthBarPrefab: {fileID: 0}
   staminaBarPrefab: {fileID: 0}
-  damageTextPrefab: {fileID: 0}
+  damageTextPrefab: {fileID: 2901086385839936139, guid: 57c6e0aa386d31544a074fa71f757185, type: 3}
   hitStopDuration: 0.1
   hitShakeIntensity: 0.1
   hitShakeDuration: 0.2

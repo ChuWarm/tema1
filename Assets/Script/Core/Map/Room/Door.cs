@@ -42,9 +42,21 @@ public class Door : MonoBehaviour
     public void Open()
     {
         string doorName = gameObject.name;
+        Debug.LogWarning($"[{doorName}] Open() CALLED. IsEnabled: {enabled}, Current _isOpen: {this._isOpen}, Current _isAnimating: {this._isAnimating}. Stack: {System.Environment.StackTrace}");
 
-        if (!enabled || _isOpen || _isAnimating)
+        if (!enabled)
         {
+            Debug.LogWarning($"[{doorName}] Open() 중단: Door component is not enabled.");
+            return;
+        }
+        if (_isOpen)
+        {
+            Debug.LogWarning($"[{doorName}] Open() 중단: Door is already open (_isOpen = true).");
+            return;
+        }
+        if (_isAnimating)
+        {
+            Debug.LogWarning($"[{doorName}] Open() 중단: Door is already animating (_isAnimating = true).");
             return;
         }
 
