@@ -714,12 +714,20 @@ GameObject:
   m_Component:
   - component: {fileID: 289078827850284985}
   - component: {fileID: 1839411865362037907}
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
+  - component: {fileID: 3519871666427082045}
+  - component: {fileID: 4386692849669521584}
+  - component: {fileID: 5451706752430866173}
+  m_Layer: 0
+  m_Name: Enemy
+========
   - component: {fileID: 2727139131556125253}
   - component: {fileID: 2092465014982970087}
   - component: {fileID: 2468373930975964604}
   - component: {fileID: 8222837742510728906}
   m_Layer: 7
   m_Name: DOOM Extinguisher (Blue)
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -763,6 +771,9 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
+--- !u!136 &3519871666427082045
+========
 --- !u!114 &2727139131556125253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -785,6 +796,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
 --- !u!136 &2092465014982970087
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -807,7 +819,11 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
+--- !u!54 &4386692849669521584
+========
 --- !u!54 &2468373930975964604
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -834,7 +850,11 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
+--- !u!114 &5451706752430866173
+========
 --- !u!114 &8222837742510728906
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -846,12 +866,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b72d97435f16a440bf152684afa402f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
+  enemyID: enf001
+  moveSpeed: 10
+  detectionRange: 15
+  attackAngle: 180
+  rotationSpeed: 2
+  animator: {fileID: 1839411865362037907}
+========
   visualHolder: {fileID: 0}
   animator: {fileID: 1839411865362037907}
   enemyID: enf001
   detectionRange: 15
   attackAngle: 180
   rotationSpeed: 2
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
   OnEnemyDeath:
     m_PersistentCalls:
       m_Calls: []
