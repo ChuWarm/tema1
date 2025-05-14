@@ -3,56 +3,76 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Cysharp.Threading.Tasks;
 
 public class Room : MonoBehaviour
 {
     [SerializeField] private Door doorNorth, doorSouth, doorEast, doorWest;
     
+    [Header("진입 설정")]
+    [SerializeField] private float enterThreshold = 50f;
+    
     private Door[] _doors;
-    private float _enterThreshold = 50f;
-    private bool _entered = false;
     private Transform _playerTransform;
     private MapData _mapData;
+    private RoomPrefabType _roomPrefabType;
     private RoomEventProcessor _eventProcessor;
     
-    public RoomType RoomType => _mapData?.roomType ?? RoomType.Normal;
+    public RoomType RoomType => _roomPrefabType?.roomType ?? _mapData?.roomType ?? RoomType.Normal;
+    public bool IsEventProcessorInitialized => _eventProcessor?.IsInitialized ?? false;
+    public bool IsCleared => _mapData?.isCleared ?? false;
+    public Vector2Int GridPosition => _mapData?.gridPos ?? Vector2Int.zero;
 
-    private void OnEnable()
+    public async UniTask WaitForEventProcessorInitializationAsync()
     {
-        _doors = new Door[] { doorNorth, doorSouth, doorEast, doorWest };
+        if (_eventProcessor == null) 
+        {
+            return;
+        }
+        await _eventProcessor.InitializationTask;
+    }
+
+    private void Awake()
+    {
+        InitializeComponents();
+    }
+
+    private void InitializeComponents()
+    {
+        _doors = new[] { doorNorth, doorSouth, doorEast, doorWest };
+        _roomPrefabType = GetComponent<RoomPrefabType>();
+        _eventProcessor = GetComponent<RoomEventProcessor>();
+        
+        if (_eventProcessor == null)
+        {
+            _eventProcessor = gameObject.AddComponent<RoomEventProcessor>();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("방 진입 : 플레이어 감지");
-        if (!_entered && other.CompareTag("Player"))
-        {
-            _playerTransform = other.transform;
-        }
+        if (!other.CompareTag("Player")) return;
+        
+        _playerTransform = other.transform;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (!_entered && other.CompareTag("Player"))
+        if (!other.CompareTag("Player") || _playerTransform == null) return;
+        if (!IsEventProcessorInitialized) return;
+
+        float distance = Vector3.Distance(_playerTransform.position, transform.position);
+        if (distance < enterThreshold)
         {
-            float distance = Vector3.Distance(_playerTransform.position, transform.position);
-            if (distance < _enterThreshold)
-            {
-                _entered = true;
-                CloseAllDoors();
-                GetComponent<RoomEventProcessor>()?.OnPlayerEnterRoom();
-                Debug.Log($"방 {_mapData.gridPos} 진입 완료, 문 활성화");
-            }
+            _eventProcessor.OnPlayerEnterRoom();
         }
     }
     
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("방 퇴장");
-        if (other.CompareTag("Player"))
-        {
-            _playerTransform = null;
-        }
+        if (!other.CompareTag("Player")) return;
+        
+        _playerTransform = null;
     }
     
     public void Init(MapData data)
@@ -60,62 +80,115 @@ public class Room : MonoBehaviour
         _mapData = data;
     }
 
-    public void ForceEnter()
+    public void ForcePlayerEnter()
     {
-        _entered = true;
-        CloseAllDoors();
-        GetComponent<RoomEventProcessor>()?.OnPlayerEnterRoom();
-    }
-
-    private void CloseAllDoors()
-    {
-        foreach (var door in _doors)
+        if (!IsEventProcessorInitialized) 
         {
-            door.Close();
         }
+        _eventProcessor.OnPlayerEnterRoom();
     }
 
-    public void MarkRoomCleared()
+    public void MarkRoomAsCleared()
     {
-        _mapData.isCleared = true;
-
-        // 현재 방 문 열기
-        for (int i = 0; i < 4; i++)
+        if (_mapData == null)
         {
-            if (_mapData.doors[i]) 
-                _doors[i].Open();
+            return;
+        }
+
+        if (IsCleared)
+        {
+            UpdateDoorsAfterClear();
+            return;
         }
         
-        // 인접한 방 문 열기
-        OpenConnectedNeighborDoors();
-        Debug.Log($"방 {_mapData.gridPos} 클리어, 문 비활성화");
+        _mapData.isCleared = true;
+        UpdateDoorsAfterClear();
     }
-    
-    private void OpenConnectedNeighborDoors()
+
+    private void UpdateDoorsAfterClear()
     {
-        Vector2Int[] directions = new Vector2Int[]
-        {
-            Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left
-        };
+        if (_mapData == null) return;
 
-        for (int i = 0; i < directions.Length; i++)
+        if (RoomType == RoomType.Spawn)
         {
-            if (_mapData.doors[i] == false) continue;
+            OpenAllDoors();
+            return;
+        }
 
-            Vector2Int neighborPos = _mapData.gridPos + directions[i];
-            if (MapGenerator.Instance.TryGetRoom(neighborPos, out Room neighborRoom))
+        UpdateConnectedDoorsBasedOnMapData();
+        UpdateNeighboringRoomDoors();
+    }
+
+    private void UpdateConnectedDoorsBasedOnMapData()
+    {
+        if (_doors == null || _mapData == null || _mapData.doors == null) return;
+        for (int i = 0; i < _doors.Length && i < _mapData.doors.Length; i++)
+        {
+            if (_mapData.doors[i] && _doors[i] != null)
             {
-                neighborRoom.OpenDoorInDirection(OppositeIndex(i));
-                Debug.Log($"인접한 방 문 열기 : {neighborPos} , {neighborRoom}");
                 _doors[i].Open();
             }
         }
     }
-    
-    // 반대 방향 인덱스를 구함
-    private int OppositeIndex(int idx)
+
+    private void UpdateNeighboringRoomDoors()
     {
-        return idx switch
+        if (_mapData == null || MapGenerator.Instance == null) return;
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left };
+        for (int i = 0; i < directions.Length && i < _mapData.doors.Length; i++)
+        {
+            if (!_mapData.doors[i]) continue;
+
+            Vector2Int neighborPos = GridPosition + directions[i];
+            if (MapGenerator.Instance.TryGetRoom(neighborPos, out Room neighborRoom))
+            {
+                int oppositeDirection = GetOppositeDirection(i);
+                neighborRoom.OpenDoorInDirection(oppositeDirection);
+            }
+        }
+    }
+
+    public void CloseAllDoors()
+    {
+        if (_doors == null) 
+        {
+            return;
+        }
+        foreach (var door in _doors)
+        {
+            if (door != null) 
+            {
+                door.Close();
+            }
+        }
+    }
+
+    public void OpenAllDoors()
+    {
+        if (_doors == null) 
+        {
+            return;
+        }
+        foreach (var door in _doors)
+        {
+            if (door != null) 
+            {
+                door.Open();
+            }
+        }
+    }
+
+    public void OpenDoorInDirection(int directionIndex)
+    {
+        if (_doors != null && directionIndex >= 0 && directionIndex < _doors.Length && _doors[directionIndex] != null)
+        {
+            _doors[directionIndex].Open();
+        }
+    }
+
+    private int GetOppositeDirection(int directionIndex)
+    {
+        return directionIndex switch
         {
             0 => 1,
             1 => 0,
@@ -124,10 +197,7 @@ public class Room : MonoBehaviour
             _ => -1
         };
     }
-    
-    public void OpenDoorInDirection(int dirIndex)
-    {
-        if (_doors[dirIndex] != null)
-            _doors[dirIndex].Open();
-    }
+
+    public MapData GetMapData() => _mapData;
+    public Door[] GetDoors() => _doors;
 }

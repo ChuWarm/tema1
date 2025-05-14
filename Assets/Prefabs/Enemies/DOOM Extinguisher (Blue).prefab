@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5650739440639563160}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Hand End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9066465993958962302}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Hand End_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5535386830089757868}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Thumb_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -103,7 +103,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2852359738263728852}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Elbow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7179362767694278373}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Chemical
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -167,7 +167,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 740505399503137053}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1167752444260655074}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -232,7 +232,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3298912752086059181}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Elbow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,7 +264,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6702487812354518341}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Hand Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3507433299804006697}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Thumb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -328,7 +328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 681954042140450026}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Toe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,7 +360,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4192121678127863451}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Shoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -392,7 +392,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 104214896333808689}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Knee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -424,7 +424,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5225061449597337263}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Knee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,7 +456,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5988841121227363826}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -488,7 +488,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4123638953580698403}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -520,7 +520,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3893666603333952181}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -552,7 +552,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8665994537705263760}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Hand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -585,7 +585,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5752387588751294185}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Toe_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -616,7 +616,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2148755626671466244}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spine 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -650,7 +650,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4141145253287775587}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Toe_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -681,7 +681,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4227021448050575984}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -714,11 +714,20 @@ GameObject:
   m_Component:
   - component: {fileID: 289078827850284985}
   - component: {fileID: 1839411865362037907}
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
   - component: {fileID: 3519871666427082045}
   - component: {fileID: 4386692849669521584}
   - component: {fileID: 5451706752430866173}
   m_Layer: 0
   m_Name: Enemy
+========
+  - component: {fileID: 2727139131556125253}
+  - component: {fileID: 2092465014982970087}
+  - component: {fileID: 2468373930975964604}
+  - component: {fileID: 8222837742510728906}
+  m_Layer: 7
+  m_Name: DOOM Extinguisher (Blue)
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -762,7 +771,32 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
 --- !u!136 &3519871666427082045
+========
+--- !u!114 &2727139131556125253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6167752670666052584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b72d97435f16a440bf152684afa402f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  visualHolder: {fileID: 0}
+  animator: {fileID: 1839411865362037907}
+  enemyID: enf001
+  detectionRange: 10
+  attackAngle: 45
+  rotationSpeed: 5
+  OnEnemyDeath:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!136 &2092465014982970087
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -785,7 +819,11 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
 --- !u!54 &4386692849669521584
+========
+--- !u!54 &2468373930975964604
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -812,7 +850,11 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
 --- !u!114 &5451706752430866173
+========
+--- !u!114 &8222837742510728906
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -824,12 +866,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b72d97435f16a440bf152684afa402f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<<< HEAD:Assets/Prefabs/Enemies/Enemy.prefab
   enemyID: enf001
   moveSpeed: 10
   detectionRange: 15
   attackAngle: 180
   rotationSpeed: 2
   animator: {fileID: 1839411865362037907}
+========
+  visualHolder: {fileID: 0}
+  animator: {fileID: 1839411865362037907}
+  enemyID: enf001
+  detectionRange: 15
+  attackAngle: 180
+  rotationSpeed: 2
+>>>>>>>> main:Assets/Prefabs/Enemies/DOOM Extinguisher (Blue).prefab
   OnEnemyDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -842,7 +893,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3245408953657306754}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Hand End_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -873,7 +924,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3287618609484419416}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spine 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -905,7 +956,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6403021605191583534}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Thumb_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -936,7 +987,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8500679672654408198}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Hand End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -968,7 +1019,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9054888815735525348}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1000,7 +1051,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4418787908474875335}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1032,7 +1083,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6282833371122922924}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1066,7 +1117,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2131431708087267402}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Head_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1097,7 +1148,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7755814157214498860}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Thumb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1129,7 +1180,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5135468009695374662}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Right Toe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1161,7 +1212,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3361650908653080231}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Shoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1193,7 +1244,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8714874606469577393}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Neck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1226,7 +1277,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4385416675815813241}
   - component: {fileID: 8785797861888323325}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DOOM Chemical Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1342,7 +1393,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6282775132062010554}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Left Hand Middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1374,7 +1425,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7581796814045100775}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spine 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

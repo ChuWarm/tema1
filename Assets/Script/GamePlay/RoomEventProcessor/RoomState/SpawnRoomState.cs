@@ -1,19 +1,44 @@
+using UnityEngine;
+
 public class SpawnRoomState : IRoomState
 {
-    private RoomEventProcessor _roomEventProcessor;
-    public void Enter(RoomEventProcessor processor)
+    private readonly RoomEventProcessor _processor;
+    private readonly Room _room;
+
+    public SpawnRoomState(RoomEventProcessor processor)
     {
-        _roomEventProcessor = processor;
-        processor.OnRoomCleared(new RoomClearedEvent());
+        _processor = processor;
+        _room = processor.GetRoom();
     }
 
-    public void Update(RoomEventProcessor processor)
+    public void OnStateEnter(RoomEventProcessor processor)
+    {
+    }
+
+    public void OnStateExit(RoomEventProcessor processor)
+    {
+    }
+
+    public void OnPlayerEnter(RoomEventProcessor processor)
+    {
+        if (_room.IsCleared)
+        {
+            return;
+        }
+        InitializeSpawnPoint();
+        processor.OnRoomCleared(null);
+    }
+
+    public void OnRoomCleared(RoomEventProcessor processor)
+    {
+    }
+
+    public void OnStateUpdate(RoomEventProcessor processor)
     {
 
     }
 
-    public void Exit(RoomEventProcessor processor)
+    private void InitializeSpawnPoint()
     {
-        _roomEventProcessor = null;
     }
 }

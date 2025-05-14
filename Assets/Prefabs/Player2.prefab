@@ -170,6 +170,11 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
+  attackRange: 1.5
+  attackAngle: 90
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
   playerManager: {fileID: 0}
   characterController: {fileID: 682543427527632376}
   animator: {fileID: 0}
