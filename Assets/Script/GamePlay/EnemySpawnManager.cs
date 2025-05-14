@@ -42,7 +42,7 @@ public class EnemySpawnManager : MonoBehaviour
             {
                 if (normalRoomEnemies[i]?.enemyPrefab == null)
                 {
-                    Debug.LogError($"Normal Room Enemy at index {i} has null prefab!");
+                    // Debug.LogError($"Normal Room Enemy at index {i} has null prefab!");
                 }
             }
         }
@@ -53,7 +53,7 @@ public class EnemySpawnManager : MonoBehaviour
             {
                 if (eliteRoomEnemies[i]?.enemyPrefab == null)
                 {
-                    Debug.LogError($"Elite Room Enemy at index {i} has null prefab!");
+                    // Debug.LogError($"Elite Room Enemy at index {i} has null prefab!");
                 }
             }
         }
@@ -63,7 +63,7 @@ public class EnemySpawnManager : MonoBehaviour
     {
         if (roomTransform == null)
         {
-            Debug.LogError($"SpawnEnemiesForRoom: roomTransform is null for room type {roomType}");
+            // Debug.LogError($"[스폰매니저] SpawnEnemiesForRoom: roomTransform이 null입니다 (방 타입: {roomType})");
             return new List<Enemy>();
         }
 
@@ -71,7 +71,7 @@ public class EnemySpawnManager : MonoBehaviour
 
         if (roomType == RoomType.Spawn)
         {
-            Debug.Log($"Skipping enemy spawn for Spawn room");
+            // Debug.Log($"[스폰매니저] 스폰 방({roomTransform.name})은 적 스폰을 건너뜁니다.");
             return new List<Enemy>();
         }
 
@@ -81,11 +81,10 @@ public class EnemySpawnManager : MonoBehaviour
 
         if (availableEnemies == null || availableEnemies.Count == 0)
         {
-            Debug.LogError($"No enemies configured for room type: {roomType} on {gameObject.name}");
+            // Debug.LogError($"[스폰매니저] {gameObject.name}에 {roomType} 타입을 위한 적이 설정되지 않았거나 리스트가 비어있습니다.");
             return new List<Enemy>();
         }
-
-        Debug.Log($"Spawning {enemyCount} enemies for room type {roomType}");
+        // Debug.Log($"[스폰매니저] {roomTransform.name}({roomType})에 {enemyCount}마리의 적 스폰 시도. 사용 가능 적 종류: {availableEnemies.Count}");
 
         for (int i = 0; i < enemyCount; i++)
         {
@@ -94,20 +93,20 @@ public class EnemySpawnManager : MonoBehaviour
             
             if (selectedEnemy == null)
             {
-                Debug.LogError($"Failed to select random enemy for room type {roomType}");
+                // Debug.LogError($"[스폰매니저] {roomType} 타입을 위한 적 선택 실패.");
                 continue;
             }
 
             if (selectedEnemy.enemyPrefab == null)
             {
-                Debug.LogError($"Selected enemy prefab is null for room type {roomType}");
+                // Debug.LogError($"[스폰매니저] 선택된 적 프리팹이 null입니다 ({roomType}). 프리팹 이름: {(selectedEnemy.enemyPrefab != null ? selectedEnemy.enemyPrefab.name : "NULL")}");
                 continue;
             }
-
+            // Debug.Log($"[스폰매니저] 스폰 대상: {selectedEnemy.enemyPrefab.name} at {spawnPosition}");
             GameObject enemy = Instantiate(selectedEnemy.enemyPrefab, spawnPosition, Quaternion.identity, roomTransform);
             if (enemy == null)
             {
-                Debug.LogError($"Failed to instantiate enemy prefab");
+                // Debug.LogError($"[스폰매니저] 적 프리팹 인스턴스화 실패: {selectedEnemy.enemyPrefab.name}");
                 continue;
             }
 
@@ -116,14 +115,15 @@ public class EnemySpawnManager : MonoBehaviour
             if (enemy.TryGetComponent<Enemy>(out var enemyBase))
             {
                 spawnedEnemyComponents.Add(enemyBase);
-                OnEnemySpawned?.Invoke(enemyBase);
+                OnEnemySpawned?.Invoke(enemyBase); // 이 이벤트는 CombatRoomBaseState에서 직접 사용하지 않음
+                // Debug.Log($"[스폰매니저] {enemy.name} (Enemy 컴포넌트 있음) 스폰 완료 및 리스트에 추가됨. 현재 spawnedEnemyComponents: {spawnedEnemyComponents.Count}");
             }
             else
             {
-                Debug.LogError($"Spawned enemy {enemy.name} does not have EnemyBase component");
+                // Debug.LogError($"[스폰매니저] 스폰된 적 {enemy.name}에 Enemy 컴포넌트가 없습니다.");
             }
         }
-
+        // Debug.Log($"[스폰매니저] 최종 스폰된 적 (Enemy 컴포넌트 기준): {spawnedEnemyComponents.Count}마리.");
         return spawnedEnemyComponents;
     }
 

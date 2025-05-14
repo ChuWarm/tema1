@@ -45,25 +45,34 @@ public class Door : MonoBehaviour
 
     public void Open()
     {
-        if (!enabled || _isOpen || _isAnimating) return;
+        if (!enabled || _isOpen || _isAnimating)
+        {
+            return;
+        }
 
         if (_animator != null)
         {
             _isAnimating = true;
             _animator.SetTrigger(OpenHash);
-            Debug.Log($"Door {gameObject.name}: Opening door");
+        }
+        else
+        {
+            _isAnimating = true;
+            _animator.SetTrigger(CloseHash);
         }
     }
 
     public void Close()
     {
-        if (!enabled || !_isOpen || _isAnimating) return;
-
+        string doorName = gameObject.name;
         if (_animator != null)
         {
             _isAnimating = true;
             _animator.SetTrigger(CloseHash);
-            Debug.Log($"Door {gameObject.name}: Closing door");
+        }
+        else
+        {
+            Debug.LogError($"Door {doorName}: Close() 호출되었으나, _animator가 null입니다. Awake에서 초기화 실패 가능성 확인 필요.");
         }
     }
 
@@ -72,14 +81,12 @@ public class Door : MonoBehaviour
     {
         _isOpen = true;
         _isAnimating = false;
-        Debug.Log($"Door {gameObject.name}: Open animation completed");
     }
 
     public void OnCloseAnimationComplete()
     {
         _isOpen = false;
         _isAnimating = false;
-        Debug.Log($"Door {gameObject.name}: Close animation completed");
     }
 
     public bool IsOpen => _isOpen;

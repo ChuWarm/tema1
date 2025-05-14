@@ -7,6 +7,7 @@ public class BattleRoomState : IRoomState
     private readonly RoomEventProcessor _processor;
     private readonly HashSet<Enemy> _activeEnemies = new();
     private readonly Room _room;
+    private bool _combatStarted = false;
 
     public BattleRoomState(RoomEventProcessor processor)
     {
@@ -18,32 +19,39 @@ public class BattleRoomState : IRoomState
     public void OnStateEnter(RoomEventProcessor processor)
     {
         _activeEnemies.Clear();
-        Debug.Log($"[전투방] {_room.gameObject.name}: 전투 준비");
+        _combatStarted = false;
     }
 
     public void OnStateExit(RoomEventProcessor processor)
     {
         GameEventBus.Unsubscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
-        Debug.Log($"[전투방] {_room.gameObject.name}: 전투 종료");
     }
 
     public void OnPlayerEnter(RoomEventProcessor processor)
     {
-        if (_room.IsCleared) return;
-
-        var enemySpawnManager = processor.GetEnemySpawnManager();
-        if (enemySpawnManager == null)
+        if (_room.IsCleared)
         {
-            Debug.LogError($"[전투방] {_room.gameObject.name}: EnemySpawnManager를 찾을 수 없음");
             return;
         }
 
-        SpawnEnemies(enemySpawnManager);
+        var enemySpawnManager = processor.GetEnemySpawnManager();
+        if (enemySpawnManager == null)
+        { 
+            return;
+        }
+        
+        if (!_combatStarted)
+        { 
+            SpawnEnemies(enemySpawnManager);
+            _combatStarted = true;
+        }
+        else
+        {
+        }
     }
 
     public void OnRoomCleared(RoomEventProcessor processor)
     {
-        Debug.Log($"[전투방] {_room.gameObject.name}: 전투 승리");
     }
 
     public void OnStateUpdate(RoomEventProcessor processor)
@@ -53,24 +61,42 @@ public class BattleRoomState : IRoomState
 
     private void SpawnEnemies(EnemySpawnManager enemySpawnManager)
     {
-        Debug.Log($"[전투방] {_room.gameObject.name}: 적 스폰 시작");
-        var spawnedEnemies = enemySpawnManager.SpawnEnemiesForRoom(_processor.GetRoomType(), _room.transform);
-        _activeEnemies.UnionWith(spawnedEnemies);
+        var spawnedEnemiesList = enemySpawnManager.SpawnEnemiesForRoom(_processor.GetRoomType(), _room.transform);
+        
+        if (spawnedEnemiesList == null)
+        {
+            return;
+        }
+        
+        int beforeCount = _activeEnemies.Count;
+        _activeEnemies.UnionWith(spawnedEnemiesList);
+        int afterCount = _activeEnemies.Count;
+
+        if (afterCount == 0 && spawnedEnemiesList.Count > 0)
+        {
+        }
+        else if (afterCount == 0 && spawnedEnemiesList.Count == 0)
+        {
+        }
     }
 
     private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)
     {
         if (enemyDeadEvent.sender != _processor) return;
 
-        _activeEnemies.Remove(enemyDeadEvent.enemy);
-        Debug.Log($"[전투방] {_room.gameObject.name}: 적 처치 (남은 적: {_activeEnemies.Count}마리)");
+        if (_activeEnemies.Remove(enemyDeadEvent.enemy))
+        {
+        }
+        else
+        {
+        }
 
         CheckAndClearRoomIfWon();
     }
 
     private void CheckAndClearRoomIfWon()
     {
-        if (!_room.IsCleared && _activeEnemies.Count == 0)
+        if (_combatStarted && !_room.IsCleared && _activeEnemies.Count == 0)
         {
             _processor.OnRoomCleared(null);
         }

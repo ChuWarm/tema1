@@ -13,36 +13,44 @@ public class RestRoomState : IRoomState
 
     public void OnStateEnter(RoomEventProcessor processor)
     {
-        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 준비");
+        // Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 준비");
     }
 
     public void OnStateExit(RoomEventProcessor processor)
     {
-        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 종료");
+        // Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 종료");
     }
 
     public void OnPlayerEnter(RoomEventProcessor processor)
     {
-        if (_room.IsCleared) return;
+        if (_room.IsCleared)
+        {
+            // Debug.Log($"[휴식방] {_room.gameObject.name}: OnPlayerEnter - 이미 클리어된 상태.");
+            return;
+        }
         StartRest();
+        // 휴식방은 들어오면 바로 클리어 처리 (특별한 클리어 조건이 없다면)
+        // Debug.Log($"[휴식방] {_room.gameObject.name}: OnPlayerEnter - 휴식 시작 후 바로 클리어 처리 요청.");
+        processor.OnRoomCleared(null);
     }
 
     public void OnRoomCleared(RoomEventProcessor processor)
     {
-        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 완료");
+        // Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 완료");
     }
 
     public void OnStateUpdate(RoomEventProcessor processor)
     {
-        if (!_room.IsCleared)
-        {
-            processor.OnRoomCleared(null);
-        }
+        // OnStateUpdate에서 매번 클리어하던 로직 제거
+        // if (!_room.IsCleared)
+        // {
+        //     processor.OnRoomCleared(null);
+        // }
     }
 
     private void StartRest()
     {
         // TODO: 플레이어 체력 회복 로직
-        Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 시작");
+        // Debug.Log($"[휴식방] {_room.gameObject.name}: 휴식 시작");
     }
 }

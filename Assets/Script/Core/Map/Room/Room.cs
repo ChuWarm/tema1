@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Cysharp.Threading.Tasks;
 
 public class Room : MonoBehaviour
 {
@@ -22,6 +23,15 @@ public class Room : MonoBehaviour
     public bool IsCleared => _mapData?.isCleared ?? false;
     public Vector2Int GridPosition => _mapData?.gridPos ?? Vector2Int.zero;
 
+    public async UniTask WaitForEventProcessorInitializationAsync()
+    {
+        if (_eventProcessor == null) 
+        {
+            return;
+        }
+        await _eventProcessor.InitializationTask;
+    }
+
     private void Awake()
     {
         InitializeComponents();
@@ -36,7 +46,6 @@ public class Room : MonoBehaviour
         if (_eventProcessor == null)
         {
             _eventProcessor = gameObject.AddComponent<RoomEventProcessor>();
-            Debug.Log($"[방] {gameObject.name}: RoomEventProcessor가 없어 새로 추가됨.");
         }
     }
 
@@ -69,14 +78,12 @@ public class Room : MonoBehaviour
     public void Init(MapData data)
     {
         _mapData = data;
-        Debug.Log($"[방] {gameObject.name}: MapData로 초기화 완료 (타입: {RoomType})");
     }
 
     public void ForcePlayerEnter()
     {
         if (!IsEventProcessorInitialized) 
         {
-            Debug.LogWarning($"[방] {gameObject.name}: 이벤트 프로세서 미초기화");
         }
         _eventProcessor.OnPlayerEnterRoom();
     }
@@ -85,19 +92,16 @@ public class Room : MonoBehaviour
     {
         if (_mapData == null)
         {
-            Debug.LogWarning($"[방] {gameObject.name}: MapData가 없어 클리어 처리 불가.");
             return;
         }
 
         if (IsCleared)
         {
-            Debug.Log($"[방] {gameObject.name}: 이미 클리어된 방입니다. 문 상태만 업데이트합니다.");
             UpdateDoorsAfterClear();
             return;
         }
         
         _mapData.isCleared = true;
-        Debug.Log($"[방] {gameObject.name}: 클리어됨.");
         UpdateDoorsAfterClear();
     }
 
@@ -108,7 +112,6 @@ public class Room : MonoBehaviour
         if (RoomType == RoomType.Spawn)
         {
             OpenAllDoors();
-            Debug.Log($"[방] {gameObject.name}: 스폰 방.");
             return;
         }
 
@@ -131,7 +134,6 @@ public class Room : MonoBehaviour
     private void UpdateNeighboringRoomDoors()
     {
         if (_mapData == null || MapGenerator.Instance == null) return;
-
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left };
         for (int i = 0; i < directions.Length && i < _mapData.doors.Length; i++)
         {
@@ -140,26 +142,39 @@ public class Room : MonoBehaviour
             Vector2Int neighborPos = GridPosition + directions[i];
             if (MapGenerator.Instance.TryGetRoom(neighborPos, out Room neighborRoom))
             {
-                neighborRoom.OpenDoorInDirection(GetOppositeDirection(i));
+                int oppositeDirection = GetOppositeDirection(i);
+                neighborRoom.OpenDoorInDirection(oppositeDirection);
             }
         }
     }
 
     public void CloseAllDoors()
     {
-        if (_doors == null) return;
+        if (_doors == null) 
+        {
+            return;
+        }
         foreach (var door in _doors)
         {
-            if (door != null) door.Close();
+            if (door != null) 
+            {
+                door.Close();
+            }
         }
     }
 
     public void OpenAllDoors()
     {
-        if (_doors == null) return;
+        if (_doors == null) 
+        {
+            return;
+        }
         foreach (var door in _doors)
         {
-            if (door != null) door.Open();
+            if (door != null) 
+            {
+                door.Open();
+            }
         }
     }
 

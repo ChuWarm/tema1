@@ -13,6 +13,7 @@ public class RoomEventProcessor : MonoBehaviour
     public bool IsInitialized => _isInitialized;
     private EnemySpawnManager _enemySpawnManager;
     private UniTaskCompletionSource<bool> _initCompletionSource;
+    public UniTask<bool> InitializationTask => _initCompletionSource.Task;
     
     private void Awake()
     {
@@ -40,14 +41,12 @@ public class RoomEventProcessor : MonoBehaviour
 
         _roomType = _room.RoomType;
         
-        // Normal과 Elite 방에서만 EnemySpawnManager 생성
         if (_roomType == RoomType.Normal || _roomType == RoomType.Elite || _roomType == RoomType.Boss)
         {
             _enemySpawnManager = GetComponent<EnemySpawnManager>();
             if (_enemySpawnManager == null)
             {
                 _enemySpawnManager = gameObject.AddComponent<EnemySpawnManager>();
-                Debug.Log($"[방이벤트] {gameObject.name}: EnemySpawnManager 추가됨");
             }
         }
     }
@@ -70,7 +69,6 @@ public class RoomEventProcessor : MonoBehaviour
             _currentRoomState.OnStateEnter(this);
             _isInitialized = true;
             
-            Debug.Log($"[방이벤트] {gameObject.name}: 초기화 완료 ({_roomType} 방)");
             _initCompletionSource.TrySetResult(true);
         }
         catch (Exception e)
@@ -103,7 +101,6 @@ public class RoomEventProcessor : MonoBehaviour
     {
         if (!_isInitialized)
         {
-            Debug.Log($"[방이벤트] {gameObject.name}: 초기화 대기 중...");
             try
             {
                 await _initCompletionSource.Task;
@@ -115,8 +112,12 @@ public class RoomEventProcessor : MonoBehaviour
             }
         }
 
-        Debug.Log($"[방이벤트] {gameObject.name}: 플레이어 진입 ({_roomType} 방)");
-        _room.CloseAllDoors();
+        
+        if (_roomType == RoomType.Normal || _roomType == RoomType.Elite || _roomType == RoomType.Boss)
+        {
+            _room.CloseAllDoors();
+        }
+        
         _currentRoomState?.OnPlayerEnter(this);
     }
 
@@ -127,11 +128,19 @@ public class RoomEventProcessor : MonoBehaviour
     
     public void OnRoomCleared(RoomClearedEvent roomClearedEvent)
     {
-        if (!_isInitialized) return;
+        if (!_isInitialized) 
+        {
+            return;
+        }
 
-        Debug.Log($"[방이벤트] {gameObject.name}: 방 클리어");
+        if (_room.IsCleared)
+        {
+            _room.MarkRoomAsCleared();
+            return;
+        }
+
         _currentRoomState?.OnRoomCleared(this);
-        _room.MarkRoomAsCleared();;
+        _room.MarkRoomAsCleared();
     }
 
     private void OnDestroy()
