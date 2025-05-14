@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 public enum RoomType { Spawn, Normal, Elite, Shop, Rest, Boss }
 
@@ -32,7 +33,7 @@ public class MapGenerator : Singleton<MapGenerator>
             _prefabDict[r.roomType] = r.roomPrefab;
     }
 
-    public void GenerateMap()
+    public async UniTask GenerateMap()
     {
         _map.Clear();
         
@@ -40,7 +41,7 @@ public class MapGenerator : Singleton<MapGenerator>
         Stack<Vector2Int> stack = new();
         Vector2Int start = Vector2Int.zero;
 
-        CreateRoom(start, RoomType.Spawn);
+        await CreateRoom(start, RoomType.Spawn);
         stack.Push(start);
 
         for (int i = 0; i < maxRooms; i++)
@@ -54,7 +55,7 @@ public class MapGenerator : Singleton<MapGenerator>
 
             if (next != null)
             {
-                CreateRoom(next.Value, type);
+                await CreateRoom(next.Value, type);
                 stack.Push(next.Value);
             }
             else
@@ -64,7 +65,7 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
-    private void CreateRoom(Vector2Int pos, RoomType type)
+    private async UniTask CreateRoom(Vector2Int pos, RoomType type)
     {
         GameObject prefab = _prefabDict[type];
         GameObject go = Instantiate(prefab, new Vector3(pos.x * 120, 0, pos.y * 120), Quaternion.identity, map.transform);
@@ -85,7 +86,8 @@ public class MapGenerator : Singleton<MapGenerator>
 
         if (type == RoomType.Spawn)
         {
-            room.ForceEnter();
+            await room.WaitForEventProcessorInitializationAsync();
+            room.ForcePlayerEnter();
         }
     }
 

@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 5897335972713401436}
   - component: {fileID: 8051740056105953749}
   - component: {fileID: 6220564103522927979}
+  - component: {fileID: 7924775599538716216}
   m_Layer: 0
   m_Name: Normal
   m_TagString: Untagged
@@ -279,6 +280,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 1, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7924775599538716216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1832806132081411984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95ef1d091e6e21343a56f2812cbd49e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  normalRoomEnemies:
+  - enemyPrefab: {fileID: 6167752670666052584, guid: bbee2240476eb2b4e80c2bd1f4efad5a, type: 3}
+    spawnWeight: 1
+  eliteRoomEnemies: []
+  minEnemyDistance: 2
+  maxEnemyDistance: 4
+  minEnemyCount: 3
+  maxEnemyCount: 5
 --- !u!1 &3094673898199966167
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,6 +22,11 @@ namespace Script.Characters
         [Header("상태 체크")] public bool isGrounded;
         public LayerMask groundLayer;
 
+        [Header("공격 설정")]
+        public float attackRange = 1.5f;
+        public float attackAngle = 90f;
+        public LayerMask enemyLayer;
+
         [Header("참조")] public PlayerManager playerManager;
         public CharacterController characterController;
         public Animator animator;
@@ -60,15 +65,23 @@ namespace Script.Characters
         public PlayerState CurrentState { get; private set; }
         public WeaponType CurrentWeapon { get; private set; } = WeaponType.Sword;
 
+        [Header("공격 판정 상세 설정")]
+        [Tooltip("애니메이션 이벤트 후 공격 판정을 지속할 시간 (초)")]
+        public float hitCheckDuration = 0.1f; 
+        private bool _isDuringHitCheck = false; // 현재 공격 판정 지속 시간 중인지 여부
+        private HashSet<IDamageable> _alreadyHitTargetsInCurrentAttack; // 현재 공격 모션에서 이미 맞은 타겟들
+
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
             if (animator == null)
                 animator = GetComponent<Animator>();
+            _alreadyHitTargetsInCurrentAttack = new HashSet<IDamageable>();
         }
 
         private void Start()
         {
+            playerManager = PlayerManager.Instance;
             _playerStateIdle = new PlayerStateIdle();
             _playerStateMove = new PlayerStateMove();
             _playerStateAttack = new PlayerStateAttack();
@@ -186,9 +199,14 @@ namespace Script.Characters
 
         private void OnDrawGizmosSelected()
         {
-            // 지면 체크 범위 시각화
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, 0.2f);
+            Gizmos.color = Color.red;
+            if (this.attackRange > 0)
+            {
+                Vector3 yOffset = Vector3.up * 1.0f;
+                Vector3 sphereCenter = transform.position + yOffset + transform.forward * (this.attackRange * 0.5f);
+                float sphereRadius = this.attackRange; 
+                Gizmos.DrawWireSphere(sphereCenter, sphereRadius);
+            }
         }
 
         public void SetWeapon(WeaponType type)
@@ -291,12 +309,73 @@ namespace Script.Characters
             LookAtMouse();
             IsRun = false;
             IsAttacking = true;
+            _alreadyHitTargetsInCurrentAttack.Clear();
+            _isDuringHitCheck = false;
+            StopCoroutine("HitCheckCoroutine");
         }
 
         public void AttackMoveStep()
         {
-            IsAttackMoving = true;
-            _attackStepElapsed = 0f;
+            Debug.Log("[PlayerController] AttackMoveStep() Animation Event Fired!");
+            if (!_isDuringHitCheck && gameObject.activeInHierarchy && enabled)
+            {
+                StartCoroutine(HitCheckCoroutine());
+            }
+        }
+        
+        private IEnumerator HitCheckCoroutine()
+        {
+            _isDuringHitCheck = true;
+            float timer = 0f;
+
+            while (timer < hitCheckDuration)
+            {
+                PerformOverlapSphere();
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            _isDuringHitCheck = false;
+        }
+
+        void PerformOverlapSphere()
+        {
+            if (playerManager == null)
+            {
+                Debug.LogError("[PlayerController] PlayerManager 참조가 null입니다!");
+                return;
+            }
+
+            Vector3 yOffset = Vector3.up * 1.0f;
+            Vector3 detectionCenter = transform.position + yOffset + transform.forward * (attackRange * 0.5f);
+            float detectionRadius = attackRange; 
+
+            Collider[] hitColliders = Physics.OverlapSphere(detectionCenter, detectionRadius, enemyLayer);
+            
+            if (hitColliders.Length > 0)
+            {
+                 // 이 로그는 너무 자주 나올 수 있으므로, 필요할 때만 활성화
+                 // Debug.Log($"[PlayerController] OverlapSphere 결과, 감지된 콜라이더 수: {hitColliders.Length}");
+            }
+
+            foreach (var hitCollider in hitColliders)
+            {
+                if (hitCollider.gameObject == gameObject) continue;
+
+                IDamageable damageable = hitCollider.GetComponent<IDamageable>();
+                if (damageable != null)
+                {
+                    if (!_alreadyHitTargetsInCurrentAttack.Contains(damageable))
+                    {
+                        Debug.Log($"[PlayerController] 감지된 콜라이더: {hitCollider.name}, 태그: {hitCollider.tag}, 레이어: {LayerMask.LayerToName(hitCollider.gameObject.layer)} ({hitCollider.gameObject.layer})");
+                        Debug.Log($"[PlayerController] {hitCollider.name} 에서 IDamageable 컴포넌트 찾음! PlayerManager.Attack 호출 시도.");
+                        
+                        playerManager.Attack(damageable);
+                        _alreadyHitTargetsInCurrentAttack.Add(damageable);
+
+                        Debug.Log($"[PlayerController] {hitCollider.name} 에게 {(playerManager != null ? playerManager.attackPower.ToString() : "알수없음")} 데미지로 공격 실행 완료.");
+                    }
+                }
+            }
         }
 
         public void AttackMoveStepEnd()
@@ -309,6 +388,8 @@ namespace Script.Characters
             animator.speed = 1f;
             IsRun = true;
             IsAttacking = false;
+            _isDuringHitCheck = false;
+            StopCoroutine("HitCheckCoroutine");
         }
 
         public void OnSpawnAnimationComplete()

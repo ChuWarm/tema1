@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7492397091261312618}
   - component: {fileID: 1465977972825754392}
+  - component: {fileID: 1085618751599731328}
   m_Layer: 0
   m_Name: EnemyBase
   m_TagString: Untagged
@@ -42,30 +43,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 1015854932561616353}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b0f016da7b7670c44babe030c355425d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7b72d97435f16a440bf152684afa402f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_visualHolder: {fileID: 2331702599826360873}
-  m_enemyData:
-    enemyID: 
-    enemyName: 
-    enemyClass: 0
-    persionalityType: 0
-    health: 0
-    moveSpeed: 0
-    resistance: 0
-    attackPower: 0
-    attackSpeed: 0
-    attackRange: 0
-    attackCooldown: 0
-    experienceGiven: 0
-    dropTalbeID: 
-    visualResourceID: 
-    soundResourceID_Attack: 
-    soundResourceID_Hit: 
-    soundResourceID_Death: 
-    notes: 
-  health: 0
+  visualHolder: {fileID: 7492397091261312618}
+  animator: {fileID: 1085618751599731328}
+  enemyID: 
+  detectionRange: 10
+  attackAngle: 45
+  rotationSpeed: 5
+  OnEnemyDeath:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!95 &1085618751599731328
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1015854932561616353}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 24fcb47ca8759514d9a1a06ff14e7021, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3479509579042630349
 GameObject:
   m_ObjectHideFlags: 0
