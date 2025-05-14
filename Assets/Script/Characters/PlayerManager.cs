@@ -344,21 +344,42 @@ namespace Script.Characters
 
         public void Attack(IDamageable target)
         {
-            if (!CanAttack() || isDead) return;
+            if (!CanAttack() || target == null || target.IsDead()) return;
+
+            Debug.Log($"[PlayerManager] Attack called on target: {target.GetTransform()?.name ?? "null target"}");
 
             lastAttackTime = Time.time;
+            // TODO: PlayerController에서 애니메이션 재생 로직이 있다면 여기서는 중복 호출하지 않도록 확인
+            // animator.SetTrigger("Attack"); // PlayerController에서 한다면 제거
             
-            // 공격 이펙트
-            EffectManager.Instance.PlayEffect("Attack", transform.position + transform.forward, transform.rotation);
+            // 공격 이펙트 (PlayerController에서 담당 가능)
+            // EffectManager.Instance.PlayEffect("PlayerAttack", transform.position + transform.forward, transform.rotation);
             
-            // 약간의 딜레이 후 데미지 적용
-            StartCoroutine(DelayedDamage(target));
+            StartCoroutine(DelayedDamage(target, attackPower)); // Pass attackPower
         }
 
-        private System.Collections.IEnumerator DelayedDamage(IDamageable target)
+        private System.Collections.IEnumerator DelayedDamage(IDamageable target, int damageToDeal)
         {
-            yield return new WaitForSeconds(0.3f); // 애니메이션 타이밍에 맞춰 조정
-            target.TakeDamage(attackPower);
+            yield return new WaitForSeconds(0.3f); 
+
+            // target이 MonoBehaviour이며, 파괴되지 않았는지 확인
+            if (target != null && target is MonoBehaviour targetMonoBehaviour && targetMonoBehaviour != null)
+            {
+                // 추가로 IsDead도 한 번 더 체크 (선택 사항, Enemy.TakeDamage에서 이미 처리함)
+                if (!target.IsDead())
+                {
+                    Debug.Log($"[PlayerManager] DelayedDamage: Applying {damageToDeal} damage to {target.GetTransform()?.name}");
+                    target.TakeDamage(damageToDeal); 
+                }
+                else
+                {
+                    Debug.LogWarning($"[PlayerManager] DelayedDamage: Target {target.GetTransform()?.name} was already dead before applying damage.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[PlayerManager] DelayedDamage: Target was destroyed or became null before damage could be applied.");
+            }
         }
 
         public bool CanAttack()

@@ -17,6 +17,7 @@ public class Room : MonoBehaviour
     private MapData _mapData;
     private RoomPrefabType _roomPrefabType;
     private RoomEventProcessor _eventProcessor;
+    private bool _playerHasEntered;
     
     public RoomType RoomType => _roomPrefabType?.roomType ?? _mapData?.roomType ?? RoomType.Normal;
     public bool IsEventProcessorInitialized => _eventProcessor?.IsInitialized ?? false;
@@ -60,11 +61,13 @@ public class Room : MonoBehaviour
     {
         if (!other.CompareTag("Player") || _playerTransform == null) return;
         if (!IsEventProcessorInitialized) return;
+        if (_playerHasEntered) return;
 
         float distance = Vector3.Distance(_playerTransform.position, transform.position);
         if (distance < enterThreshold)
         {
             _eventProcessor.OnPlayerEnterRoom();
+            _playerHasEntered = true;
         }
     }
     
@@ -73,6 +76,7 @@ public class Room : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         
         _playerTransform = null;
+        _playerHasEntered = false;
     }
     
     public void Init(MapData data)
@@ -90,8 +94,12 @@ public class Room : MonoBehaviour
 
     public void MarkRoomAsCleared()
     {
+        string roomName = gameObject.name;
+        Debug.Log($"[{roomName}] MarkRoomAsCleared 호출됨. 현재 IsCleared: {IsCleared}");
+
         if (_mapData == null)
         {
+            Debug.LogError($"[{roomName}] MarkRoomAsCleared: _mapData가 null이므로 중단합니다.");
             return;
         }
 
@@ -107,7 +115,14 @@ public class Room : MonoBehaviour
 
     private void UpdateDoorsAfterClear()
     {
-        if (_mapData == null) return;
+        string roomName = gameObject.name;
+        Debug.Log($"[{roomName}] UpdateDoorsAfterClear() 호출됨. RoomType: {RoomType}");
+
+        if (_mapData == null)
+        {
+             Debug.LogError($"[{roomName}] UpdateDoorsAfterClear: _mapData가 null이므로 중단합니다.");
+             return;
+        }
 
         if (RoomType == RoomType.Spawn)
         {
@@ -121,7 +136,13 @@ public class Room : MonoBehaviour
 
     private void UpdateConnectedDoorsBasedOnMapData()
     {
-        if (_doors == null || _mapData == null || _mapData.doors == null) return;
+        string roomName = gameObject.name;
+        Debug.Log($"[{roomName}] UpdateConnectedDoorsBasedOnMapData() 호출됨.");
+
+        if (_doors == null) { Debug.LogWarning($"[{roomName}] _doors가 null입니다."); return; }
+        if (_mapData == null) { Debug.LogWarning($"[{roomName}] _mapData가 null입니다."); return; }
+        if (_mapData.doors == null) { Debug.LogWarning($"[{roomName}] _mapData.doors가 null입니다."); return; }
+
         for (int i = 0; i < _doors.Length && i < _mapData.doors.Length; i++)
         {
             if (_mapData.doors[i] && _doors[i] != null)
@@ -133,8 +154,14 @@ public class Room : MonoBehaviour
 
     private void UpdateNeighboringRoomDoors()
     {
-        if (_mapData == null || MapGenerator.Instance == null) return;
+        string roomName = gameObject.name;
+        Debug.Log($"[{roomName}] UpdateNeighboringRoomDoors() 호출됨.");
+
+        if (_mapData == null) { Debug.LogWarning($"[{roomName}] _mapData가 null입니다."); return; }
+        if (MapGenerator.Instance == null) { Debug.LogWarning($"[{roomName}] MapGenerator.Instance가 null입니다."); return; }
+
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left };
+
         for (int i = 0; i < directions.Length && i < _mapData.doors.Length; i++)
         {
             if (!_mapData.doors[i]) continue;
@@ -145,13 +172,19 @@ public class Room : MonoBehaviour
                 int oppositeDirection = GetOppositeDirection(i);
                 neighborRoom.OpenDoorInDirection(oppositeDirection);
             }
+            else
+            {
+                Debug.LogWarning($"[{roomName}] UpdateNeighboringRoomDoors - 이웃 방 {neighborPos}를 찾을 수 없습니다.");
+            }
         }
     }
 
     public void CloseAllDoors()
     {
+        string roomName = gameObject.name;
         if (_doors == null) 
         {
+            Debug.LogWarning($"[{roomName}] CloseAllDoors: _doors가 null입니다.");
             return;
         }
         foreach (var door in _doors)
@@ -165,8 +198,11 @@ public class Room : MonoBehaviour
 
     public void OpenAllDoors()
     {
+        string roomName = gameObject.name;
+        Debug.Log($"[{roomName}] OpenAllDoors() 호출됨.");
         if (_doors == null) 
         {
+            Debug.LogWarning($"[{roomName}] OpenAllDoors: _doors가 null입니다.");
             return;
         }
         foreach (var door in _doors)
@@ -180,9 +216,16 @@ public class Room : MonoBehaviour
 
     public void OpenDoorInDirection(int directionIndex)
     {
+        string roomName = gameObject.name;
+        Debug.Log($"[{roomName}] OpenDoorInDirection({directionIndex}) 호출됨.");
         if (_doors != null && directionIndex >= 0 && directionIndex < _doors.Length && _doors[directionIndex] != null)
         {
-            _doors[directionIndex].Open();
+            var doorToOpen = _doors[directionIndex];
+            doorToOpen.Open();
+        }
+        else
+        {
+            Debug.LogWarning($"[{roomName}] OpenDoorInDirection({directionIndex}) - 유효하지 않은 문 인덱스 또는 문이 null입니다.");
         }
     }
 

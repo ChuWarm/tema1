@@ -7,7 +7,7 @@ public abstract class CombatRoomBaseState : IRoomState
     protected readonly RoomEventProcessor _processor;
     protected readonly HashSet<Enemy> _activeEnemies = new();
     protected readonly Room _room;
-    private bool _combatStarted = false;
+    protected bool _combatStarted = false;
 
     protected CombatRoomBaseState(RoomEventProcessor processor)
     {
@@ -20,13 +20,11 @@ public abstract class CombatRoomBaseState : IRoomState
     {
         _activeEnemies.Clear();
         _combatStarted = false;
-        // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: {GetLogStateNameForEnter()} 준비. _combatStarted = {_combatStarted}");
     }
 
     public virtual void OnStateExit(RoomEventProcessor processor)
     {
         GameEventBus.Unsubscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
-        // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: {GetLogStateNameForEnter()} 종료");
     }
 
     public virtual void OnPlayerEnter(RoomEventProcessor processor)
@@ -43,27 +41,23 @@ public abstract class CombatRoomBaseState : IRoomState
 
         if (_room.IsCleared) 
         {
-            // Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter 호출 시 이미 IsCleared가 true입니다. 스폰 및 전투 시작을 건너뜁니다.");
+            // Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter - Room already cleared. Skipping spawn.");
             return;
         }
 
         var enemySpawnManager = processor.GetEnemySpawnManager();
         if (enemySpawnManager == null)
         {
-            // Debug.LogError($"[{GetRoomStateName()}] {_room.gameObject.name}: EnemySpawnManager를 찾을 수 없음. 스폰 실패.");
+            Debug.LogError($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter - EnemySpawnManager not found!");
             return;
         }
 
         if (!_combatStarted)
         {
-            // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: PerformSpecificSpawn 호출 준비.");
+            // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter - Performing specific spawn.");
             PerformSpecificSpawn(enemySpawnManager);
             _combatStarted = true;
-            // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter - 전투 시작! _combatStarted = {_combatStarted}");
-        }
-        else
-        {
-            // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter - 이미 전투가 시작된 상태 (_combatStarted = true). 추가 스폰 없음.");
+            // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: OnPlayerEnter - Combat started. _combatStarted = true. Initial active enemies: {_activeEnemies.Count}");
         }
     }
 
@@ -85,26 +79,30 @@ public abstract class CombatRoomBaseState : IRoomState
 
     private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)
     {
-        if (enemyDeadEvent.sender != _processor) return;
+        // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: OnEnemyDeadEvent received from sender: {enemyDeadEvent.sender?.GetInstanceID()} for enemy: {enemyDeadEvent.enemy?.name}. Expected processor: {_processor.GetInstanceID()}");
 
-        if (_activeEnemies.Remove(enemyDeadEvent.enemy))
+        if (enemyDeadEvent.sender != _processor) 
         {
-            // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: 적 처치 ({enemyDeadEvent.enemy.name}). 남은 적: {_activeEnemies.Count}마리");
-        }
-        else
-        {
-            // Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: OnEnemyDeadEvent - _activeEnemies에서 {enemyDeadEvent.enemy.name} 제거 실패.");
+            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: OnEnemyDeadEvent - Event sender does not match current room processor. Event ignored.");
+            return;
         }
 
+        // int countBeforeRemove = _activeEnemies.Count;
+        bool removed = _activeEnemies.Remove(enemyDeadEvent.enemy);
+        // Debug.Log($"[{GetRoomStateName()}] {_room.gameObject.name}: Enemy {enemyDeadEvent.enemy?.name} removal attempted. Success: {removed}. Active enemies before: {countBeforeRemove}, after: {_activeEnemies.Count}");
+        
         CheckAndClearRoomIfWon();
     }
 
     private void CheckAndClearRoomIfWon()
     {
+        string roomName = _room.gameObject.name;
+        string stateName = GetRoomStateName();
+        
         if (_combatStarted && !_room.IsCleared && _activeEnemies.Count == 0 && _processor.IsInitialized)
         {
-            // Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: CheckAndClearRoomIfWon 조건 만족! 방 클리어 처리를 요청합니다. (_combatStarted: true, IsCleared: false, ActiveEnemies: 0, ProcessorInitialized: true)");
-            _processor.OnRoomCleared(null);
+            Debug.Log($"[{stateName}] {roomName}: All enemies cleared. Marking room as cleared.");
+            _processor.OnRoomCleared(new RoomClearedEvent { sender = _processor, ClearedRoom = _room });
         }
     }
 } 

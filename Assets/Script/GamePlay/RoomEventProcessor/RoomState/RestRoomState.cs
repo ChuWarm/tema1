@@ -29,9 +29,9 @@ public class RestRoomState : IRoomState
             return;
         }
         StartRest();
-        // 휴식방은 들어오면 바로 클리어 처리 (특별한 클리어 조건이 없다면)
+        // 휴식방은 들어오면 바로 클리어 처리
         // Debug.Log($"[휴식방] {_room.gameObject.name}: OnPlayerEnter - 휴식 시작 후 바로 클리어 처리 요청.");
-        processor.OnRoomCleared(null);
+        processor.OnRoomCleared(new RoomClearedEvent { sender = processor, ClearedRoom = _room });
     }
 
     public void OnRoomCleared(RoomEventProcessor processor)

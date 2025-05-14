@@ -9,6 +9,7 @@ public class PlayerStateMove : IPlayerState
     {
         _playerController = playerController;
         _playerController.animator.SetBool(PlayerController.IsWalkingAnim, true);
+        Debug.Log("[PlayerStateMove] Entered Move State. IsRun set to true.");
     }
 
     public void UpdateState()
@@ -28,16 +29,16 @@ public class PlayerStateMove : IPlayerState
         Vector3 input = new(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         float speed = input.magnitude;
         
-        if (speed > 0.01 && _playerController.IsRun)
+        if (speed > 0.01f)
         {
             _playerController.HandleMovement();
         }
         else
         {
-            AnimatorStateInfo currentAnim = _playerController.animator.GetCurrentAnimatorStateInfo(0);
-            if (currentAnim.IsName("RunStart"))
+            if (_playerController.animator.GetBool(PlayerController.IsWalkingAnim))
             {
-                _playerController.animator.Play(PlayerController.Idle);
+                 _playerController.animator.SetBool(PlayerController.IsWalkingAnim, false);
+                 Debug.Log("[PlayerStateMove] UpdateState: Movement stopped. IsRun set to false.");
             }
             _playerController.SetState(PlayerState.Idle);
         }
@@ -47,7 +48,11 @@ public class PlayerStateMove : IPlayerState
 
     public void ExitState()
     {
-        _playerController.animator.SetBool(PlayerController.IsWalkingAnim, false);
+        if (_playerController != null && _playerController.animator != null && _playerController.animator.GetBool(PlayerController.IsWalkingAnim))
+        {
+            _playerController.animator.SetBool(PlayerController.IsWalkingAnim, false);
+            Debug.Log("[PlayerStateMove] ExitState: IsRun set to false.");
+        }
         _playerController = null;
     }
 }
