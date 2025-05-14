@@ -40,8 +40,9 @@ public class RoomEventProcessor : MonoBehaviour
         }
 
         _roomType = _room.RoomType;
-        
-        if (_roomType == RoomType.Normal || _roomType == RoomType.Elite || _roomType == RoomType.Boss)
+
+        if (_roomType == RoomType.Normal || _roomType == RoomType.Normal2 || 
+            _roomType == RoomType.Elite || _roomType == RoomType.Boss)
         {
             _enemySpawnManager = GetComponent<EnemySpawnManager>();
             if (_enemySpawnManager == null)
@@ -89,6 +90,7 @@ public class RoomEventProcessor : MonoBehaviour
         {
             RoomType.Spawn => new SpawnRoomState(this),
             RoomType.Normal => new BattleRoomState(this),
+            RoomType.Normal2 => new BattleRoomState(this),
             RoomType.Elite => new BattleRoomState(this),
             RoomType.Rest => new RestRoomState(this),
             RoomType.Shop => new ShopRoomState(this),
@@ -113,7 +115,8 @@ public class RoomEventProcessor : MonoBehaviour
         }
 
         
-        if (_roomType == RoomType.Normal || _roomType == RoomType.Elite || _roomType == RoomType.Boss)
+        if (_roomType == RoomType.Normal || _roomType == RoomType.Normal2 ||
+            _roomType == RoomType.Elite || _roomType == RoomType.Boss)
         {
             _room.CloseAllDoors();
         }

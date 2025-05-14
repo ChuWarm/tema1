@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
-public enum RoomType { Spawn, Normal, Elite, Shop, Rest, Boss }
+public enum RoomType { Spawn, Normal, Normal2, Elite, Shop, Rest, Boss }
 
 public class MapData
 {
@@ -51,7 +51,21 @@ public class MapGenerator : Singleton<MapGenerator>
             var current = stack.Peek();
             var next = GetRandomEmptyNeighbor(current);
             
-            RoomType type = i == maxRooms - 1 ? RoomType.Boss : RandomRoomType();
+            // RoomType type = i == maxRooms - 1 ? RoomType.Boss : RandomRoomType();
+            RoomType type = RandomRoomType();
+            
+            if (i == 4)
+            { 
+                type =RoomType.Rest;
+            }
+            else if (i == 7)
+            { 
+                type = RoomType.Shop;
+            }
+            else if (i == maxRooms - 1)
+            {
+                type = RoomType.Boss;
+            }
             
             if (next != null)
             {
@@ -122,10 +136,8 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         RoomType[] pool = new RoomType[]
         {
-            RoomType.Normal, RoomType.Normal, RoomType.Normal,
-            RoomType.Elite, 
-            RoomType.Shop, RoomType.Shop, 
-            RoomType.Rest
+            RoomType.Normal, RoomType.Normal, RoomType.Normal2, RoomType.Normal2,
+            RoomType.Elite, RoomType.Elite
         };
         return pool[Random.Range(0, pool.Length)];
     }

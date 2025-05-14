@@ -245,6 +245,7 @@ MonoBehaviour:
   doorSouth: {fileID: 547165773717782056}
   doorEast: {fileID: 4284118379148320709}
   doorWest: {fileID: 1699079711288512507}
+  enterThreshold: 50
 --- !u!114 &5897335972713401436
 MonoBehaviour:
   m_ObjectHideFlags: 0

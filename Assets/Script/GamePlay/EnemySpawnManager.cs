@@ -133,6 +133,8 @@ public class EnemySpawnManager : MonoBehaviour
         {
             case RoomType.Normal:
                 return normalRoomEnemies;
+            case RoomType.Normal2:
+                return normalRoomEnemies;
             case RoomType.Elite:
                 return eliteRoomEnemies;
             default:
