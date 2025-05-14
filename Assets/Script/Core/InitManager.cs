@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
 
 public class InitManager : Singleton<InitManager>
 {
@@ -14,10 +15,10 @@ public class InitManager : Singleton<InitManager>
         SceneManager.sceneLoaded -= HandleSceneLoaded;
     }
     
-    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    private async void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 순서 보장
-        MapGenerator.Instance.GenerateMap();
+        await MapGenerator.Instance.GenerateMap();
         GamePlayManager.Instance.InstantiatePlayer();
         CameraController.Instance.CameraInit();
     }

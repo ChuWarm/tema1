@@ -23,10 +23,13 @@ public class SpawnRoomState : IRoomState
     {
         if (_room.IsCleared)
         {
+            // Debug.Log($"[{_room.gameObject.name}] SpawnRoomState: OnPlayerEnter - Already cleared.");
             return;
         }
+        // Debug.Log($"[{_room.gameObject.name}] SpawnRoomState: OnPlayerEnter - Initializing spawn point and clearing room.");
         InitializeSpawnPoint();
-        processor.OnRoomCleared(null);
+        // Spawn room is instantly cleared on player enter if not already.
+        processor.OnRoomCleared(new RoomClearedEvent { sender = processor, ClearedRoom = _room });
     }
 
     public void OnRoomCleared(RoomEventProcessor processor)

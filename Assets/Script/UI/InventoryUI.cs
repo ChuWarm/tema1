@@ -42,6 +42,7 @@ public class InventoryUI : MonoBehaviour
         Inventory.Instance.OnItemRemoved += OnItemRemoved;
         Inventory.Instance.OnItemEquipped += OnItemEquipped;
         Inventory.Instance.OnItemUnequipped += OnItemUnequipped;
+        Inventory.Instance.OnItemsSwapped += OnItemsSwappedHandler;
 
         // 초기 UI 상태 설정
         inventoryPanel.SetActive(false);
@@ -71,8 +72,18 @@ public class InventoryUI : MonoBehaviour
 
     private void ToggleInventory()
     {
+        Debug.Log("[InventoryUI] ToggleInventory() called.");
         isInventoryOpen = !isInventoryOpen;
+        Debug.Log($"[InventoryUI] isInventoryOpen is now: {isInventoryOpen}");
+
+        if (inventoryPanel == null)
+        {
+            Debug.LogError("[InventoryUI] inventoryPanel is NOT assigned in the Inspector!");
+            return;
+        }
+
         inventoryPanel.SetActive(isInventoryOpen);
+        Debug.Log($"[InventoryUI] inventoryPanel.SetActive({isInventoryOpen}) executed.");
         
         if (isInventoryOpen)
         {
@@ -171,6 +182,14 @@ public class InventoryUI : MonoBehaviour
             UpdateInventoryUI();
         }
     }
+
+    private void OnItemsSwappedHandler()
+    {
+        if (isInventoryOpen)
+        {
+            UpdateInventoryUI();
+        }
+    }
     #endregion
 
     private void OnDestroy()
@@ -182,6 +201,7 @@ public class InventoryUI : MonoBehaviour
             Inventory.Instance.OnItemRemoved -= OnItemRemoved;
             Inventory.Instance.OnItemEquipped -= OnItemEquipped;
             Inventory.Instance.OnItemUnequipped -= OnItemUnequipped;
+            Inventory.Instance.OnItemsSwapped -= OnItemsSwappedHandler;
         }
     }
 } 

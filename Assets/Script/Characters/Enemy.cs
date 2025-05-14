@@ -7,7 +7,7 @@ namespace Script.Characters
 {
     public static class EnemyFactory
     {
-        public static Enemy SpawnEnemy(EnemyData enemyData, Vector3 position, Transform parent = null)
+        public static Enemy SpawnEnemy(EnemyData enemyData, Vector3 position, Transform parent = null, RoomEventProcessor roomProcessor = null)
         {
             var basePrefab = Resources.Load<GameObject>("EnemyBase");
             if (basePrefab == null)
@@ -19,6 +19,7 @@ namespace Script.Characters
             var instance = Object.Instantiate(basePrefab, position, Quaternion.identity, parent);
             if (instance.TryGetComponent<Enemy>(out var enemy))
             {
+                enemy.SetRoomProcessor(roomProcessor);
                 return enemy.Init(enemyData);
             }
             
@@ -61,6 +62,8 @@ namespace Script.Characters
         [System.Serializable]
         public class EnemyDeathEvent : UnityEvent<Enemy> { }
         public EnemyDeathEvent OnEnemyDeath = new EnemyDeathEvent();
+
+        private RoomEventProcessor _roomProcessor;
 
         public EnemyData GetEnemyData => enemyData;
 
@@ -113,6 +116,11 @@ namespace Script.Characters
             }
 
             return this;
+        }
+
+        public void SetRoomProcessor(RoomEventProcessor processor)
+        {
+            _roomProcessor = processor;
         }
 
         private void Update()
@@ -192,6 +200,11 @@ namespace Script.Characters
         {
             if (animator != null)
             {
+                bool currentState = animator.GetBool(IsWalkingAnim);
+                if (currentState != isWalking)
+                {
+                    Debug.Log($"[Enemy: {gameObject.name}] SetWalkingAnimation: current IsWalking = {currentState}, new IsWalking = {isWalking}");
+                }
                 animator.SetBool(IsWalkingAnim, isWalking);
             }
         }
@@ -236,7 +249,16 @@ namespace Script.Characters
             EffectManager.Instance.ShowExpText(enemyData.experienceGiven, transform.position + Vector3.up);
             
             // 이벤트 발행
-            GameEventBus.Publish(new RoomEnemyDeadEvent { enemy = this });
+            if (_roomProcessor != null)
+            {
+                GameEventBus.Publish(new RoomEnemyDeadEvent { sender = _roomProcessor, enemy = this });
+                Debug.Log($"[{_roomProcessor.GetRoom().gameObject.name}] Enemy '{gameObject.name}' died. Published RoomEnemyDeadEvent with sender: {_roomProcessor.GetInstanceID()}");
+            }
+            else
+            {
+                Debug.LogError($"[{gameObject.name}] Enemy.HandleDeath - _roomProcessor is null! Publishing RoomEnemyDeadEvent without sender.");
+                GameEventBus.Publish(new RoomEnemyDeadEvent { enemy = this }); 
+            }
             
             Destroy(gameObject, 2f);
         }

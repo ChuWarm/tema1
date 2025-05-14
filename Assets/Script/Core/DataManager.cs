@@ -28,13 +28,9 @@ public class DataManager : Singleton<DataManager>
         try
         {
             var json = await LoadDataGoogleSheet(DataSheetURLHolder.DATA_SHEET_URL);
-
-            print("Asd");
             var enemySheet = JsonUtility.FromJson<EnemyDataSheet>(json);
             var memoryDataSheet = JsonUtility.FromJson<MemoryUpgradeDataSheet>(json);
             var itemDataSheet = JsonUtility.FromJson<ItemDataSheet>(json);
-
-            print("parse suc");
 
             var enemyTask = await UniTask.RunOnThreadPool(() =>
             {
@@ -127,7 +123,6 @@ public class DataManager : Singleton<DataManager>
         {
             Debug.LogError(e);
         }
-        print("DataManager - Ready    asd");
         IsReady = true;
     }
 

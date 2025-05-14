@@ -33,6 +33,7 @@ public class RoomEnterEvent : IGameEvent
 public class RoomClearedEvent : IGameEvent
 {
     public RoomEventProcessor sender;
+    public Room ClearedRoom;
 }
 
 public class RoomEnemyDeadEvent : IGameEvent
