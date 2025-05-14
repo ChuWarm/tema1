@@ -5,6 +5,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Script.Core;
+using Script.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+using TMPro;
 
 namespace Script.Characters
 {
@@ -72,6 +77,10 @@ namespace Script.Characters
         private HashSet<IDamageable> _alreadyHitTargetsInCurrentAttack; // 현재 공격 모션에서 이미 맞은 타겟들
 
         public float _forwardThrustAmount = 1f;
+
+        [Header("UI References")] // (선택 사항) 인스펙터에서 구분하기 쉽게 Header 추가
+        public GameObject damageTextPrefab; // DamageTextPrefab을 Inspector에서 연결
+        public Canvas canvas; // 데미지 텍스트를 생성할 Canvas를 Inspector에서 연결
 
         private void Awake()
         {
@@ -341,10 +350,141 @@ namespace Script.Characters
                 {
                     if (!_alreadyHitTargetsInCurrentAttack.Contains(damageable))
                     {
+                        int damageDealt = playerManager.attackPower; // (선택 사항) 데미지 값을 변수에 저장
                         playerManager.Attack(damageable);
                         _alreadyHitTargetsInCurrentAttack.Add(damageable);
 
-                        Debug.Log($"[PlayerController] {hitCollider.name} 에게 {(playerManager != null ? playerManager.attackPower.ToString() : "알수없음")} 데미지로 공격 실행 완료.");
+                        Debug.Log($"[PlayerController] {hitCollider.name} 에게 {damageDealt} 데미지로 공격 실행 완료."); // (선택 사항) 로그에 저장된 데미지 사용
+
+                        // --- 데미지 텍스트 생성 및 초기화 시작 ---
+                        if (damageTextPrefab != null)
+                        {
+                            try
+                            {
+                                // 적의 위치를 기준으로 데미지 텍스트 생성 (적의 머리 위에 표시하기 위해 y 오프셋 추가)
+                                Vector3 spawnPosition = hitCollider.gameObject.transform.position + Vector3.up * 1.5f;
+                                
+                                // 부모 없이 생성 - 프리팹 인스턴스 생성
+                                GameObject damageTextInstance = null;
+                                
+#if UNITY_EDITOR
+                                // 프리팹이 에셋인지 확인하여 처리 방식 변경
+                                if (PrefabUtility.IsPartOfPrefabAsset(damageTextPrefab))
+                                {
+                                    // 프리팹 에셋에서 복제하려면 임시 게임오브젝트를 생성하고 TextMeshPro 등 필요한 컴포넌트를 추가
+                                    damageTextInstance = new GameObject("DamageText");
+                                    
+                                    // TextMeshPro 컴포넌트 추가
+                                    TextMeshPro textMesh = damageTextInstance.AddComponent<TextMeshPro>();
+                                    textMesh.text = damageDealt.ToString();
+                                    textMesh.color = Color.red;
+                                    textMesh.fontSize = 3;
+                                    textMesh.alignment = TextAlignmentOptions.Center;
+                                    
+                                    // 위치 설정
+                                    damageTextInstance.transform.position = spawnPosition;
+                                    
+                                    // DamageText 컴포넌트 추가
+                                    DamageText damageTextComp = damageTextInstance.AddComponent<DamageText>();
+                                }
+                                else
+                                {
+                                    // 일반 프리팹인 경우 정상적으로 Instantiate
+                                    damageTextInstance = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity);
+                                }
+#else
+                                // 빌드 환경에서는 항상 Instantiate 사용
+                                try {
+                                    damageTextInstance = Instantiate(damageTextPrefab, spawnPosition, Quaternion.identity);
+                                }
+                                catch (Exception e) {
+                                    // 인스턴스화 실패 시 수동으로 생성
+                                    damageTextInstance = new GameObject("DamageText");
+                                    
+                                    // TextMeshPro 컴포넌트 추가
+                                    TextMeshPro textMesh = damageTextInstance.AddComponent<TextMeshPro>();
+                                    textMesh.text = damageDealt.ToString();
+                                    textMesh.color = Color.red;
+                                    textMesh.fontSize = 3;
+                                    textMesh.alignment = TextAlignmentOptions.Center;
+                                    
+                                    // 위치 설정
+                                    damageTextInstance.transform.position = spawnPosition;
+                                    
+                                    // DamageText 컴포넌트 추가
+                                    DamageText damageTextComp = damageTextInstance.AddComponent<DamageText>();
+                                }
+#endif
+                                
+                                // 캔버스에 UI 요소를 추가할 때는 월드 좌표를 스크린 좌표로 변환해야 합니다
+                                if (canvas != null && Camera.main != null)
+                                {
+                                    try
+                                    {
+                                        // 오브젝트의 RectTransform 컴포넌트 가져오기
+                                        RectTransform rectTransform = damageTextInstance.GetComponent<RectTransform>();
+                                        if (rectTransform != null)
+                                        {
+                                            // 월드 좌표를 스크린 좌표로 변환
+                                            Vector2 screenPos = Camera.main.WorldToScreenPoint(spawnPosition);
+                                            
+                                            // Screen Space - Overlay 모드에서는 worldCamera를 null로 전달
+                                            Vector2 localPos;
+                                            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                                                canvas.GetComponent<RectTransform>(),
+                                                screenPos,
+                                                null, // Screen Space - Overlay 모드에서는 null 사용
+                                                out localPos);
+                                            
+                                            // UI 요소를 캔버스에 자식으로 추가하는 대신 위치만 직접 설정
+                                            // damageTextInstance.transform.SetParent(canvas.transform, false); // 이 부분이 오류를 발생시킴
+                                            
+                                            // TextMeshPro는 월드 스페이스에서도 작동할 수 있으므로 포지션만 설정
+                                            rectTransform.position = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 10f));
+                                        }
+                                        else
+                                        {
+                                            Debug.LogError("[PlayerController] DamageText 프리팹에 RectTransform 컴포넌트가 없습니다!");
+                                        }
+                                    }
+                                    catch (System.Exception e)
+                                    {
+                                        Debug.LogError($"[PlayerController] 데미지 텍스트 위치 설정 중 오류 발생: {e.Message}");
+                                    }
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("[PlayerController] Canvas 또는 Camera.main이 null입니다!");
+                                }
+                                
+                                // DamageText 컴포넌트 초기화
+                                DamageText damageTextComponent = damageTextInstance.GetComponent<DamageText>();
+                                if (damageTextComponent != null)
+                                {
+                                    damageTextComponent.Initialize(damageDealt, Color.red);
+                                }
+                                else
+                                {
+                                    Debug.LogError("[PlayerController] 생성된 DamageTextPrefab 인스턴스에 DamageText 컴포넌트가 없습니다!");
+                                    // DamageText 컴포넌트 추가 시도
+                                    damageTextComponent = damageTextInstance.AddComponent<DamageText>();
+                                    if (damageTextComponent != null)
+                                    {
+                                        Debug.Log("[PlayerController] DamageText 컴포넌트를 동적으로 추가했습니다.");
+                                        damageTextComponent.Initialize(damageDealt, Color.red);
+                                    }
+                                }
+                            }
+                            catch (System.Exception e)
+                            {
+                                Debug.LogError($"[PlayerController] 데미지 텍스트 생성 중 오류 발생: {e.Message}");
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("[PlayerController] DamageTextPrefab이 Inspector에 연결되지 않았습니다.");
+                        }
+                        // --- 데미지 텍스트 생성 및 초기화 끝 ---
                     }
                 }
             }

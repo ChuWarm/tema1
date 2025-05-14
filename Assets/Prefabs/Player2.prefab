@@ -179,6 +179,9 @@ MonoBehaviour:
   characterController: {fileID: 682543427527632376}
   animator: {fileID: 0}
   hitCheckDuration: 0.1
+  _forwardThrustAmount: 1
+  damageTextPrefab: {fileID: 2901086385839936139, guid: 57c6e0aa386d31544a074fa71f757185, type: 3}
+  canvas: {fileID: 68151706535487298, guid: 57c6e0aa386d31544a074fa71f757185, type: 3}
 --- !u!54 &3201424534032826102
 Rigidbody:
   m_ObjectHideFlags: 0
