@@ -215,35 +215,6 @@ namespace Script.Characters
             animator.SetInteger("WeaponType", (int)type);
             _currentAttackBehavior = _attackBehaviors[type];
         }
-
-        // public void Move(Vector3 inputDirection, float speed)
-        // {
-        //     if (CurrentState == PlayerState.Attack && CurrentWeapon == WeaponType.Sword)
-        //         return;
-        //
-        //     inputDirection.Normalize();
-        //
-        //     Vector3 cameraForward = Camera.main.transform.forward;
-        //     Vector3 cameraRight = Camera.main.transform.right;
-        //
-        //     cameraForward.y = 0;
-        //     cameraRight.y = 0;
-        //
-        //     cameraForward.Normalize();
-        //     cameraRight.Normalize();
-        //
-        //     Vector3 moveDirection = cameraForward * inputDirection.z
-        //                             + cameraRight * inputDirection.x;
-        //
-        //     if (moveDirection.magnitude > 0.1f)
-        //     {
-        //         if (currentLookMode == LookMode.Movement)
-        //             transform.rotation = Quaternion.LookRotation(moveDirection);
-        //
-        //         characterController.Move(moveDirection * (moveSpeed * Time.deltaTime));
-        //     }
-        // }
-
         private void AttackStep()
         {
             if (IsAttackMoving && CurrentState == PlayerState.Attack)
@@ -366,9 +337,6 @@ namespace Script.Characters
                 {
                     if (!_alreadyHitTargetsInCurrentAttack.Contains(damageable))
                     {
-                        Debug.Log($"[PlayerController] 감지된 콜라이더: {hitCollider.name}, 태그: {hitCollider.tag}, 레이어: {LayerMask.LayerToName(hitCollider.gameObject.layer)} ({hitCollider.gameObject.layer})");
-                        Debug.Log($"[PlayerController] {hitCollider.name} 에서 IDamageable 컴포넌트 찾음! PlayerManager.Attack 호출 시도.");
-                        
                         playerManager.Attack(damageable);
                         _alreadyHitTargetsInCurrentAttack.Add(damageable);
 
@@ -385,11 +353,21 @@ namespace Script.Characters
 
         public void AttackEnd()
         {
+            Debug.Log("[PlayerController] AttackEnd() Animation Event Fired!");
             animator.speed = 1f;
             IsRun = true;
             IsAttacking = false;
             _isDuringHitCheck = false;
             StopCoroutine("HitCheckCoroutine");
+
+            if (CurrentState == PlayerState.Attack)
+            {
+                SetState(PlayerState.Idle);
+            }
+            else
+            {
+                Debug.LogWarning($"[PlayerController] AttackEnd: Current state was {CurrentState}, not Attack. State not changed to Idle by AttackEnd.");
+            }
         }
 
         public void OnSpawnAnimationComplete()

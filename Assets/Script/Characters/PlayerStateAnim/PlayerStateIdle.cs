@@ -8,7 +8,10 @@ public class PlayerStateIdle : IPlayerState
     public void EnterState(Script.Characters.PlayerController playerController)
     {
         _playerController = playerController;
-        _playerController.animator.SetBool(PlayerController.Idle, true);
+        if (_playerController.animator.GetBool(PlayerController.IsWalkingAnim))
+        {
+            _playerController.animator.SetBool(PlayerController.IsWalkingAnim, false);
+        }
     }
 
     public void UpdateState()
@@ -39,7 +42,6 @@ public class PlayerStateIdle : IPlayerState
 
     public void ExitState()
     {
-        _playerController.animator.SetBool(PlayerController.Idle, false);
         _playerController = null;
     }
 }

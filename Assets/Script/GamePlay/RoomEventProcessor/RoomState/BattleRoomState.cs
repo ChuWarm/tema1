@@ -2,32 +2,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using Script.Characters;
 
-public class BattleRoomState : IRoomState
+public class BattleRoomState : CombatRoomBaseState
 {
-    private readonly RoomEventProcessor _processor;
-    private readonly HashSet<Enemy> _activeEnemies = new();
-    private readonly Room _room;
-    private bool _combatStarted = false;
-
-    public BattleRoomState(RoomEventProcessor processor)
+    public BattleRoomState(RoomEventProcessor processor) : base(processor)
     {
-        _processor = processor;
-        _room = processor.GetRoom();
-        GameEventBus.Subscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
     }
 
-    public void OnStateEnter(RoomEventProcessor processor)
+    public override void OnStateEnter(RoomEventProcessor processor)
     {
-        _activeEnemies.Clear();
-        _combatStarted = false;
+        base.OnStateEnter(processor);
     }
 
-    public void OnStateExit(RoomEventProcessor processor)
+    public override void OnStateExit(RoomEventProcessor processor)
     {
-        GameEventBus.Unsubscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
+        base.OnStateExit(processor);
     }
 
-    public void OnPlayerEnter(RoomEventProcessor processor)
+    public override void OnPlayerEnter(RoomEventProcessor processor)
     {
         if (_room.IsCleared)
         {
@@ -37,68 +28,55 @@ public class BattleRoomState : IRoomState
         var enemySpawnManager = processor.GetEnemySpawnManager();
         if (enemySpawnManager == null)
         { 
+            Debug.LogError($"[{GetLogStateNameForEnter()}] {_room.gameObject.name}: EnemySpawnManager not found!");
             return;
         }
         
         if (!_combatStarted)
         { 
-            SpawnEnemies(enemySpawnManager);
+            PerformSpecificSpawn(enemySpawnManager);
             _combatStarted = true;
         }
-        else
-        {
-        }
     }
 
-    public void OnRoomCleared(RoomEventProcessor processor)
-    {
-    }
-
-    public void OnStateUpdate(RoomEventProcessor processor)
-    {
-        CheckAndClearRoomIfWon();
-    }
-
-    private void SpawnEnemies(EnemySpawnManager enemySpawnManager)
+    protected override void PerformSpecificSpawn(EnemySpawnManager enemySpawnManager)
     {
         var spawnedEnemiesList = enemySpawnManager.SpawnEnemiesForRoom(_processor.GetRoomType(), _room.transform);
         
         if (spawnedEnemiesList == null)
         {
+            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: SpawnEnemiesForRoom returned null.");
             return;
         }
+
+        foreach (var enemy in spawnedEnemiesList)
+        {
+            if (enemy != null)
+            {
+                enemy.SetRoomProcessor(_processor);
+            }
+        }
         
-        int beforeCount = _activeEnemies.Count;
         _activeEnemies.UnionWith(spawnedEnemiesList);
-        int afterCount = _activeEnemies.Count;
 
-        if (afterCount == 0 && spawnedEnemiesList.Count > 0)
+        if (_activeEnemies.Count == 0 && spawnedEnemiesList.Count > 0)
         {
-        }
-        else if (afterCount == 0 && spawnedEnemiesList.Count == 0)
-        {
+            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: Spawned enemies but _activeEnemies (base) is still empty!");
         }
     }
 
-    private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)
+    protected override string GetRoomStateName()
     {
-        if (enemyDeadEvent.sender != _processor) return;
-
-        if (_activeEnemies.Remove(enemyDeadEvent.enemy))
-        {
-        }
-        else
-        {
-        }
-
-        CheckAndClearRoomIfWon();
+        return "BattleRoomState";
     }
 
-    private void CheckAndClearRoomIfWon()
+    protected override string GetLogStateNameForEnter()
     {
-        if (_combatStarted && !_room.IsCleared && _activeEnemies.Count == 0)
-        {
-            _processor.OnRoomCleared(null);
-        }
+        return "Battle Room";
+    }
+
+    protected override string GetLogStateNameForCleared()
+    {
+        return "Battle Room Cleared";
     }
 }

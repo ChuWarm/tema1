@@ -178,6 +178,7 @@ MonoBehaviour:
   playerManager: {fileID: 0}
   characterController: {fileID: 682543427527632376}
   animator: {fileID: 0}
+  hitCheckDuration: 0.1
 --- !u!54 &3201424534032826102
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -235,7 +236,7 @@ MonoBehaviour:
   currentStamina: 10
   moveSpeed: 3.5
   resistance: 10
-  attackPower: 10
+  attackPower: 50
   attackSpeed: 0.8
   healthIncreasePerLevel: 10
   attackPowerIncreasePerLevel: 10

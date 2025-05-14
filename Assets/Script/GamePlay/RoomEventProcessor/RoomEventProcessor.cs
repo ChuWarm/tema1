@@ -128,19 +128,43 @@ public class RoomEventProcessor : MonoBehaviour
     
     public void OnRoomCleared(RoomClearedEvent roomClearedEvent)
     {
-        if (!_isInitialized) 
+        if (!_isInitialized)
         {
+            // Debug.Log($"[{gameObject.name}] RoomEventProcessor.OnRoomCleared - Processor not initialized. Returning."); // 유지 또는 삭제 (일단 삭제)
             return;
         }
 
-        if (_room.IsCleared)
+        if (roomClearedEvent == null || roomClearedEvent.ClearedRoom == null)
         {
-            _room.MarkRoomAsCleared();
+            Debug.LogError($"[{gameObject.name}] RoomEventProcessor.OnRoomCleared - Received null event or null ClearedRoom.");
+            if (_room != null) {
+                 if (!_room.IsCleared) 
+                 {
+                    Debug.LogWarning($"[{gameObject.name}] RoomEventProcessor.OnRoomCleared - Bad event, attempting to clear and open current room: {_room.name}");
+                    _room.MarkRoomAsCleared();
+                 }
+                 // else if (_room.IsCleared) { _room.OpenAllDoors(); } // 이미 클리어 되었다면 문을 열어줌 (위의 roomToProcess.IsCleared 경우와 유사)
+            }
             return;
         }
 
-        _currentRoomState?.OnRoomCleared(this);
-        _room.MarkRoomAsCleared();
+        Room roomToProcess = roomClearedEvent.ClearedRoom;
+        if (roomClearedEvent.sender != null && roomClearedEvent.sender != this)
+        {
+            // Debug.LogWarning($"[{gameObject.name}] RoomEventProcessor.OnRoomCleared - Event sender mismatch. Event for {roomToProcess.name} (sender: {roomClearedEvent.sender.GetInstanceID()}), this processor: {GetInstanceID()}. Ignoring."); // 삭제
+            return;
+        }
+
+        if (roomToProcess.IsCleared)
+        {
+
+            roomToProcess.OpenAllDoors(); 
+            _currentRoomState?.OnRoomCleared(this); 
+            return;
+        }
+        
+        roomToProcess.MarkRoomAsCleared();
+        _currentRoomState?.OnRoomCleared(this); 
     }
 
     private void OnDestroy()
