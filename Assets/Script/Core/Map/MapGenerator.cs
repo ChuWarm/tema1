@@ -51,7 +51,7 @@ public class MapGenerator : Singleton<MapGenerator>
             var next = GetRandomEmptyNeighbor(current);
             
             RoomType type = i == maxRooms - 1 ? RoomType.Boss : RandomRoomType();
-
+            
             if (next != null)
             {
                 CreateRoom(next.Value, type);
