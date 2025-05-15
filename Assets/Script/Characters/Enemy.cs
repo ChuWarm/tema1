@@ -239,7 +239,7 @@ namespace Script.Characters
             {
                 Debug.Log("죽음 애니메이션 실행");
                 animator.ResetTrigger(HitAnim);
-                animator.CrossFade(DieAnim, 0.5f);
+                animator.SetTrigger(DieAnim);
             }
 
             OnEnemyDeath?.Invoke(this);
@@ -263,7 +263,7 @@ namespace Script.Characters
                 GameEventBus.Publish(new RoomEnemyDeadEvent { enemy = this }); 
             }
             
-            Destroy(gameObject, 2f);
+            Destroy(gameObject, 3.5f);
         }
 
         public void Attack(IDamageable target)
@@ -280,7 +280,7 @@ namespace Script.Characters
             EffectManager.Instance.PlayEffect("Attack", transform.position + transform.forward, transform.rotation);
             
             // 딜레이 후 데미지 적용 
-            StartCoroutine(DelayedDamage(target));
+            // StartCoroutine(DelayedDamage(target));
         }
 
         private IEnumerator DelayedDamage(IDamageable target)
@@ -308,6 +308,24 @@ namespace Script.Characters
             // 공격 범위 시각화
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, enemyData?.attackRange ?? 0f);
+        }
+
+        public void TriggerHit()
+        {
+            float hitRadius = 2f;
+            Vector3 hitOrigin = transform.position + transform.forward * 1.5f;
+            Collider[] hits = Physics.OverlapSphere(hitOrigin, hitRadius, LayerMask.GetMask("Player"));
+
+            foreach (var hit in hits)
+            {
+                if (hit.TryGetComponent<PlayerManager>(out var player))
+                {
+                    player.TakeDamage(enemyData.attackPower);
+                    Debug.Log($"[Enemy] 플레이어 적중: {player.name}");
+                }
+            }
+            
+            EffectManager.Instance.PlayEffect("Hit", hitOrigin, Quaternion.identity);
         }
     }
 } 
