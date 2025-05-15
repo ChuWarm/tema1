@@ -17,5 +17,6 @@ public class InitManager : Singleton<InitManager>
         GameEventBus.Publish<NewGameStart>(new NewGameStart());
         // GamePlayManager.Instance.InstantiatePlayer();
         CameraController.Instance.CameraInit();
+        BGMManager.Instance.PlayBGM(BGMType.InGame);
     }
 }
