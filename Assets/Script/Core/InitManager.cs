@@ -7,19 +7,15 @@ public class InitManager : Singleton<InitManager>
 {
     private void OnEnable()
     {
-        SceneManager.sceneLoaded += HandleSceneLoaded;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= HandleSceneLoaded;
+        HandleSceneLoaded().Forget();
     }
     
-    private async void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    private async UniTaskVoid HandleSceneLoaded()
     {
         // 순서 보장
         await MapGenerator.Instance.GenerateMap();
-        GamePlayManager.Instance.InstantiatePlayer();
+        GameEventBus.Publish<NewGameStart>(new NewGameStart());
+        // GamePlayManager.Instance.InstantiatePlayer();
         CameraController.Instance.CameraInit();
     }
 }
