@@ -317,7 +317,7 @@ MonoBehaviour:
   attackEffect:
     effectName: 
     effectPrefab: {fileID: 0}
-    soundEffect: {fileID: 0}
+    soundEffect: {fileID: 8300000, guid: 98d51b3de776d764280b6636475c2e25, type: 3}
     duration: 1
   hitEffect:
     effectName: Hit
@@ -327,7 +327,7 @@ MonoBehaviour:
   deathEffect:
     effectName: Death
     effectPrefab: {fileID: 1277154925287174, guid: 3b517eddec185dd4a830743a742ad00b, type: 3}
-    soundEffect: {fileID: 0}
+    soundEffect: {fileID: 8300000, guid: 98f33dc4cd9607246b72c1bd1bddef60, type: 3}
     duration: 1
   healEffect:
     effectName: 
@@ -337,7 +337,7 @@ MonoBehaviour:
   DashEffect:
     effectName: Dash
     effectPrefab: {fileID: 1698068915230344, guid: 05f7c156786bd024e8da3bb1a4b8aa09, type: 3}
-    soundEffect: {fileID: 0}
+    soundEffect: {fileID: 8300000, guid: 4f9dab83cd88d5f4687b9fac1797d1d0, type: 3}
     duration: 1
   damageTextPrefab: {fileID: 0}
   healTextPrefab: {fileID: 0}
