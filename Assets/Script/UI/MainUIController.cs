@@ -19,13 +19,18 @@ public class MainUIController : MonoBehaviour
         }
 
         mainButtons[0].onClick.AddListener(() => GameManager.Instance.LoadScene(1));
+        mainButtons[1].onClick.AddListener(() =>
+        {
+            print("Show Config panel");
+        });
+        mainButtons[2].onClick.AddListener(() => Application.Quit());
 
         yield return new WaitUntil(() => !DataManager.IsReady);
 
         foreach (var item in mainButtons)
         {
             item.gameObject.SetActive(true);
+            yield return new WaitForSeconds(.1f);
         }
     }
-
 }
