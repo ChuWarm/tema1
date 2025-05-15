@@ -223,7 +223,7 @@ namespace Script.Characters
             }
 
             // 데미지 이펙트
-            EffectManager.Instance.PlayEffect("Hit", transform.position, Quaternion.identity);
+            EffectManager.Instance.PlayEffect("Hit", transform.position, Quaternion.identity, 2f);
             EffectManager.Instance.ShowDamageText(damage, transform.position + Vector3.up);
 
             if (currentHealth <= 0)
@@ -245,7 +245,7 @@ namespace Script.Characters
             OnEnemyDeath?.Invoke(this);
             
             // 죽음 이펙트
-            EffectManager.Instance.PlayEffect("Death", transform.position, Quaternion.identity);
+            EffectManager.Instance.PlayEffect("Death", transform.position, Quaternion.identity, 2f);
             
             // 경험치 지급
             PlayerManager.Instance.GainExperience(enemyData.experienceGiven);
@@ -263,13 +263,13 @@ namespace Script.Characters
                 GameEventBus.Publish(new RoomEnemyDeadEvent { enemy = this }); 
             }
             
-            Destroy(gameObject, 3.5f);
+            Destroy(gameObject, 4f);
         }
 
         public void Attack(IDamageable target)
         {
             if (!CanAttack()) return;
-
+            
             lastAttackTime = Time.time;
             if (animator != null)
             {
@@ -310,6 +310,8 @@ namespace Script.Characters
             Gizmos.DrawWireSphere(transform.position, enemyData?.attackRange ?? 0f);
         }
 
+        #region 애니메이션 이벤트
+
         public void TriggerHit()
         {
             float hitRadius = 2f;
@@ -321,11 +323,13 @@ namespace Script.Characters
                 if (hit.TryGetComponent<PlayerManager>(out var player))
                 {
                     player.TakeDamage(enemyData.attackPower);
+                    EffectManager.Instance.PlayEffect("Hit", hitOrigin + hit.transform.position, Quaternion.identity, 2f);
                     Debug.Log($"[Enemy] 플레이어 적중: {player.name}");
                 }
             }
-            
-            EffectManager.Instance.PlayEffect("Hit", hitOrigin, Quaternion.identity);
         }
+
+        #endregion
+        
     }
 } 
