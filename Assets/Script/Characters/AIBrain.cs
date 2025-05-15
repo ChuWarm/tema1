@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Script.Characters;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class AIBrains
 {
     EnemyBehaviorTree m_activeBT;
-    EnemyBase m_EnemyBase;
+    Enemy m_EnemyBase;
 
-    public AIBrains(EnemyBehaviorTree activeBT, EnemyBase enemyBase)
+    public AIBrains(EnemyBehaviorTree activeBT, Enemy enemyBase)
     {
         m_activeBT = activeBT;
         m_EnemyBase = enemyBase;

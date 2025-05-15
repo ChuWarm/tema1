@@ -1,0 +1,37 @@
+UI 프리팹 생성:
+1. 빈 게임 오브젝트를 만들고 이름을 "InventoryUI"로 지정
+2. Canvas 컴포넌트 추가 (Screen Space - Overlay)
+3. EventSystem 오브젝트가 있는지 확인
+
+인벤토리 패널 설정 :
+InventoryUI (GameObject)
+├── InventoryPanel
+│   ├── Background
+│   ├── Title
+│   └── SlotsParent (Grid Layout Group)
+│       └── SlotPrefab
+│           ├── ItemIcon
+│           ├── QuantityText
+│           ├── EquippedIndicator
+│           └── SelectedIndicator
+├── TooltipPanel
+│   ├── Background
+│   ├── NameText
+│   ├── DescriptionText
+│   └── StatsText
+└── ItemInfoPanel
+    ├── Background
+    ├── ItemIcon
+    ├── ItemName
+    ├── ItemDescription
+    └── ItemStats
+
+컴포넌트 설정:
+1. InventoryUI 오브젝트에 InventoryUI 스크립트 추가
+2. 각 UI 요소들을 Inspector에서 참조 설정
+3. SlotPrefab에 InventorySlot 스크립트 추가
+
+아이템 아이콘 설정:
+1. Resources 폴더에 Icons 폴더 생성
+2. 아이템 아이콘 이미지들을 Icons 폴더에 추가
+3. 이미지 이름을 iconID와 일치하도록 설정

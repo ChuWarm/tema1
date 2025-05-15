@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Script.Characters;
 using UnityEngine;
 
 public class GamePlayManager : Singleton<GamePlayManager>
@@ -9,8 +10,6 @@ public class GamePlayManager : Singleton<GamePlayManager>
 
     public GamePlayLogic gamePlayLogic;
     private Transform _spawnPoint;
-
-
 
     public Transform GetPlayer => player?.transform;
 

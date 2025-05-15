@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Script.Characters;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -41,7 +42,7 @@ public class GamePlayLogic
 
     void OnHitPlayer(HitPlayer e)
     {
-        int finalDamage = e.enemyData.attackPower - m_Player.playerStats.resistance;
+        int finalDamage = e.enemyData.attackPower - PlayerManager.Instance.resistance;
 
         GameEventBus.Publish<PlayerHPChanged>(new PlayerHPChanged
         {

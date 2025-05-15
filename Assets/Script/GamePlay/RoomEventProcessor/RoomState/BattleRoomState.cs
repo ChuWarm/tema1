@@ -1,61 +1,82 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Script.Characters;
 
-public class BattleRoomState : IRoomState
+public class BattleRoomState : CombatRoomBaseState
 {
-    private List<EnemyBase> _activeEnemies = new();
-    private RoomEventProcessor _roomEventProcessor;
-
-    public BattleRoomState(RoomEventProcessor roomEventProcessor)
+    public BattleRoomState(RoomEventProcessor processor) : base(processor)
     {
-        _roomEventProcessor = roomEventProcessor;
-        
-        GameEventBus.Subscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
     }
-    
-    public void Enter(RoomEventProcessor processor)
+
+    public override void OnStateEnter(RoomEventProcessor processor)
     {
-        Debug.Log("Normal Room 입장: 적 스폰 시작");
-        
-        var positions = new List<Vector3>();
+        base.OnStateEnter(processor);
+    }
 
-        for (int i = 0; i < 3; i++)
+    public override void OnStateExit(RoomEventProcessor processor)
+    {
+        base.OnStateExit(processor);
+    }
+
+    public override void OnPlayerEnter(RoomEventProcessor processor)
+    {
+        if (_room.IsCleared)
         {
-            positions.Add(processor.transform.position + 
-                          new Vector3(Random.Range(-15f, 15f), 0, Random.Range(-15f, 15f)));
+            return;
+        }
 
-            EnemyData dummydata = new EnemyData
-            {
-                enemyID = "dummy_enemy",
-                enemyName = "더미",
-                health = 10
-            };
-            
-            var enemy = EnemyFactory.SpawnEnemy(dummydata, positions[i], processor.transform);
+        var enemySpawnManager = processor.GetEnemySpawnManager();
+        if (enemySpawnManager == null)
+        { 
+            Debug.LogError($"[{GetLogStateNameForEnter()}] {_room.gameObject.name}: EnemySpawnManager not found!");
+            return;
+        }
+        
+        if (!_combatStarted)
+        { 
+            PerformSpecificSpawn(enemySpawnManager);
+            _combatStarted = true;
+        }
+    }
+
+    protected override void PerformSpecificSpawn(EnemySpawnManager enemySpawnManager)
+    {
+        var spawnedEnemiesList = enemySpawnManager.SpawnEnemiesForRoom(_processor.GetRoomType(), _room.transform);
+        
+        if (spawnedEnemiesList == null)
+        {
+            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: SpawnEnemiesForRoom returned null.");
+            return;
+        }
+
+        foreach (var enemy in spawnedEnemiesList)
+        {
             if (enemy != null)
-                _activeEnemies.Add(enemy);
+            {
+                enemy.SetRoomProcessor(_processor);
+            }
         }
-    }
-
-    public void Update(RoomEventProcessor processor)
-    {
         
-    }
+        _activeEnemies.UnionWith(spawnedEnemiesList);
 
-    public void Exit(RoomEventProcessor processor)
-    {
-
-    }
-    
-    private void OnEnemyDeadEvent(RoomEnemyDeadEvent enemyDeadEvent)
-    {
-        if (enemyDeadEvent.sender != _roomEventProcessor) return;
-
-        _activeEnemies.Remove(enemyDeadEvent.enemy);
-        if (_activeEnemies.Count == 0)
+        if (_activeEnemies.Count == 0 && spawnedEnemiesList.Count > 0)
         {
-            Debug.Log($"클리어!");
-            _roomEventProcessor.OnRoomCleared(new RoomClearedEvent());
+            Debug.LogWarning($"[{GetRoomStateName()}] {_room.gameObject.name}: Spawned enemies but _activeEnemies (base) is still empty!");
         }
+    }
+
+    protected override string GetRoomStateName()
+    {
+        return "BattleRoomState";
+    }
+
+    protected override string GetLogStateNameForEnter()
+    {
+        return "Battle Room";
+    }
+
+    protected override string GetLogStateNameForCleared()
+    {
+        return "Battle Room Cleared";
     }
 }

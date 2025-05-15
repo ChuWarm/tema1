@@ -32,12 +32,13 @@ public class EnemyData : IGameData
     public float attackRange;
     public float attackCooldown;
     public int experienceGiven;
-    public string dropTalbeID;
     public string visualResourceID;
     public string soundResourceID_Attack;
     public string soundResourceID_Hit;
     public string soundResourceID_Death;
     public string notes;
+    
+    public string GetID() => enemyID;
 }
 
 [System.Serializable]

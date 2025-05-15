@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
-public enum RoomType { Spawn, Normal, Elite, Shop, Rest, Boss }
+public enum RoomType { Spawn, Normal, Normal2, Elite, Shop, Rest, Boss }
 
 public class MapData
 {
@@ -32,7 +33,7 @@ public class MapGenerator : Singleton<MapGenerator>
             _prefabDict[r.roomType] = r.roomPrefab;
     }
 
-    public void GenerateMap()
+    public async UniTask GenerateMap()
     {
         _map.Clear();
         
@@ -40,7 +41,7 @@ public class MapGenerator : Singleton<MapGenerator>
         Stack<Vector2Int> stack = new();
         Vector2Int start = Vector2Int.zero;
 
-        CreateRoom(start, RoomType.Spawn);
+        await CreateRoom(start, RoomType.Spawn);
         stack.Push(start);
 
         for (int i = 0; i < maxRooms; i++)
@@ -50,11 +51,25 @@ public class MapGenerator : Singleton<MapGenerator>
             var current = stack.Peek();
             var next = GetRandomEmptyNeighbor(current);
             
-            RoomType type = i == maxRooms - 1 ? RoomType.Boss : RandomRoomType();
-
+            // RoomType type = i == maxRooms - 1 ? RoomType.Boss : RandomRoomType();
+            RoomType type = RandomRoomType();
+            
+            if (i == 4)
+            { 
+                type =RoomType.Rest;
+            }
+            else if (i == 7)
+            { 
+                type = RoomType.Shop;
+            }
+            else if (i == maxRooms - 1)
+            {
+                type = RoomType.Boss;
+            }
+            
             if (next != null)
             {
-                CreateRoom(next.Value, type);
+                await CreateRoom(next.Value, type);
                 stack.Push(next.Value);
             }
             else
@@ -64,7 +79,7 @@ public class MapGenerator : Singleton<MapGenerator>
         }
     }
 
-    private void CreateRoom(Vector2Int pos, RoomType type)
+    private async UniTask CreateRoom(Vector2Int pos, RoomType type)
     {
         GameObject prefab = _prefabDict[type];
         GameObject go = Instantiate(prefab, new Vector3(pos.x * 120, 0, pos.y * 120), Quaternion.identity, map.transform);
@@ -82,6 +97,12 @@ public class MapGenerator : Singleton<MapGenerator>
         _map[pos] = data;
         ConnectToNeighbors(pos);
         room.Init(data);
+
+        if (type == RoomType.Spawn)
+        {
+            await room.WaitForEventProcessorInitializationAsync();
+            room.ForcePlayerEnter();
+        }
     }
 
     private void ConnectToNeighbors(Vector2Int pos)
@@ -115,10 +136,8 @@ public class MapGenerator : Singleton<MapGenerator>
     {
         RoomType[] pool = new RoomType[]
         {
-            RoomType.Normal, RoomType.Normal, RoomType.Normal,
-            RoomType.Elite, 
-            RoomType.Shop, RoomType.Shop, 
-            RoomType.Rest
+            RoomType.Normal, RoomType.Normal, RoomType.Normal2, RoomType.Normal2,
+            RoomType.Elite, RoomType.Elite
         };
         return pool[Random.Range(0, pool.Length)];
     }
@@ -144,5 +163,16 @@ public class MapGenerator : Singleton<MapGenerator>
             int j = Random.Range(i, list.Count);
             (list[i], list[j]) = (list[j], list[i]);
         }
+    }
+
+    public bool TryGetRoom(Vector2Int pos, out Room room)
+    {
+        if (_map.TryGetValue(pos, out var data) && data.roomInstance != null)
+        {
+            room = data.roomInstance;
+            return true;
+        }
+        room = null;
+        return false;
     }
 }

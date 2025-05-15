@@ -6,7 +6,7 @@ public class CameraController : Singleton<CameraController>
     [SerializeField] private float cameraSpeed = 5f;
     private Transform _targetPlayer;
     private CameraObstacleHandler _obstacleHandler;
-    private Vector3 _offset = new Vector3(-15f, 15f, -15f);
+    private Vector3 _offset = new Vector3(-20f, 25f, -20f);
     private float _angleX = 50f;
     private float _angleY = 45f;
 
