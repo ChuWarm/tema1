@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ece915711bf9f04eac78b840c0bde35, type: 3}
+  m_Name: New Reward SO_Heal
+  m_EditorClassIdentifier: 
+  rewardTitle: "\uD68C\uBCF5"
+  rewardDescription: "\uCCB4\uB825\uC744 \uD68C\uBCF5\uD569\uB2C8\uB2E4"
+  rewardIcon: {fileID: 21300000, guid: 3d8e34000614548ee8d762ab21af11f3, type: 3}
+  amount: 30

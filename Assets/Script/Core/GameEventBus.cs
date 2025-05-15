@@ -7,9 +7,9 @@ using UnityEngine;
 public interface IGameEvent { }
 
 public class PlayerHPChanged : IGameEvent 
-    {
-        public int HP, MaxHP;
-    }
+{
+    public int HP, MaxHP;
+}
 
 public  class PlayerEXPAdded : IGameEvent
 {
@@ -41,6 +41,9 @@ public class RoomEnemyDeadEvent : IGameEvent
     public RoomEventProcessor sender;
     public Enemy enemy;
 }
+
+public class UserSelectDoneEvent : IGameEvent { }
+
 
 public static class GameEventBus
 {

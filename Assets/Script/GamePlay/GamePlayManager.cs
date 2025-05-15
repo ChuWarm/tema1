@@ -21,6 +21,7 @@ public class GamePlayManager : Singleton<GamePlayManager>
 
     public void OnNewGameStart(NewGameStart e)
     {
+        Debug.Log("새 게임 시작");   
         gamePlayLogic = new GamePlayLogic(SpawnPlayer().GetComponent<PlayerController>());
     }
 
@@ -35,6 +36,9 @@ public class GamePlayManager : Singleton<GamePlayManager>
         var newSpawnPoint = GameObject.FindGameObjectWithTag("SpawnPoint").transform;
         var playerObj = Instantiate(player, newSpawnPoint.position, Quaternion.identity);
         player = playerObj;
+        
+        // CameraController.Instance.CameraInit();
+
         return playerObj;
     }
 
