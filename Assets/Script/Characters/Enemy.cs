@@ -57,7 +57,8 @@ namespace Script.Characters
         private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
         private static readonly int AttackAnim = Animator.StringToHash("Attack");
         private static readonly int HitAnim = Animator.StringToHash("Hit");
-        private static readonly int DieAnim = Animator.StringToHash("Die");
+        private static readonly int DieAnim = Animator.StringToHash("Dead");
+        private static readonly int IdleAnim = Animator.StringToHash("Idle");
 
         [System.Serializable]
         public class EnemyDeathEvent : UnityEvent<Enemy> { }
@@ -126,7 +127,7 @@ namespace Script.Characters
         private void Update()
         {
             if (!isInitialized || isDead || PlayerManager.Instance == null) return;
-
+            
             var playerTransform = PlayerManager.Instance.transform;
             float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
             Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
@@ -156,7 +157,7 @@ namespace Script.Characters
                     Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-                    if (distanceToPlayer <= enemyData.attackRange)
+                    if (distanceToPlayer <= 15f) // enemyData.attackRange)
                     {
                         if (angleToPlayer <= attackAngle && CanAttack())
                         {
@@ -236,7 +237,9 @@ namespace Script.Characters
             isDead = true;
             if (animator != null)
             {
-                animator.SetTrigger(DieAnim);
+                Debug.Log("죽음 애니메이션 실행");
+                animator.ResetTrigger(HitAnim);
+                animator.CrossFade(DieAnim, 0.5f);
             }
 
             OnEnemyDeath?.Invoke(this);
@@ -276,13 +279,13 @@ namespace Script.Characters
             // 공격 이펙트
             EffectManager.Instance.PlayEffect("Attack", transform.position + transform.forward, transform.rotation);
             
-            // 딜레이 후 데미지 적용
+            // 딜레이 후 데미지 적용 
             StartCoroutine(DelayedDamage(target));
         }
 
         private IEnumerator DelayedDamage(IDamageable target)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(1f);
             target.TakeDamage(enemyData.attackPower);
         }
 

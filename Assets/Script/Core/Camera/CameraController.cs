@@ -1,3 +1,4 @@
+using Script.Characters;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +8,7 @@ public class CameraController : Singleton<CameraController>
     private Transform _targetPlayer;
     private CameraObstacleHandler _obstacleHandler;
     private Vector3 _offset = new Vector3(-20f, 25f, -20f);
+    private Vector3 camVelocity;
     private float _angleX = 50f;
     private float _angleY = 45f;
 
@@ -19,7 +21,7 @@ public class CameraController : Singleton<CameraController>
     {
         if (!_targetPlayer) return;
         Vector3 targetPos = _targetPlayer.position + _offset;
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * cameraSpeed);
+        transform.position = Vector3.Lerp(this.transform.position, targetPos, Time.deltaTime * cameraSpeed);
         transform.rotation = Quaternion.Euler(_angleX, _angleY, 0f);
 
         _obstacleHandler.CheckObstacles(_targetPlayer);
@@ -27,10 +29,13 @@ public class CameraController : Singleton<CameraController>
     
     public void CameraInit()
     {
-        var playerObj = GamePlayManager.Instance.FindPlayer();
-        if (playerObj != null)
+        if (_targetPlayer == null)
         {
-            _targetPlayer = playerObj.transform;
+            var playerObj = PlayerManager.Instance.gameObject;
+            if (playerObj != null)
+            {
+                _targetPlayer = playerObj.transform;
+            }
         }
     }
 }
