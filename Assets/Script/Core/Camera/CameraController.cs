@@ -29,13 +29,10 @@ public class CameraController : Singleton<CameraController>
     
     public void CameraInit()
     {
-        if (_targetPlayer == null)
-        {
             var playerObj = PlayerManager.Instance.gameObject;
             if (playerObj != null)
             {
                 _targetPlayer = playerObj.transform;
             }
-        }
     }
 }

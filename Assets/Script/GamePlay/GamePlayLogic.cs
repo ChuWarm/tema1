@@ -18,7 +18,8 @@ public class GamePlayLogic
         GameEventBus.Subscribe<PlayerHPChanged>(OnPlayerHPChanged);
         GameEventBus.Subscribe<RoomEnemyDeadEvent>(OnEnemyDeadEvent);
         GameEventBus.Subscribe<HitPlayer>(OnHitPlayer);
-        // GameEventBus.Subscribe<RoomClearedEvent>()
+        GameEventBus.Subscribe<RoomClearedEvent>(OnRoomCleared);
+        GameEventBus.Subscribe<UserSelectDoneEvent>(OnUserSelected);
     }
 
     void OnPlayerHPChanged(PlayerHPChanged e)
@@ -34,9 +35,6 @@ public class GamePlayLogic
 
   void OnEnemyDeadEvent(RoomEnemyDeadEvent e)
     {
-        // enemy ���� ȿ�� ��� ?
-        // �̰� ���⼭ ȣ���ϴ°� �³�?
-
         playerEXP += e.enemy.GetEnemyData.experienceGiven;
     }
 
@@ -48,5 +46,17 @@ public class GamePlayLogic
         {
             HP = playerHP - finalDamage,
         });
+    }
+
+    void OnRoomCleared(RoomClearedEvent e)
+    {
+        Debug.Log("Room Cleared");
+        GameManager.Instance.LoadScene(GameConstValues.REWARED_SCENE_BUILDINDEX, UnityEngine.SceneManagement.LoadSceneMode.Additive);
+    }
+
+    void OnUserSelected(UserSelectDoneEvent e)
+    {
+        GameManager.Instance.UnloadScene(GameConstValues.REWARED_SCENE_BUILDINDEX);
+
     }
 }
