@@ -264,6 +264,7 @@ namespace Script.Characters
 
             animator.speed = 1f;
             SetState(PlayerState.Dash);
+            EffectManager.Instance.PlayEffect("Dash", transform.position, transform.rotation, 2f);
         }
         
         public void IsPlayerDead()

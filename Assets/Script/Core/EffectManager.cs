@@ -22,6 +22,7 @@ namespace Script.Core
         public EffectData hitEffect;
         public EffectData deathEffect;
         public EffectData healEffect;
+        public EffectData DashEffect;
 
         [Header("UI 이펙트")]
         public GameObject damageTextPrefab;
@@ -52,6 +53,7 @@ namespace Script.Core
             InitializeEffectPool(hitEffect);
             InitializeEffectPool(deathEffect);
             InitializeEffectPool(healEffect);
+            InitializeEffectPool(DashEffect);
         }
 
         private void InitializeEffectPool(EffectData effectData)
@@ -68,7 +70,7 @@ namespace Script.Core
             effectPools[effectData.effectName] = pool;
         }
 
-        public void PlayEffect(string effectName, Vector3 position, Quaternion rotation)
+        public void PlayEffect(string effectName, Vector3 position, Quaternion rotation, float scale = 0)
         {
             if (!effectPools.ContainsKey(effectName)) return;
 
@@ -78,6 +80,7 @@ namespace Script.Core
             GameObject effect = pool.Dequeue();
             effect.transform.position = position;
             effect.transform.rotation = rotation;
+            effect.transform.localScale = scale == 0 ? Vector3.one : Vector3.one * scale;
             effect.SetActive(true);
 
             // 사운드 재생
@@ -98,6 +101,7 @@ namespace Script.Core
                 case "Hit": return hitEffect;
                 case "Death": return deathEffect;
                 case "Heal": return healEffect;
+                case "Dash": return DashEffect;
                 default: return null;
             }
         }

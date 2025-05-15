@@ -63,7 +63,7 @@ namespace Script.Characters
         [Header("전투 피드백")]
         public float hitStopDuration = 0.1f;
         public float hitShakeIntensity = 0.1f;
-        public float hitShakeDuration = 0.2f;
+        public float hitShakeDuration = 0.15f;
         private Camera mainCamera;
 
         [System.Serializable]
@@ -315,11 +315,11 @@ namespace Script.Characters
         {
             Vector3 originalPosition = mainCamera.transform.localPosition;
             float elapsed = 0f;
-
+            
             while (elapsed < hitShakeDuration)
             {
-                float x = Random.Range(-1f, 1f) * hitShakeIntensity;
-                float y = Random.Range(-1f, 1f) * hitShakeIntensity;
+                float x = Random.Range(originalPosition.x -1f, originalPosition.x + 1f);
+                float y = Random.Range(originalPosition.y -1f, originalPosition.y + 1f);
                 mainCamera.transform.localPosition = new Vector3(x, y, originalPosition.z);
                 elapsed += Time.deltaTime;
                 yield return null;

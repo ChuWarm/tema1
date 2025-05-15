@@ -57,7 +57,8 @@ namespace Script.Characters
         private static readonly int IsWalkingAnim = Animator.StringToHash("IsWalking");
         private static readonly int AttackAnim = Animator.StringToHash("Attack");
         private static readonly int HitAnim = Animator.StringToHash("Hit");
-        private static readonly int DieAnim = Animator.StringToHash("Die");
+        private static readonly int DieAnim = Animator.StringToHash("Dead");
+        private static readonly int IdleAnim = Animator.StringToHash("Idle");
 
         [System.Serializable]
         public class EnemyDeathEvent : UnityEvent<Enemy> { }
@@ -126,7 +127,7 @@ namespace Script.Characters
         private void Update()
         {
             if (!isInitialized || isDead || PlayerManager.Instance == null) return;
-
+            
             var playerTransform = PlayerManager.Instance.transform;
             float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
             Vector3 directionToPlayer = (playerTransform.position - transform.position).normalized;
@@ -156,7 +157,7 @@ namespace Script.Characters
                     Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-                    if (distanceToPlayer <= enemyData.attackRange)
+                    if (distanceToPlayer <= 15f) // enemyData.attackRange)
                     {
                         if (angleToPlayer <= attackAngle && CanAttack())
                         {
@@ -222,7 +223,7 @@ namespace Script.Characters
             }
 
             // 데미지 이펙트
-            EffectManager.Instance.PlayEffect("Hit", transform.position, Quaternion.identity);
+            EffectManager.Instance.PlayEffect("Hit", transform.position, Quaternion.identity, 2f);
             EffectManager.Instance.ShowDamageText(damage, transform.position + Vector3.up);
 
             if (currentHealth <= 0)
@@ -236,13 +237,15 @@ namespace Script.Characters
             isDead = true;
             if (animator != null)
             {
+                Debug.Log("죽음 애니메이션 실행");
+                animator.ResetTrigger(HitAnim);
                 animator.SetTrigger(DieAnim);
             }
 
             OnEnemyDeath?.Invoke(this);
             
             // 죽음 이펙트
-            EffectManager.Instance.PlayEffect("Death", transform.position, Quaternion.identity);
+            EffectManager.Instance.PlayEffect("Death", transform.position, Quaternion.identity, 2f);
             
             // 경험치 지급
             PlayerManager.Instance.GainExperience(enemyData.experienceGiven);
@@ -260,13 +263,13 @@ namespace Script.Characters
                 GameEventBus.Publish(new RoomEnemyDeadEvent { enemy = this }); 
             }
             
-            Destroy(gameObject, 2f);
+            Destroy(gameObject, 4f);
         }
 
         public void Attack(IDamageable target)
         {
             if (!CanAttack()) return;
-
+            
             lastAttackTime = Time.time;
             if (animator != null)
             {
@@ -276,13 +279,13 @@ namespace Script.Characters
             // 공격 이펙트
             EffectManager.Instance.PlayEffect("Attack", transform.position + transform.forward, transform.rotation);
             
-            // 딜레이 후 데미지 적용
-            StartCoroutine(DelayedDamage(target));
+            // 딜레이 후 데미지 적용 
+            // StartCoroutine(DelayedDamage(target));
         }
 
         private IEnumerator DelayedDamage(IDamageable target)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(1f);
             target.TakeDamage(enemyData.attackPower);
         }
 
@@ -306,5 +309,27 @@ namespace Script.Characters
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, enemyData?.attackRange ?? 0f);
         }
+
+        #region 애니메이션 이벤트
+
+        public void TriggerHit()
+        {
+            float hitRadius = 2f;
+            Vector3 hitOrigin = transform.position + transform.forward * 1.5f;
+            Collider[] hits = Physics.OverlapSphere(hitOrigin, hitRadius, LayerMask.GetMask("Player"));
+
+            foreach (var hit in hits)
+            {
+                if (hit.TryGetComponent<PlayerManager>(out var player))
+                {
+                    player.TakeDamage(enemyData.attackPower);
+                    EffectManager.Instance.PlayEffect("Hit", hitOrigin + hit.transform.position, Quaternion.identity, 2f);
+                    Debug.Log($"[Enemy] 플레이어 적중: {player.name}");
+                }
+            }
+        }
+
+        #endregion
+        
     }
 } 

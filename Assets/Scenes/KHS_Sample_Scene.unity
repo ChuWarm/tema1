@@ -203,8 +203,8 @@ Camera:
   m_GameObject: {fileID: 850656591}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -320,18 +320,23 @@ MonoBehaviour:
     soundEffect: {fileID: 0}
     duration: 1
   hitEffect:
-    effectName: 
-    effectPrefab: {fileID: 0}
+    effectName: Hit
+    effectPrefab: {fileID: 1489431029902184, guid: 4430919f14c50f84085d287cbcb2c30e, type: 3}
     soundEffect: {fileID: 0}
     duration: 1
   deathEffect:
-    effectName: 
-    effectPrefab: {fileID: 0}
+    effectName: Death
+    effectPrefab: {fileID: 1277154925287174, guid: 3b517eddec185dd4a830743a742ad00b, type: 3}
     soundEffect: {fileID: 0}
     duration: 1
   healEffect:
     effectName: 
     effectPrefab: {fileID: 0}
+    soundEffect: {fileID: 0}
+    duration: 1
+  DashEffect:
+    effectName: Dash
+    effectPrefab: {fileID: 1698068915230344, guid: 05f7c156786bd024e8da3bb1a4b8aa09, type: 3}
     soundEffect: {fileID: 0}
     duration: 1
   damageTextPrefab: {fileID: 0}
