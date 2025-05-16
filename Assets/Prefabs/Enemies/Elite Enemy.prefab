@@ -1690,7 +1690,7 @@ MonoBehaviour:
   animator: {fileID: 3246114250161436041}
   enemyID: enf001
   detectionRange: 15
-  attackAngle: 120
+  attackAngle: 60
   rotationSpeed: 5
   OnEnemyDeath:
     m_PersistentCalls:

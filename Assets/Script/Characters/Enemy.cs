@@ -157,7 +157,7 @@ namespace Script.Characters
                     Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-                    if (distanceToPlayer <= 15f) // enemyData.attackRange)
+                    if (distanceToPlayer <= enemyData.attackRange)
                     {
                         if (angleToPlayer <= attackAngle && CanAttack())
                         {

@@ -55,6 +55,13 @@ public class Room : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         
         _playerTransform = other.transform;
+        
+        if (RoomType == RoomType.Normal)
+            BGMManager.Instance.PlayBGM(BGMType.InGame);
+        else if (RoomType == RoomType.Elite)
+            BGMManager.Instance.PlayBGM(BGMType.EliteRoom);
+        else if (RoomType == RoomType.Boss)
+            BGMManager.Instance.PlayBGM(BGMType.BossRoom);
     }
 
     private void OnTriggerStay(Collider other)
@@ -62,7 +69,7 @@ public class Room : MonoBehaviour
         if (!other.CompareTag("Player") || _playerTransform == null) return;
         if (!IsEventProcessorInitialized) return;
         if (_playerHasEntered) return;
-
+        
         float distance = Vector3.Distance(_playerTransform.position, transform.position);
         if (distance < enterThreshold)
         {
