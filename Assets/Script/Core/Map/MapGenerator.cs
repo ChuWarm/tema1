@@ -26,15 +26,14 @@ public class MapGenerator : Singleton<MapGenerator>
 
     private void OnEnable()
     {
-        _prefabDict = new();
-        
-        
-        foreach (var r in roomPrefabs)
-            _prefabDict[r.roomType] = r.roomPrefab;
     }
 
     public async UniTask GenerateMap()
     {
+        _prefabDict = new();
+        foreach (var r in roomPrefabs)
+            _prefabDict[r.roomType] = r.roomPrefab;
+
         _map.Clear();
         
         int maxRooms = 10;

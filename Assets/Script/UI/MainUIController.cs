@@ -25,12 +25,14 @@ public class MainUIController : MonoBehaviour
         });
         mainButtons[2].onClick.AddListener(() => Application.Quit());
 
-        yield return new WaitUntil(() => !DataManager.IsReady);
+        yield return new WaitUntil(() => DataManager.IsReady);
 
         foreach (var item in mainButtons)
         {
             item.gameObject.SetActive(true);
             yield return new WaitForSeconds(.1f);
         }
+
+        Debug.Log("Main on");
     }
 }

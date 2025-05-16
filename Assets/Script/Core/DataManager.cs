@@ -76,7 +76,7 @@ public class DataManager : Singleton<DataManager>
                         Debug.LogWarning($"�ߺ� enemyID: {item.upgradeID}");
                         continue; // �Ǵ� ���� ������ �����
                     }
-                    
+
                     upgDatas.Add(item.upgradeID, item);
                 }
 
@@ -110,20 +110,23 @@ public class DataManager : Singleton<DataManager>
 
             await UniTask.SwitchToMainThread();
 
-            print($"added - enemyData count: {enemyTask.Count}");
+            Debug.Log($"added - enemyData count: {enemyTask.Count}");
             datas.Add(typeof(EnemyData), enemyTask);
 
-            print($"added - memoryData count: {memoryTask.Count}");
+            Debug.Log($"added - memoryData count: {memoryTask.Count}");
             datas.Add(typeof(MemoryUpgradeData), memoryTask);
 
-            print($"added - itemData count: {itemTask.Count}");
+            Debug.Log($"added - itemData count: {itemTask.Count}");
             datas.Add(typeof(ItemData), itemTask);
         }
         catch (Exception e)
         {
             Debug.LogError(e);
         }
-        IsReady = true;
+        finally
+        {
+            IsReady = true;
+        }
     }
 
     async UniTask<string> LoadDataGoogleSheet(string url)
